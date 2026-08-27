@@ -15,8 +15,9 @@ Living doc so any new session can resume. Update it as work lands.
   clone on another machine needs to re-add them. Restart dev server after editing env.
 
 ## Key files
-- `web/app/page.tsx` — server component; reads todos, renders list + add form.
-- `web/app/actions.ts` — server actions: `addTodo`, `toggleTodo`.
+- `web/app/page.tsx` — home **hub**: links to feature pages (only ones that exist).
+- `web/app/todos/page.tsx` — To-dos feature at `/todos`; reads todos, list + add form.
+- `web/app/actions.ts` — server actions: `addTodo`, `toggleTodo` (revalidate `/todos`).
 - `web/lib/supabase.ts` — server Supabase client (secret key, bypasses RLS).
 - DB: Supabase `todos` table (`id`, `text`, `done`, `created_at`), RLS on.
 
