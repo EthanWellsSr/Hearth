@@ -10,6 +10,9 @@ export default function Home() {
           <li>
             <Link href="/todos">To-dos</Link>
           </li>
+          <li>
+            <Link href="/groceries">Grocery List</Link>
+          </li>
         </ul>
       </nav>
     </main>
