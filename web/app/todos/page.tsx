@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireHousehold } from "@/lib/auth";
-import { addTodo, toggleTodo } from "@/app/actions";
+import { CheckableList } from "@/components/CheckableList";
+import { addTodo, toggleTodo, deleteTodo } from "@/app/actions";
 
 export default async function TodosPage() {
   const { supabase } = await requireHousehold();
@@ -8,6 +9,12 @@ export default async function TodosPage() {
     .from("todos")
     .select()
     .order("created_at", { ascending: true });
+
+  const items = (todos ?? []).map((t) => ({
+    id: t.id,
+    label: t.text,
+    checked: t.done,
+  }));
 
   return (
     <main>
@@ -22,18 +29,12 @@ export default async function TodosPage() {
         <button type="submit">Add</button>
       </form>
 
-      <ul>
-        {todos?.map((todo) => (
-          <li key={todo.id}>
-            <form action={toggleTodo}>
-              <input type="hidden" name="id" value={todo.id} />
-              <input type="hidden" name="done" value={String(todo.done)} />
-              <button type="submit">{todo.done ? "☑" : "☐"}</button>
-            </form>
-            {todo.text}
-          </li>
-        ))}
-      </ul>
+      <CheckableList
+        items={items}
+        toggleAction={toggleTodo}
+        deleteAction={deleteTodo}
+        checkedField="done"
+      />
     </main>
   );
 }

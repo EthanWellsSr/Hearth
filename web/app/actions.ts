@@ -18,3 +18,10 @@ export async function toggleTodo(formData: FormData) {
   await supabase.from("todos").update({ done: !done }).eq("id", id);
   revalidatePath("/todos");
 }
+
+export async function deleteTodo(formData: FormData) {
+  const id = String(formData.get("id"));
+  const { supabase } = await requireHousehold();
+  await supabase.from("todos").delete().eq("id", id);
+  revalidatePath("/todos");
+}

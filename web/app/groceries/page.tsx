@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireHousehold } from "@/lib/auth";
+import { CheckableList } from "@/components/CheckableList";
 import {
   addGroceryItem,
   toggleGroceryItem,
@@ -9,11 +10,17 @@ import {
 
 export default async function GroceriesPage() {
   const { supabase } = await requireHousehold();
-  const { data: items } = await supabase
+  const { data: groceries } = await supabase
     .from("grocery_items")
     .select()
     .order("bought", { ascending: true }) // unbought (false) before bought (true)
     .order("created_at", { ascending: true }); // oldest → newest within each group
+
+  const items = (groceries ?? []).map((g) => ({
+    id: g.id,
+    label: g.name,
+    checked: g.bought,
+  }));
 
   return (
     <main>
@@ -28,22 +35,12 @@ export default async function GroceriesPage() {
         <button type="submit">Add</button>
       </form>
 
-      <ul>
-        {items?.map((item) => (
-          <li key={item.id}>
-            <form action={toggleGroceryItem}>
-              <input type="hidden" name="id" value={item.id} />
-              <input type="hidden" name="bought" value={String(item.bought)} />
-              <button type="submit">{item.bought ? "☑" : "☐"}</button>
-            </form>
-            {item.name}
-            <form action={deleteGroceryItem}>
-              <input type="hidden" name="id" value={item.id} />
-              <button type="submit">✕</button>
-            </form>
-          </li>
-        ))}
-      </ul>
+      <CheckableList
+        items={items}
+        toggleAction={toggleGroceryItem}
+        deleteAction={deleteGroceryItem}
+        checkedField="bought"
+      />
 
       <form action={clearBought}>
         <button type="submit">Clear bought</button>
