@@ -1,4 +1,4 @@
-// A house wrapped in a climbing vine — "Hearth" as home + plant life.
+// "Hearth" mark: a house with a small sprig growing from the roof (home + growth).
 // Colored by the accent via currentColor.
 export function PlantMark() {
   return (
@@ -13,31 +13,18 @@ export function PlantMark() {
       className="h-full w-full"
     >
       {/* house */}
-      <path d="M6 21V11l6-5 6 5v10" />
-      <path d="M6 21h12" />
+      <path d="M5 20.5V11l7-5.5 7 5.5v9.5Z" />
       {/* door */}
-      <path d="M10.5 21v-4.5h3V21" />
-      {/* climbing vine up the right wall */}
-      <path d="M18 21c3-1.4 3.4-4.6 1.2-6.8" />
+      <path d="M10 20.5v-4.5h4v4.5" />
+      {/* sprig growing from the roof peak */}
+      <path d="M12 5.5V2.5" />
       <path
-        d="M19.4 15c1.1-.1 2-1 2.2-2.2-1.2-.2-2.2.6-2.2 2.2z"
+        d="M12 3.4C11.2 2 9.6 1.4 8 1.8c.2 1.7 1.6 2.8 3.2 2.5z"
         fill="currentColor"
         stroke="none"
       />
       <path
-        d="M18.4 18c1.1.2 2.2-.3 2.7-1.4-1.1-.5-2.3-.1-2.7 1.4z"
-        fill="currentColor"
-        stroke="none"
-      />
-      {/* climbing vine up the left wall */}
-      <path d="M6 21c-3-1.4-3.4-4.6-1.2-6.8" />
-      <path
-        d="M4.6 15c-1.1-.1-2-1-2.2-2.2 1.2-.2 2.2.6 2.2 2.2z"
-        fill="currentColor"
-        stroke="none"
-      />
-      <path
-        d="M5.6 18c-1.1.2-2.2-.3-2.7-1.4 1.1-.5 2.3-.1 2.7 1.4z"
+        d="M12 4.6c.7-1.2 2.1-1.8 3.5-1.5-.1 1.5-1.4 2.5-2.9 2.2z"
         fill="currentColor"
         stroke="none"
       />
