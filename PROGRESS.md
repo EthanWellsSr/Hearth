@@ -20,9 +20,10 @@ Living doc so any new session can resume. Update it as work lands.
   in `lib/recurrence.ts`). Overdue highlighted. Optional assignee per chore
   (a Member; reassignable). Member display names live on `memberships`.
 - **Tests: STARTED.** Vitest set up (`npm test`); `lib/recurrence.ts` covered.
-- **Styling: DONE.** Hand-written CSS design system in `app/globals.css`
-  (theme-aware light/dark, forest-green palette; sprout mark in `components/Sprout.tsx`);
-  class hooks on all pages + `CheckableList`. No Tailwind (per ADR 0002).
+- **Styling: DONE.** **Tailwind CSS v4** (ADR 0007) with an emerald/stone botanical
+  theme, dark mode via `prefers-color-scheme`. Component classes (`.card`,
+  `.btn-primary`, `.btn-ghost`, `.field`, `.icon-btn`) in `app/globals.css`; shared
+  `components/AppHeader.tsx` + `components/PlantMark.tsx` (house-in-vines mark).
 - Not deployed.
 
 ## Run it

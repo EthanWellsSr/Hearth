@@ -10,6 +10,7 @@ export function PlantMark() {
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
+      className="h-full w-full"
     >
       {/* house */}
       <path d="M6 21V11l6-5 6 5v10" />

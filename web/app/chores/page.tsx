@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { requireHousehold } from "@/lib/auth";
 import { todayInChicago } from "@/lib/recurrence";
+import { AppHeader } from "@/components/AppHeader";
 import { addChore, completeChore, deleteChore, reassignChore } from "./actions";
 
 const WEEKDAYS = [
@@ -56,81 +56,110 @@ export default async function ChoresPage() {
   const memberList = (members ?? []) as Member[];
 
   return (
-    <main>
-      <p>
-        <Link href="/" className="backlink">
-          ← Home
-        </Link>
-      </p>
+    <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-5 py-8">
+      <AppHeader />
 
-      <h1>Chores</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-stone-800 dark:text-stone-50">
+        Chores
+      </h1>
 
-      <form action={addChore} className="add-form">
-        <input name="title" placeholder="Add a chore" />
-        <select name="freq">
+      <form action={addChore} className="card flex flex-wrap items-center gap-2 p-4">
+        <input
+          name="title"
+          placeholder="Add a chore"
+          className="field min-w-40 flex-1"
+        />
+        <select name="freq" className="field">
           <option value="every_n_days">Every N days</option>
           <option value="weekly">Weekly on…</option>
         </select>
-        <input name="interval_days" type="number" min="1" defaultValue="1" />
-        <select name="weekday" defaultValue="1">
+        <input
+          name="interval_days"
+          type="number"
+          min="1"
+          defaultValue="1"
+          className="field w-20"
+        />
+        <select name="weekday" defaultValue="1" className="field">
           {WEEKDAYS.map((w, i) => (
             <option key={i} value={i}>
               {w}
             </option>
           ))}
         </select>
-        <select name="assignee_id">
+        <select name="assignee_id" className="field">
           <MemberOptions members={memberList} />
         </select>
-        <button type="submit">Add</button>
+        <button type="submit" className="btn-primary">
+          Add
+        </button>
       </form>
 
-      <ul className="list">
-        {chores?.map((c) => {
-          const overdue = c.next_due < today;
-          const assignee = c.assignee?.display_name ?? "Unassigned";
-          return (
-            <li key={c.id} className="row">
-              <form action={completeChore} className="inline">
-                <input type="hidden" name="id" value={c.id} />
-                <button type="submit" className="btn-primary">
-                  Done
-                </button>
-              </form>
-
-              <div className="chore-main">
-                <span className="label">{c.title}</span>
-                <div className="chore-meta">
-                  <span>{describe(c)}</span>
-                  <span>·</span>
-                  <span className={overdue ? "overdue" : undefined}>
-                    due {c.next_due}
-                    {overdue && " (overdue)"}
-                  </span>
-                  <span>·</span>
-                  <span>{assignee}</span>
-                </div>
-                <form action={reassignChore} className="reassign">
+      {chores && chores.length > 0 ? (
+        <ul className="flex flex-col gap-2">
+          {chores.map((c) => {
+            const overdue = c.next_due < today;
+            const assignee = c.assignee?.display_name ?? "Unassigned";
+            return (
+              <li key={c.id} className="card flex items-start gap-3 px-4 py-3">
+                <form action={completeChore} className="flex">
                   <input type="hidden" name="id" value={c.id} />
-                  <select name="assignee_id" defaultValue={c.assignee_id ?? ""}>
-                    <MemberOptions members={memberList} />
-                  </select>
-                  <button type="submit" className="btn-ghost">
-                    Set
+                  <button type="submit" className="btn-primary px-3 py-1.5">
+                    Done
                   </button>
                 </form>
-              </div>
 
-              <form action={deleteChore} className="inline">
-                <input type="hidden" name="id" value={c.id} />
-                <button type="submit" className="icon-btn danger" aria-label="Delete">
-                  ✕
-                </button>
-              </form>
-            </li>
-          );
-        })}
-      </ul>
+                <div className="flex flex-1 flex-col gap-1.5">
+                  <span className="font-medium text-stone-800 dark:text-stone-100">
+                    {c.title}
+                  </span>
+                  <div className="flex flex-wrap items-center gap-2 text-sm text-stone-500 dark:text-stone-400">
+                    <span>{describe(c)}</span>
+                    <span aria-hidden>·</span>
+                    <span
+                      className={
+                        overdue ? "font-medium text-red-600 dark:text-red-400" : ""
+                      }
+                    >
+                      due {c.next_due}
+                      {overdue && " · overdue"}
+                    </span>
+                    <span
+                      className="rounded-full bg-emerald-600/10 px-2 py-0.5 text-xs text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300"
+                    >
+                      {assignee}
+                    </span>
+                  </div>
+                  <form action={reassignChore} className="flex items-center gap-2 pt-0.5">
+                    <input type="hidden" name="id" value={c.id} />
+                    <select
+                      name="assignee_id"
+                      defaultValue={c.assignee_id ?? ""}
+                      className="field px-2 py-1 text-xs"
+                    >
+                      <MemberOptions members={memberList} />
+                    </select>
+                    <button type="submit" className="btn-ghost px-2 py-1 text-xs">
+                      Reassign
+                    </button>
+                  </form>
+                </div>
+
+                <form action={deleteChore} className="flex">
+                  <input type="hidden" name="id" value={c.id} />
+                  <button type="submit" aria-label="Delete" className="icon-btn">
+                    ✕
+                  </button>
+                </form>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <p className="rounded-xl border border-dashed border-stone-300 px-4 py-8 text-center text-sm text-stone-400 dark:border-stone-700">
+          No chores yet — add a recurring task above.
+        </p>
+      )}
     </main>
   );
 }
