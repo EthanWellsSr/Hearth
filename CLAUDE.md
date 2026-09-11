@@ -14,6 +14,10 @@ It is the handoff doc between sessions; a stale one misleads the next instance.
 **Commits use a single-line message** that summarizes the contents. No multi-line
 bodies or bulleted commit descriptions.
 
+**Only commit and push when Ethan says to.** Do the work and leave it uncommitted;
+never run `git commit`/`git push` until he explicitly asks. He batches related
+changes into commits on his own cadence.
+
 ## Working with Ethan
 
 This is a **learning project**: the deliverable is Ethan's understanding of how

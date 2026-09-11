@@ -51,13 +51,10 @@ export default async function Home() {
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-5 py-8">
       <AppHeader />
 
-      <section className="flex flex-col gap-1 pt-2">
+      <section className="pt-2">
         <h1 className="text-3xl font-semibold tracking-tight text-stone-800 dark:text-stone-50">
           Welcome home
         </h1>
-        <p className="text-stone-500 dark:text-stone-400">
-          Everything your household is keeping track of, in one place.
-        </p>
       </section>
 
       <nav className="grid grid-cols-1 gap-4 sm:grid-cols-3">
