@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireHousehold } from "@/lib/auth";
 import { todayInChicago } from "@/lib/recurrence";
-import { addChore, completeChore, deleteChore } from "./actions";
+import { addChore, completeChore, deleteChore, reassignChore } from "./actions";
 
 const WEEKDAYS = [
   "Sunday",
@@ -24,14 +24,36 @@ function describe(chore: {
     : `every ${chore.interval_days} days`;
 }
 
+type Member = { id: string; display_name: string | null };
+
+function MemberOptions({ members }: { members: Member[] }) {
+  return (
+    <>
+      <option value="">Unassigned</option>
+      {members.map((m) => (
+        <option key={m.id} value={m.id}>
+          {m.display_name ?? "Member"}
+        </option>
+      ))}
+    </>
+  );
+}
+
 export default async function ChoresPage() {
   const { supabase } = await requireHousehold();
+
+  const { data: members } = await supabase
+    .from("memberships")
+    .select("id, display_name")
+    .order("display_name");
+
   const { data: chores } = await supabase
     .from("chores")
-    .select()
-    .order("next_due", { ascending: true }); // soonest / overdue first
+    .select("*, assignee:assignee_id(display_name)")
+    .order("next_due", { ascending: true });
 
   const today = todayInChicago();
+  const memberList = (members ?? []) as Member[];
 
   return (
     <main>
@@ -55,12 +77,16 @@ export default async function ChoresPage() {
             </option>
           ))}
         </select>
+        <select name="assignee_id">
+          <MemberOptions members={memberList} />
+        </select>
         <button type="submit">Add</button>
       </form>
 
       <ul>
         {chores?.map((c) => {
           const overdue = c.next_due < today;
+          const assignee = c.assignee?.display_name ?? "Unassigned";
           return (
             <li key={c.id}>
               <form action={completeChore}>
@@ -68,7 +94,15 @@ export default async function ChoresPage() {
                 <button type="submit">Done</button>
               </form>
               {c.title} — {describe(c)} — due {c.next_due}
-              {overdue && <span style={{ color: "crimson" }}> (overdue)</span>}
+              {overdue && <span style={{ color: "crimson" }}> (overdue)</span>} —{" "}
+              {assignee}
+              <form action={reassignChore}>
+                <input type="hidden" name="id" value={c.id} />
+                <select name="assignee_id" defaultValue={c.assignee_id ?? ""}>
+                  <MemberOptions members={memberList} />
+                </select>
+                <button type="submit">Set</button>
+              </form>
               <form action={deleteChore}>
                 <input type="hidden" name="id" value={c.id} />
                 <button type="submit">✕</button>

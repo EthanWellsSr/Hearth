@@ -13,6 +13,7 @@ export async function addChore(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
   if (!title) return;
   const freq = String(formData.get("freq"));
+  const assigneeId = String(formData.get("assignee_id") ?? "");
   const { supabase, householdId } = await requireHousehold();
 
   let rule: Recurrence;
@@ -33,7 +34,19 @@ export async function addChore(formData: FormData) {
     ...cols,
     next_due: firstDue(rule, todayInChicago()),
     household_id: householdId,
+    assignee_id: assigneeId || null,
   });
+  revalidatePath("/chores");
+}
+
+export async function reassignChore(formData: FormData) {
+  const id = String(formData.get("id"));
+  const assigneeId = String(formData.get("assignee_id") ?? "");
+  const { supabase } = await requireHousehold();
+  await supabase
+    .from("chores")
+    .update({ assignee_id: assigneeId || null })
+    .eq("id", id);
   revalidatePath("/chores");
 }
 

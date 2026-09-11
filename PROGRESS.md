@@ -17,7 +17,8 @@ Living doc so any new session can resume. Update it as work lands.
   Membership is admin-managed (no self-serve join yet). See ADR 0006.
 - **Chores: DONE** (at `/chores`). Recurring tasks (every N days / weekly on a
   weekday); single-row model, `next_due` advances on completion (recurrence math
-  in `lib/recurrence.ts`). Overdue highlighted. No assignee yet (next slice).
+  in `lib/recurrence.ts`). Overdue highlighted. Optional assignee per chore
+  (a Member; reassignable). Member display names live on `memberships`.
 - **Tests: STARTED.** Vitest set up (`npm test`); `lib/recurrence.ts` covered.
 - Not deployed. No styling yet.
 
@@ -49,10 +50,9 @@ Living doc so any new session can resume. Update it as work lands.
   `memberships`; RLS enforced on all via `is_member(household_id)`.
 
 ## Next (deploy is LAST — only once the MVP is functional and the UI is done)
-1. Chores: add optional Assignee ("whose turn") — deferred from the chores slice.
-2. Styling — nail down the UI.
-3. Deploy to Vercel — connect GitHub repo, set env vars there.
-4. CI — run `npm test` on push (test runner already set up).
+1. Styling — nail down the UI.
+2. Deploy to Vercel — connect GitHub repo, set env vars there.
+3. CI — run `npm test` on push (test runner already set up).
 
 ## Gotchas
 - `.env.local` never committed; secret key (`SUPABASE_SECRET_KEY`) is server-only.
