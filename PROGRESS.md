@@ -15,7 +15,11 @@ Living doc so any new session can resume. Update it as work lands.
   `household_id` on every data table; RLS enforces access via `is_member()`.
   Pages/actions use the user-scoped client (RLS live); `/login` gates the app.
   Membership is admin-managed (no self-serve join yet). See ADR 0006.
-- Not deployed. No styling, no tests yet.
+- **Chores: DONE** (at `/chores`). Recurring tasks (every N days / weekly on a
+  weekday); single-row model, `next_due` advances on completion (recurrence math
+  in `lib/recurrence.ts`). Overdue highlighted. No assignee yet (next slice).
+- **Tests: STARTED.** Vitest set up (`npm test`); `lib/recurrence.ts` covered.
+- Not deployed. No styling yet.
 
 ## Run it
 - `cd web && npm run dev` → http://localhost:3000
@@ -30,6 +34,9 @@ Living doc so any new session can resume. Update it as work lands.
 - `web/app/actions.ts` — to-do server actions: `addTodo`, `toggleTodo` (revalidate `/todos`).
 - `web/components/CheckableList.tsx` — shared list view (todos + groceries; normalize
   rows to {id,label,checked} + pass toggle/delete actions). Reuse for future lists.
+- `web/app/chores/` — Chores feature; recurrence math in `web/lib/recurrence.ts`
+  (pure, unit-tested in `recurrence.test.ts`). Chores do NOT use CheckableList
+  (completing reschedules, not toggles). Table `chores` (migration 0003).
 - `web/app/groceries/page.tsx` — Grocery List at `/groceries`; DB-sorted (bought last).
 - `web/app/groceries/actions.ts` — grocery actions: add / toggle bought / delete / clear bought.
 - `web/lib/supabase.ts` — admin client (secret key, bypasses RLS). Server/admin only.
@@ -42,10 +49,10 @@ Living doc so any new session can resume. Update it as work lands.
   `memberships`; RLS enforced on all via `is_member(household_id)`.
 
 ## Next (deploy is LAST — only once the MVP is functional and the UI is done)
-1. Chores + recurrence — next feature through the loop (reuse `CheckableList`).
+1. Chores: add optional Assignee ("whose turn") — deferred from the chores slice.
 2. Styling — nail down the UI.
 3. Deploy to Vercel — connect GitHub repo, set env vars there.
-4. Tests/CI.
+4. CI — run `npm test` on push (test runner already set up).
 
 ## Gotchas
 - `.env.local` never committed; secret key (`SUPABASE_SECRET_KEY`) is server-only.

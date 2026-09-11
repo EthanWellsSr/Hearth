@@ -22,6 +22,9 @@ export default async function Home() {
           <li>
             <Link href="/groceries">Grocery List</Link>
           </li>
+          <li>
+            <Link href="/chores">Chores</Link>
+          </li>
         </ul>
       </nav>
 
