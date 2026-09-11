@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { requireHousehold } from "@/lib/auth";
 import {
   addGroceryItem,
   toggleGroceryItem,
@@ -8,6 +8,7 @@ import {
 } from "./actions";
 
 export default async function GroceriesPage() {
+  const { supabase } = await requireHousehold();
   const { data: items } = await supabase
     .from("grocery_items")
     .select()

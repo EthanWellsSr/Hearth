@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { requireHousehold } from "@/lib/auth";
 import { addTodo, toggleTodo } from "@/app/actions";
 
 export default async function TodosPage() {
+  const { supabase } = await requireHousehold();
   const { data: todos } = await supabase
     .from("todos")
     .select()
