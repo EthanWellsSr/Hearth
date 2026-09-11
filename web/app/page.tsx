@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { Sprout } from "@/components/Sprout";
 import { signOut } from "./login/actions";
 
 export default async function Home() {
@@ -12,7 +13,10 @@ export default async function Home() {
 
   return (
     <main>
-      <h1>Hearth</h1>
+      <h1 className="wordmark">
+        <Sprout />
+        Hearth
+      </h1>
 
       <nav>
         <ul className="tiles">

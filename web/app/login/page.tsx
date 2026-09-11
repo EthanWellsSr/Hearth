@@ -1,3 +1,4 @@
+import { Sprout } from "@/components/Sprout";
 import { signIn, signUp } from "./actions";
 
 export default async function LoginPage({
@@ -9,7 +10,10 @@ export default async function LoginPage({
 
   return (
     <main className="auth">
-      <h1>Hearth</h1>
+      <h1 className="wordmark">
+        <Sprout />
+        Hearth
+      </h1>
       <p className="muted">Sign in to your household.</p>
 
       {params.error && <p className="error">{params.error}</p>}

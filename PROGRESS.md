@@ -21,8 +21,8 @@ Living doc so any new session can resume. Update it as work lands.
   (a Member; reassignable). Member display names live on `memberships`.
 - **Tests: STARTED.** Vitest set up (`npm test`); `lib/recurrence.ts` covered.
 - **Styling: DONE.** Hand-written CSS design system in `app/globals.css`
-  (theme-aware light/dark, warm "hearth" accent); class hooks on all pages +
-  `CheckableList`. No Tailwind (per ADR 0002).
+  (theme-aware light/dark, forest-green palette; sprout mark in `components/Sprout.tsx`);
+  class hooks on all pages + `CheckableList`. No Tailwind (per ADR 0002).
 - Not deployed.
 
 ## Run it

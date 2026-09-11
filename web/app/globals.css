@@ -1,10 +1,10 @@
 :root {
-  --bg: #f6f5f3;
+  --bg: #eef3ec;
   --surface: #ffffff;
-  --text: #1c1a17;
-  --muted: #6b6560;
-  --border: #e6e2dc;
-  --accent: #c2410c;
+  --text: #16241b;
+  --muted: #586b5e;
+  --border: #d7e2d5;
+  --accent: #1f6b3f;
   --accent-contrast: #ffffff;
   --danger: #b42318;
   --radius: 12px;
@@ -13,13 +13,13 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #141310;
-    --surface: #1f1d18;
-    --text: #f1ede7;
-    --muted: #a49e95;
-    --border: #332f28;
-    --accent: #f97316;
-    --accent-contrast: #1a1712;
+    --bg: #0e1512;
+    --surface: #15201a;
+    --text: #e8efe9;
+    --muted: #93a89a;
+    --border: #243029;
+    --accent: #57b979;
+    --accent-contrast: #0c130f;
     --danger: #f87171;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.25);
   }
@@ -60,6 +60,18 @@ h1 {
   font-size: 1.6rem;
   font-weight: 650;
   letter-spacing: -0.01em;
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.wordmark svg {
+  width: 1.5em;
+  height: 1.5em;
+  color: var(--accent);
+  flex: none;
 }
 
 a {
