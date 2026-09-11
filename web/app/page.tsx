@@ -15,21 +15,29 @@ export default async function Home() {
       <h1>Hearth</h1>
 
       <nav>
-        <ul>
+        <ul className="tiles">
           <li>
-            <Link href="/todos">To-dos</Link>
+            <Link href="/todos" className="tile">
+              To-dos
+            </Link>
           </li>
           <li>
-            <Link href="/groceries">Grocery List</Link>
+            <Link href="/groceries" className="tile">
+              Grocery List
+            </Link>
           </li>
           <li>
-            <Link href="/chores">Chores</Link>
+            <Link href="/chores" className="tile">
+              Chores
+            </Link>
           </li>
         </ul>
       </nav>
 
       <form action={signOut}>
-        <button type="submit">Sign out</button>
+        <button type="submit" className="btn-ghost">
+          Sign out
+        </button>
       </form>
     </main>
   );

@@ -25,12 +25,14 @@ export default async function GroceriesPage() {
   return (
     <main>
       <p>
-        <Link href="/">← Home</Link>
+        <Link href="/" className="backlink">
+          ← Home
+        </Link>
       </p>
 
       <h1>Grocery List</h1>
 
-      <form action={addGroceryItem}>
+      <form action={addGroceryItem} className="add-form">
         <input name="name" placeholder="Add an item" />
         <button type="submit">Add</button>
       </form>
@@ -43,7 +45,9 @@ export default async function GroceriesPage() {
       />
 
       <form action={clearBought}>
-        <button type="submit">Clear bought</button>
+        <button type="submit" className="btn-ghost">
+          Clear bought
+        </button>
       </form>
     </main>
   );

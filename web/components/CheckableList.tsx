@@ -15,18 +15,24 @@ export function CheckableList({
   checkedField: string; // the DB column the toggle flips: "done" | "bought"
 }) {
   return (
-    <ul>
+    <ul className="list">
       {items.map((item) => (
-        <li key={item.id}>
-          <form action={toggleAction}>
+        <li key={item.id} className="row">
+          <form action={toggleAction} className="inline">
             <input type="hidden" name="id" value={item.id} />
             <input type="hidden" name={checkedField} value={String(item.checked)} />
-            <button type="submit">{item.checked ? "☑" : "☐"}</button>
+            <button type="submit" className="check" aria-label="Toggle">
+              {item.checked ? "☑" : "☐"}
+            </button>
           </form>
-          {item.label}
-          <form action={deleteAction}>
+          <span className={item.checked ? "label checked" : "label"}>
+            {item.label}
+          </span>
+          <form action={deleteAction} className="inline">
             <input type="hidden" name="id" value={item.id} />
-            <button type="submit">✕</button>
+            <button type="submit" className="icon-btn danger" aria-label="Delete">
+              ✕
+            </button>
           </form>
         </li>
       ))}

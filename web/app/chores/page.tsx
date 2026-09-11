@@ -58,12 +58,14 @@ export default async function ChoresPage() {
   return (
     <main>
       <p>
-        <Link href="/">← Home</Link>
+        <Link href="/" className="backlink">
+          ← Home
+        </Link>
       </p>
 
       <h1>Chores</h1>
 
-      <form action={addChore}>
+      <form action={addChore} className="add-form">
         <input name="title" placeholder="Add a chore" />
         <select name="freq">
           <option value="every_n_days">Every N days</option>
@@ -83,29 +85,47 @@ export default async function ChoresPage() {
         <button type="submit">Add</button>
       </form>
 
-      <ul>
+      <ul className="list">
         {chores?.map((c) => {
           const overdue = c.next_due < today;
           const assignee = c.assignee?.display_name ?? "Unassigned";
           return (
-            <li key={c.id}>
-              <form action={completeChore}>
+            <li key={c.id} className="row">
+              <form action={completeChore} className="inline">
                 <input type="hidden" name="id" value={c.id} />
-                <button type="submit">Done</button>
+                <button type="submit" className="btn-primary">
+                  Done
+                </button>
               </form>
-              {c.title} — {describe(c)} — due {c.next_due}
-              {overdue && <span style={{ color: "crimson" }}> (overdue)</span>} —{" "}
-              {assignee}
-              <form action={reassignChore}>
+
+              <div className="chore-main">
+                <span className="label">{c.title}</span>
+                <div className="chore-meta">
+                  <span>{describe(c)}</span>
+                  <span>·</span>
+                  <span className={overdue ? "overdue" : undefined}>
+                    due {c.next_due}
+                    {overdue && " (overdue)"}
+                  </span>
+                  <span>·</span>
+                  <span>{assignee}</span>
+                </div>
+                <form action={reassignChore} className="reassign">
+                  <input type="hidden" name="id" value={c.id} />
+                  <select name="assignee_id" defaultValue={c.assignee_id ?? ""}>
+                    <MemberOptions members={memberList} />
+                  </select>
+                  <button type="submit" className="btn-ghost">
+                    Set
+                  </button>
+                </form>
+              </div>
+
+              <form action={deleteChore} className="inline">
                 <input type="hidden" name="id" value={c.id} />
-                <select name="assignee_id" defaultValue={c.assignee_id ?? ""}>
-                  <MemberOptions members={memberList} />
-                </select>
-                <button type="submit">Set</button>
-              </form>
-              <form action={deleteChore}>
-                <input type="hidden" name="id" value={c.id} />
-                <button type="submit">✕</button>
+                <button type="submit" className="icon-btn danger" aria-label="Delete">
+                  ✕
+                </button>
               </form>
             </li>
           );

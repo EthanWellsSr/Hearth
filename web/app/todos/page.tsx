@@ -19,12 +19,14 @@ export default async function TodosPage() {
   return (
     <main>
       <p>
-        <Link href="/">← Home</Link>
+        <Link href="/" className="backlink">
+          ← Home
+        </Link>
       </p>
 
       <h1>To-dos</h1>
 
-      <form action={addTodo}>
+      <form action={addTodo} className="add-form">
         <input name="text" placeholder="Add a to-do" />
         <button type="submit">Add</button>
       </form>

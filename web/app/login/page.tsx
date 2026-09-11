@@ -8,18 +8,24 @@ export default async function LoginPage({
   const params = await searchParams;
 
   return (
-    <main>
+    <main className="auth">
       <h1>Hearth</h1>
-      <p>Sign in to your household.</p>
+      <p className="muted">Sign in to your household.</p>
 
-      {params.error && <p style={{ color: "crimson" }}>{params.error}</p>}
-      {params.message && <p>{params.message}</p>}
+      {params.error && <p className="error">{params.error}</p>}
+      {params.message && <p className="muted">{params.message}</p>}
 
-      <form>
+      <form className="auth-form">
         <input name="email" type="email" placeholder="Email" required />
         <input name="password" type="password" placeholder="Password" required />
-        <button formAction={signIn}>Sign in</button>
-        <button formAction={signUp}>Sign up</button>
+        <div className="buttons">
+          <button className="btn-primary" formAction={signIn}>
+            Sign in
+          </button>
+          <button className="btn-ghost" formAction={signUp}>
+            Sign up
+          </button>
+        </div>
       </form>
     </main>
   );

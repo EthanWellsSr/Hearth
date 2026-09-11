@@ -20,7 +20,10 @@ Living doc so any new session can resume. Update it as work lands.
   in `lib/recurrence.ts`). Overdue highlighted. Optional assignee per chore
   (a Member; reassignable). Member display names live on `memberships`.
 - **Tests: STARTED.** Vitest set up (`npm test`); `lib/recurrence.ts` covered.
-- Not deployed. No styling yet.
+- **Styling: DONE.** Hand-written CSS design system in `app/globals.css`
+  (theme-aware light/dark, warm "hearth" accent); class hooks on all pages +
+  `CheckableList`. No Tailwind (per ADR 0002).
+- Not deployed.
 
 ## Run it
 - `cd web && npm run dev` → http://localhost:3000
@@ -50,9 +53,8 @@ Living doc so any new session can resume. Update it as work lands.
   `memberships`; RLS enforced on all via `is_member(household_id)`.
 
 ## Next (deploy is LAST — only once the MVP is functional and the UI is done)
-1. Styling — nail down the UI.
-2. Deploy to Vercel — connect GitHub repo, set env vars there.
-3. CI — run `npm test` on push (test runner already set up).
+1. Deploy to Vercel — connect GitHub repo, set env vars there.
+2. CI — run `npm test` on push (test runner already set up).
 
 ## Gotchas
 - `.env.local` never committed; secret key (`SUPABASE_SECRET_KEY`) is server-only.
