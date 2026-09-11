@@ -1,4 +1,4 @@
-import { Sprout } from "@/components/Sprout";
+import { PlantMark } from "@/components/PlantMark";
 import { signIn, signUp } from "./actions";
 
 export default async function LoginPage({
@@ -11,7 +11,7 @@ export default async function LoginPage({
   return (
     <main className="auth">
       <h1 className="wordmark">
-        <Sprout />
+        <PlantMark />
         Hearth
       </h1>
       <p className="muted">Sign in to your household.</p>
