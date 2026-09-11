@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import pkg from "@/package.json";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,7 +21,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <footer className="px-5 py-6 text-center text-xs text-stone-400 dark:text-stone-600">
+          Hearth v{pkg.version}
+        </footer>
+      </body>
     </html>
   );
 }
