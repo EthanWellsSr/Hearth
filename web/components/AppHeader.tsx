@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { PlantMark } from "./PlantMark";
 import { signOut } from "@/app/login/actions";
 
 export function AppHeader() {
@@ -7,11 +6,10 @@ export function AppHeader() {
     <header className="flex items-center justify-between">
       <Link
         href="/"
-        className="flex items-center gap-2 text-emerald-800 transition-colors hover:text-emerald-600 dark:text-emerald-300 dark:hover:text-emerald-200"
+        className="flex items-center gap-2 text-stone-800 transition-opacity hover:opacity-80 dark:text-stone-100"
       >
-        <span className="h-7 w-7">
-          <PlantMark />
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.png" alt="" className="h-8 w-8 rounded-full" />
         <span className="text-lg font-semibold tracking-tight">Hearth</span>
       </Link>
       <form action={signOut}>

@@ -1,4 +1,3 @@
-import { PlantMark } from "@/components/PlantMark";
 import { signIn, signUp } from "./actions";
 
 export default async function LoginPage({
@@ -11,10 +10,9 @@ export default async function LoginPage({
   return (
     <main className="grid min-h-screen place-items-center px-5">
       <div className="card flex w-full max-w-sm flex-col gap-5 p-7">
-        <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300">
-          <span className="h-8 w-8">
-            <PlantMark />
-          </span>
+        <div className="flex items-center gap-2 text-stone-800 dark:text-stone-100">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="" className="h-10 w-10 rounded-full" />
           <span className="text-xl font-semibold tracking-tight">Hearth</span>
         </div>
 

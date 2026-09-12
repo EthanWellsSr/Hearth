@@ -18,11 +18,11 @@ export const metadata: Metadata = {
   description: "Your household, in one place.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "Hearth", statusBarStyle: "default" },
-  icons: { icon: "/icon.svg", apple: "/icon.svg" },
+  icons: { icon: "/logo.png", apple: "/logo.png" },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#15803d",
+  themeColor: "#3f5623",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

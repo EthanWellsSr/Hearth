@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { requireHousehold } from "@/lib/auth";
 import { AppHeader } from "@/components/AppHeader";
 
 const FEATURES = [
@@ -41,20 +40,29 @@ const FEATURES = [
 ];
 
 export default async function Home() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const { supabase, householdId } = await requireHousehold();
+  const { data: household } = await supabase
+    .from("households")
+    .select("name, invite_code")
+    .eq("id", householdId)
+    .maybeSingle();
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-5 py-8">
       <AppHeader />
 
-      <section className="pt-2">
+      <section className="flex flex-col gap-1 pt-2">
         <h1 className="text-3xl font-semibold tracking-tight text-stone-800 dark:text-stone-50">
           Welcome home
         </h1>
+        {household && (
+          <p className="text-sm text-stone-500 dark:text-stone-400">
+            The {household.name} household · invite code{" "}
+            <span className="rounded bg-stone-500/10 px-1.5 py-0.5 font-mono text-stone-700 dark:text-stone-200">
+              {household.invite_code}
+            </span>
+          </p>
+        )}
       </section>
 
       <nav className="grid grid-cols-1 gap-4 sm:grid-cols-3">

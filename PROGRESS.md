@@ -14,16 +14,20 @@ Living doc so any new session can resume. Update it as work lands.
   Auth (email confirmation ON). `households` + `memberships` (join table) tables;
   `household_id` on every data table; RLS enforces access via `is_member()`.
   Pages/actions use the user-scoped client (RLS live); `/login` gates the app.
-  Membership is admin-managed (no self-serve join yet). See ADR 0006.
+  **Self-serve onboarding** at `/onboarding`: a user with no household creates one
+  (becomes owner) or joins via a household `invite_code` (member). Household join/
+  create writes go through the admin client server-side after validation. Owners
+  see the invite code on the hub. See ADR 0006.
 - **Chores: DONE** (at `/chores`). Recurring tasks (every N days / weekly on a
   weekday); single-row model, `next_due` advances on completion (recurrence math
   in `lib/recurrence.ts`). Overdue highlighted. Optional assignee per chore
   (a Member; reassignable). Member display names live on `memberships`.
 - **Tests: STARTED.** Vitest set up (`npm test`); `lib/recurrence.ts` covered.
-- **Styling: DONE.** **Tailwind CSS v4** (ADR 0007) with an emerald/stone botanical
-  theme, dark mode via `prefers-color-scheme`. Component classes (`.card`,
-  `.btn-primary`, `.btn-ghost`, `.field`, `.icon-btn`) in `app/globals.css`; shared
-  `components/AppHeader.tsx` + `components/PlantMark.tsx` (house-in-vines mark).
+- **Styling: DONE.** **Tailwind CSS v4** (ADR 0007). Palette is the Hearth **logo**
+  (`public/logo.png`): forest-green + sage on warm cream, set by overriding the
+  emerald/stone scales in `app/globals.css` (so all utilities recolor at once).
+  Dark mode via `prefers-color-scheme`. Component classes + `components/AppHeader.tsx`.
+  Installable PWA (`app/manifest.ts`, logo icon).
 - **Deployed** to Vercel (Hobby): https://hearth-omega-umber.vercel.app — root
   dir `web`, production branch `master`, 4 env vars set, auto-redeploys on push.
   Supabase Site URL points at the Vercel domain.
@@ -54,6 +58,8 @@ Living doc so any new session can resume. Update it as work lands.
 - `web/lib/auth.ts` — `requireHousehold()`: gate returning {supabase, user, householdId}.
 - `web/middleware.ts` — refreshes the auth session cookie on every request.
 - `web/app/login/` — email+password sign in / sign up / sign out.
+- `web/app/onboarding/` — create-or-join-household step for users with no membership.
+- `web/public/logo.png` — the Hearth logo (favicon, PWA icon, header/login mark).
 - `web/supabase/migrations/0001_auth_tenancy.sql` — the tenancy migration (record).
 - DB: `todos`, `grocery_items` (now with `household_id`), `households`,
   `memberships`; RLS enforced on all via `is_member(household_id)`.

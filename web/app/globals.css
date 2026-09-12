@@ -2,6 +2,35 @@
 
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* Palette remapped to the Hearth logo: forest green + sage, warm cream neutrals.
+     Overriding the emerald/stone scales re-colors every existing utility at once. */
+
+  /* emerald -> forest/sage greens */
+  --color-emerald-50: #f0f3e6;
+  --color-emerald-100: #dde6c8;
+  --color-emerald-200: #c3d1a3;
+  --color-emerald-300: #a8bd7e;
+  --color-emerald-400: #8ba659;
+  --color-emerald-500: #6d8a41;
+  --color-emerald-600: #55702f;
+  --color-emerald-700: #3f5623;
+  --color-emerald-800: #33461d;
+  --color-emerald-900: #2a3a19;
+  --color-emerald-950: #16220e;
+
+  /* stone -> warm cream / olive-gray neutrals */
+  --color-stone-50: #f8f5ec;
+  --color-stone-100: #eee9db;
+  --color-stone-200: #e3ddc9;
+  --color-stone-300: #cfc7b0;
+  --color-stone-400: #a8a488;
+  --color-stone-500: #78765c;
+  --color-stone-600: #5b5942;
+  --color-stone-700: #423f2e;
+  --color-stone-800: #2f3222;
+  --color-stone-900: #1c1e14;
+  --color-stone-950: #14150d;
 }
 
 @layer base {
@@ -13,21 +42,21 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
-    color: #292524; /* stone-800 */
+    color: #2f3222; /* warm ink */
     background:
-      radial-gradient(1100px 560px at 110% -10%, #d7ecd0 0%, transparent 58%),
-      radial-gradient(900px 500px at -10% 0%, #e7f1e0 0%, transparent 55%),
-      linear-gradient(180deg, #f4f7f0 0%, #eef3ea 100%);
+      radial-gradient(1100px 560px at 110% -10%, #e6ecd3 0%, transparent 58%),
+      radial-gradient(900px 500px at -10% 0%, #eef0e0 0%, transparent 55%),
+      linear-gradient(180deg, #f5f2e8 0%, #f0eee0 100%);
     background-attachment: fixed;
   }
 
   @media (prefers-color-scheme: dark) {
     body {
-      color: #ece9e4;
+      color: #ece7d6; /* warm cream */
       background:
-        radial-gradient(1100px 560px at 110% -10%, #123024 0%, transparent 55%),
-        radial-gradient(900px 500px at -10% 0%, #0e2018 0%, transparent 55%),
-        linear-gradient(180deg, #0c1410 0%, #0a0f0c 100%);
+        radial-gradient(1100px 560px at 110% -10%, #1c2a12 0%, transparent 55%),
+        radial-gradient(900px 500px at -10% 0%, #172012 0%, transparent 55%),
+        linear-gradient(180deg, #12160e 0%, #0f120b 100%);
     }
   }
 }
