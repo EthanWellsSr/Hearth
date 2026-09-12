@@ -24,7 +24,12 @@ Living doc so any new session can resume. Update it as work lands.
   theme, dark mode via `prefers-color-scheme`. Component classes (`.card`,
   `.btn-primary`, `.btn-ghost`, `.field`, `.icon-btn`) in `app/globals.css`; shared
   `components/AppHeader.tsx` + `components/PlantMark.tsx` (house-in-vines mark).
-- Not deployed.
+- **Deployed** to Vercel (Hobby): https://hearth-omega-umber.vercel.app — root
+  dir `web`, production branch `master`, 4 env vars set, auto-redeploys on push.
+  Supabase Site URL points at the Vercel domain.
+- **Versioning:** semver git tags via `npm version` (release = `npm version minor`
+  from `web/`, then `git push Hearth master --follow-tags`); visible in the footer
+  from `package.json`. First release tagged **v0.1.0**.
 
 ## Run it
 - `cd web && npm run dev` → http://localhost:3000
@@ -54,8 +59,7 @@ Living doc so any new session can resume. Update it as work lands.
   `memberships`; RLS enforced on all via `is_member(household_id)`.
 
 ## Next (deploy is LAST — only once the MVP is functional and the UI is done)
-1. Deploy to Vercel — connect GitHub repo, set env vars there.
-2. CI — run `npm test` on push (test runner already set up).
+1. CI — run `npm test` on push (test runner already set up).
 
 ## Gotchas
 - `.env.local` never committed; secret key (`SUPABASE_SECRET_KEY`) is server-only.

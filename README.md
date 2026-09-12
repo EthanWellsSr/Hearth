@@ -1,0 +1,84 @@
+# Hearth
+
+A shared web app where the members of one household coordinate their to-dos,
+grocery list, chores, and more — in one place.
+
+**Live:** https://hearth-omega-umber.vercel.app
+
+## Features
+
+- **To-dos** — one-off tasks; add, check off, delete; completed ones auto-purge
+  nightly (Supabase `pg_cron`, midnight America/Chicago).
+- **Grocery List** — add, check off (bought), delete, and "clear bought"; bought
+  items sink to the bottom.
+- **Chores** — recurring tasks (every N days, or weekly on a weekday); `next_due`
+  advances on completion; optional assignee.
+- **Auth + Households** — email/password login; all data is scoped to a Household
+  and enforced by Postgres row-level security (see `docs/adr/0006`).
+- Installable as a PWA (Add to Home Screen).
+
+## Stack
+
+- **Next.js** (App Router) + **TypeScript** — app lives in [`web/`](web/)
+- **Supabase** (Postgres, Auth, RLS, `pg_cron`)
+- **Tailwind CSS v4** for styling
+- **Vitest** for unit tests
+- **Vercel** for hosting
+
+## Project layout
+
+```
+CONTEXT.md            # the domain glossary — the words Hearth uses
+PROGRESS.md           # living status / handoff between work sessions
+docs/adr/             # architecture decision records (why, not just what)
+web/                  # the Next.js app
+  app/                # routes (/, /login, /todos, /groceries, /chores) + server actions
+  components/         # shared UI (AppHeader, CheckableList, PlantMark)
+  lib/                # supabase clients, auth gate, recurrence math
+  supabase/migrations # SQL migrations (run by hand in the Supabase SQL editor)
+```
+
+## Local development
+
+```bash
+cd web
+npm install
+npm run dev        # http://localhost:3000
+npm test           # run the unit tests
+```
+
+Create `web/.env.local` (gitignored) with:
+
+```
+SUPABASE_URL=...
+SUPABASE_SECRET_KEY=...            # server-only admin key (bypasses RLS)
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...  # publishable key; user-scoped client
+```
+
+## Database
+
+Supabase Postgres. Schema changes live as SQL files in
+[`web/supabase/migrations/`](web/supabase/migrations/) and are applied by hand in
+the Supabase SQL editor (in filename order). RLS is enforced on every table.
+
+## Deployment
+
+Hosted on Vercel (Hobby):
+
+- **Root Directory:** `web`
+- **Production branch:** `master` — pushes deploy to production automatically
+- **Preview:** every push to another branch (e.g. `dev`) gets its own preview URL
+- The four env vars above are set in Vercel for Production and Preview
+
+## Branches & versioning
+
+- `dev` — day-to-day work; merge into `master` to release
+- Releases use semver git tags via `npm version` (from `web/`):
+
+  ```bash
+  npm version minor              # bumps package.json, commits, tags vX.Y.Z
+  git push Hearth master --follow-tags
+  ```
+
+  The app footer shows the current version, read from `web/package.json`.
