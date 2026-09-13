@@ -2,64 +2,238 @@
 
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --color-emerald-50: #f1f6ef;
+  --color-emerald-100: #e1eddd;
+  --color-emerald-200: #c8ddc0;
+  --color-emerald-300: #a9c99f;
+  --color-emerald-400: #82ad78;
+  --color-emerald-500: #638f5d;
+  --color-emerald-600: #4e754b;
+  --color-emerald-700: #3e5e3d;
+  --color-emerald-800: #334c34;
+  --color-emerald-900: #2a3f2c;
+  --color-emerald-950: #142318;
+
+  --color-stone-50: #fbfaf6;
+  --color-stone-100: #f4f0e8;
+  --color-stone-200: #e8e1d5;
+  --color-stone-300: #d7ccbc;
+  --color-stone-400: #ac9f8e;
+  --color-stone-500: #7f7466;
+  --color-stone-600: #62594f;
+  --color-stone-700: #4c453e;
+  --color-stone-800: #37342f;
+  --color-stone-900: #262521;
+  --color-stone-950: #171714;
 }
 
 @layer base {
+  :root {
+    --cream: #f8f5ed;
+    --paper: #fffdf8;
+    --ink: #294236;
+    --moss: #496e49;
+    --sage: #9fbe98;
+    --sky: #b9d7dc;
+    --sky-deep: #739aa3;
+    --sunshine: #e7bb56;
+    --line: rgba(71, 103, 73, 0.18);
+    --shadow: 0 18px 50px rgba(47, 76, 54, 0.09);
+  }
+
   html {
-    color-scheme: light dark;
+    color-scheme: light;
+    background: var(--cream);
   }
 
   body {
+    isolation: isolate;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
-    color: #292524; /* stone-800 */
+    color: var(--ink);
     background:
-      radial-gradient(1100px 560px at 110% -10%, #d7ecd0 0%, transparent 58%),
-      radial-gradient(900px 500px at -10% 0%, #e7f1e0 0%, transparent 55%),
-      linear-gradient(180deg, #f4f7f0 0%, #eef3ea 100%);
+      radial-gradient(circle at 9% 7%, rgba(231, 187, 86, 0.21), transparent 24rem),
+      radial-gradient(circle at 92% 10%, rgba(185, 215, 220, 0.58), transparent 30rem),
+      radial-gradient(circle at 8% 86%, rgba(159, 190, 152, 0.34), transparent 32rem),
+      linear-gradient(145deg, #fcfaf3 0%, #f5f3e8 48%, #f2f7ef 100%);
     background-attachment: fixed;
   }
 
-  @media (prefers-color-scheme: dark) {
-    body {
-      color: #ece9e4;
-      background:
-        radial-gradient(1100px 560px at 110% -10%, #123024 0%, transparent 55%),
-        radial-gradient(900px 500px at -10% 0%, #0e2018 0%, transparent 55%),
-        linear-gradient(180deg, #0c1410 0%, #0a0f0c 100%);
-    }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+    z-index: 0;
+  }
+
+  body > main,
+  body > footer {
+    position: relative;
+    z-index: 1;
+  }
+
+  ::selection {
+    color: var(--ink);
+    background: rgba(231, 187, 86, 0.34);
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+
+  button,
+  a,
+  input,
+  select {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
 @layer components {
-  .card {
-    @apply rounded-2xl border border-stone-200/70 bg-white/75 shadow-sm backdrop-blur
-      dark:border-emerald-900/40 dark:bg-stone-900/50;
+  .app-shell {
+    @apply relative mx-auto flex min-h-[calc(100vh-64px)] w-full max-w-3xl flex-col gap-7 px-5 py-6 sm:px-8 sm:py-8;
+  }
+
+  .auth-shell {
+    @apply relative mx-auto grid min-h-[calc(100vh-64px)] w-full max-w-5xl place-items-center px-5 py-10;
+  }
+
+  .card,
+  .form-panel,
+  .empty-state {
+    @apply rounded-[1.4rem] border bg-white/75 backdrop-blur-md;
+    border-color: var(--line);
+    box-shadow: 0 8px 30px rgba(55, 83, 59, 0.06);
+  }
+
+  .botanical-card,
+  .form-panel {
+    @apply relative overflow-hidden;
+  }
+
+  .botanical-card::before,
+  .form-panel::before {
+    content: "";
+    @apply pointer-events-none absolute right-0 top-0 h-24 w-32;
+    opacity: 0.32;
+    background: right top / contain no-repeat url("data:image/svg+xml,%3Csvg viewBox='0 0 130 95' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M139 -4C105 8 107 36 78 47 58 55 37 48 16 76' fill='none' stroke='%237da27a' stroke-width='1.6' stroke-linecap='round'/%3E%3Cpath d='M105 26c-14-1-23-8-28-21 15 0 24 7 28 21Z' fill='%239dbb94'/%3E%3Cpath d='M76 48c3-13 12-21 26-23-3 14-12 22-26 23Z' fill='%237da27a'/%3E%3Ccircle cx='18' cy='75' r='3.5' fill='%23e7bb56'/%3E%3C/svg%3E");
+  }
+
+  .meadow-backdrop {
+    @apply pointer-events-none fixed inset-0 z-0 overflow-hidden;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm
-      font-medium transition-colors disabled:opacity-50
-      bg-emerald-700 text-white shadow-sm hover:bg-emerald-600
-      dark:bg-emerald-600 dark:hover:bg-emerald-500;
+    @apply relative inline-flex min-h-11 items-center justify-center gap-2 overflow-hidden rounded-full px-5 py-2 text-sm font-semibold text-white shadow-sm transition duration-200 disabled:opacity-50;
+    background: linear-gradient(135deg, #557d52, #3f6543);
+    box-shadow: 0 7px 18px rgba(57, 95, 64, 0.18);
   }
+
+  .btn-primary::before {
+    content: "";
+    @apply h-2.5 w-4 -rotate-12 rounded-[100%_0_100%_0];
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #638c5e, #496f4d);
+    box-shadow: 0 10px 24px rgba(57, 95, 64, 0.22);
+  }
+
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm
-      font-medium transition-colors disabled:opacity-50
-      text-stone-500 hover:text-emerald-700 dark:text-stone-400
-      dark:hover:text-emerald-400;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-stone-600 transition duration-200 disabled:opacity-50;
+  }
+
+  .btn-ghost:hover {
+    color: var(--moss);
+    background: rgba(159, 190, 152, 0.14);
   }
 
   .field {
-    @apply rounded-xl border border-stone-300/80 bg-white/70 px-3 py-2 text-sm
-      text-stone-800 outline-none transition
-      placeholder:text-stone-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30
-      dark:border-stone-700 dark:bg-stone-900/50 dark:text-stone-100;
+    @apply min-h-12 rounded-2xl border bg-white/80 px-4 py-2.5 text-sm text-stone-800 outline-none transition placeholder:text-stone-400;
+    border-color: rgba(89, 119, 87, 0.22);
+    box-shadow: inset 0 1px 2px rgba(56, 79, 55, 0.03);
+  }
+
+  .field:focus {
+    border-color: rgba(78, 117, 75, 0.65);
+    box-shadow: 0 0 0 4px rgba(159, 190, 152, 0.22);
   }
 
   .icon-btn {
-    @apply rounded-lg p-1.5 text-stone-400 transition-colors hover:text-red-600
-      dark:hover:text-red-400;
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-full text-stone-400 transition-colors;
+  }
+
+  .icon-btn:hover {
+    color: #a65447;
+    background: rgba(166, 84, 71, 0.08);
+  }
+
+  .page-kicker {
+    @apply mb-2 flex items-center gap-2 text-[0.7rem] font-bold uppercase tracking-[0.2em];
+    color: var(--sky-deep);
+  }
+
+  .page-kicker::before {
+    content: "";
+    @apply h-2 w-2 rounded-full;
+    background: var(--sunshine);
+    box-shadow: 0 0 0 4px rgba(231, 187, 86, 0.13);
+  }
+
+  .page-title {
+    @apply text-3xl font-semibold tracking-[-0.035em] text-stone-800 sm:text-4xl;
+  }
+
+  .page-description {
+    @apply mt-2 max-w-xl text-sm leading-6 text-stone-500 sm:text-base;
+  }
+
+  .form-panel {
+    @apply flex gap-2 p-2;
+  }
+
+  .empty-state {
+    @apply flex flex-col items-center gap-3 border-dashed px-5 py-12 text-center text-sm text-stone-500;
+  }
+
+  .subtle-label {
+    @apply mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.13em] text-stone-500;
+  }
+
+  .status-message {
+    @apply rounded-2xl px-4 py-3 text-sm;
+  }
+
+  .logo-frame {
+    @apply overflow-hidden rounded-full border border-white bg-[#fffdf8] shadow-sm;
+    box-shadow: 0 6px 18px rgba(49, 76, 52, 0.12);
+  }
+
+  .soft-divider {
+    @apply h-px w-full;
+    background: linear-gradient(90deg, transparent, rgba(82, 112, 80, 0.2), transparent);
+  }
+
+  @media (max-width: 480px) {
+    .app-shell {
+      @apply gap-6 px-4 py-5;
+    }
+
+    .form-panel {
+      @apply flex-col p-3;
+    }
+
+    .form-panel .btn-primary {
+      @apply w-full;
+    }
   }
 }

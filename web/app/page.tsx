@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { requireHousehold } from "@/lib/auth";
 import { AppHeader } from "@/components/AppHeader";
+import { MeadowSprig } from "@/components/MeadowSprig";
 
 const FEATURES = [
   {
     href: "/todos",
     title: "To-dos",
-    desc: "One-off tasks for the household.",
+    desc: "Keep the little things from getting lost.",
+    accent: "bg-[#dfeeda] text-emerald-700",
     icon: (
       <path d="M4 6h16M4 12h16M4 18h10" />
     ),
@@ -15,7 +16,8 @@ const FEATURES = [
   {
     href: "/groceries",
     title: "Grocery List",
-    desc: "What to pick up on the next run.",
+    desc: "A shared list for the next market run.",
+    accent: "bg-[#e3f0f2] text-[#557f88]",
     icon: (
       <>
         <path d="M6 6h15l-1.5 9h-12z" />
@@ -28,7 +30,8 @@ const FEATURES = [
   {
     href: "/chores",
     title: "Chores",
-    desc: "Recurring tasks, on a schedule.",
+    desc: "Gentle rhythms that keep home cared for.",
+    accent: "bg-[#f8ebc9] text-[#9a7022]",
     icon: (
       <>
         <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
@@ -41,30 +44,56 @@ const FEATURES = [
 ];
 
 export default async function Home() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const { supabase, householdId } = await requireHousehold();
+  const { data: household } = await supabase
+    .from("households")
+    .select("name, invite_code")
+    .eq("id", householdId)
+    .maybeSingle();
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-5 py-8">
+    <main className="app-shell">
       <AppHeader />
 
-      <section className="pt-2">
-        <h1 className="text-3xl font-semibold tracking-tight text-stone-800 dark:text-stone-50">
-          Welcome home
-        </h1>
+      <section className="card botanical-card relative overflow-hidden px-6 py-8 sm:px-9 sm:py-10">
+        <div className="relative z-10 max-w-lg">
+          <p className="page-kicker">Your household</p>
+          <h1 className="text-4xl font-semibold tracking-[-0.045em] text-stone-800 sm:text-5xl">
+            Welcome home
+          </h1>
+          <p className="mt-3 text-base leading-7 text-stone-500">
+            A calm place for everything that keeps life moving.
+          </p>
+          {household && (
+            <div className="mt-6 flex flex-wrap items-center gap-2 text-sm text-stone-600">
+              <span className="rounded-full bg-emerald-100/70 px-3 py-1.5 font-medium text-emerald-800">
+                {household.name} household
+              </span>
+              <span className="rounded-full bg-[#e7f1f3] px-3 py-1.5 text-[#55737a]">
+                Invite · <span className="font-mono font-semibold tracking-wider">{household.invite_code}</span>
+              </span>
+            </div>
+          )}
+        </div>
+        <MeadowSprig className="absolute -bottom-2 -right-5 w-52 text-emerald-500/40 sm:w-64" />
       </section>
 
-      <nav className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <section>
+        <div className="mb-4 flex items-end justify-between">
+          <div>
+            <p className="page-kicker">Around the home</p>
+            <h2 className="text-xl font-semibold tracking-tight text-stone-700">What needs tending?</h2>
+          </div>
+          <span className="hidden text-xs text-stone-400 sm:block">Choose a space</span>
+        </div>
+        <nav className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {FEATURES.map((f) => (
           <Link
             key={f.href}
             href={f.href}
-            className="card flex flex-col gap-3 p-5 transition-all hover:-translate-y-0.5 hover:shadow-md"
+            className="card botanical-card group flex min-h-48 flex-col p-5 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300/70 hover:shadow-lg"
           >
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600/10 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300">
+            <span className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl ${f.accent}`}>
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -77,15 +106,20 @@ export default async function Home() {
                 {f.icon}
               </svg>
             </span>
-            <span className="font-semibold text-stone-800 dark:text-stone-100">
+            <span className="mt-5 font-semibold text-stone-800">
               {f.title}
             </span>
-            <span className="text-sm text-stone-500 dark:text-stone-400">
+            <span className="mt-1 text-sm leading-5 text-stone-500">
               {f.desc}
+            </span>
+            <span className="mt-auto flex items-center gap-1.5 pt-4 text-xs font-semibold text-emerald-700 opacity-70 transition group-hover:opacity-100">
+              Open
+              <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
             </span>
           </Link>
         ))}
-      </nav>
+        </nav>
+      </section>
     </main>
   );
 }

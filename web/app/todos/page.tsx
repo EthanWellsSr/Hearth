@@ -17,17 +17,19 @@ export default async function TodosPage() {
   }));
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-5 py-8">
+    <main className="app-shell">
       <AppHeader />
 
-      <h1 className="text-2xl font-semibold tracking-tight text-stone-800 dark:text-stone-50">
-        To-dos
-      </h1>
+      <header>
+        <p className="page-kicker">A clearer mind</p>
+        <h1 className="page-title">To-dos</h1>
+        <p className="page-description">Set something down here, then enjoy the calm of knowing it has a place.</p>
+      </header>
 
-      <form action={addTodo} className="flex gap-2">
-        <input name="text" placeholder="Add a to-do" className="field flex-1" />
+      <form action={addTodo} className="form-panel">
+        <input name="text" placeholder="What needs doing?" aria-label="New to-do" className="field flex-1" />
         <button type="submit" className="btn-primary">
-          Add
+          Add to list
         </button>
       </form>
 

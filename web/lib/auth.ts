@@ -17,7 +17,7 @@ export async function requireHousehold() {
     .select("household_id")
     .eq("user_id", user.id)
     .maybeSingle();
-  if (!membership) redirect("/login?error=No+household+for+this+account");
+  if (!membership) redirect("/onboarding");
 
   return { supabase, user, householdId: membership.household_id as string };
 }

@@ -4,6 +4,7 @@ Shared web app for one household (Ethan + wife): calendar, chores, to-dos,
 groceries, meal planning, notes, messaging, expenses.
 
 - **Status** — current progress and what's next in [PROGRESS.md](PROGRESS.md).
+- **Roadmap** — planned releases and future features in [ROADMAP.md](ROADMAP.md).
 - **Vocabulary** — use the exact terms in [CONTEXT.md](CONTEXT.md).
 - **Decisions** — recorded in [docs/adr/](docs/adr/).
 

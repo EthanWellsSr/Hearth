@@ -1,6 +1,7 @@
 import { requireHousehold } from "@/lib/auth";
 import { todayInChicago } from "@/lib/recurrence";
 import { AppHeader } from "@/components/AppHeader";
+import { TinyLeaf } from "@/components/MeadowSprig";
 import { addChore, completeChore, deleteChore, reassignChore } from "./actions";
 
 const WEEKDAYS = [
@@ -56,91 +57,104 @@ export default async function ChoresPage() {
   const memberList = (members ?? []) as Member[];
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-5 py-8">
+    <main className="app-shell">
       <AppHeader />
 
-      <h1 className="text-2xl font-semibold tracking-tight text-stone-800 dark:text-stone-50">
-        Chores
-      </h1>
+      <header>
+        <p className="page-kicker">The rhythm of home</p>
+        <h1 className="page-title">Chores</h1>
+        <p className="page-description">Create simple routines so caring for your space feels shared and steady.</p>
+      </header>
 
-      <form action={addChore} className="card flex flex-wrap items-center gap-2 p-4">
-        <input
-          name="title"
-          placeholder="Add a chore"
-          className="field min-w-40 flex-1"
-        />
-        <select name="freq" className="field">
-          <option value="every_n_days">Every N days</option>
-          <option value="weekly">Weekly on…</option>
-        </select>
-        <input
-          name="interval_days"
-          type="number"
-          min="1"
-          defaultValue="1"
-          className="field w-20"
-        />
-        <select name="weekday" defaultValue="1" className="field">
-          {WEEKDAYS.map((w, i) => (
-            <option key={i} value={i}>
-              {w}
-            </option>
-          ))}
-        </select>
-        <select name="assignee_id" className="field">
-          <MemberOptions members={memberList} />
-        </select>
-        <button type="submit" className="btn-primary">
-          Add
+      <form action={addChore} className="card botanical-card grid gap-4 p-4 sm:grid-cols-2 sm:p-6">
+        <label className="sm:col-span-2">
+          <span className="subtle-label">What needs tending?</span>
+          <input name="title" placeholder="For example, water the plants" className="field w-full" />
+        </label>
+
+        <label>
+          <span className="subtle-label">Repeat</span>
+          <select name="freq" className="field w-full">
+            <option value="every_n_days">Every few days</option>
+            <option value="weekly">On the same day each week</option>
+          </select>
+        </label>
+
+        <label>
+          <span className="subtle-label">Number of days</span>
+          <input name="interval_days" type="number" min="1" defaultValue="1" className="field w-full" />
+        </label>
+
+        <label>
+          <span className="subtle-label">Day of the week</span>
+          <select name="weekday" defaultValue="1" className="field w-full">
+            {WEEKDAYS.map((w, i) => (
+              <option key={i} value={i}>{w}</option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          <span className="subtle-label">Who is tending to it?</span>
+          <select name="assignee_id" className="field w-full">
+            <MemberOptions members={memberList} />
+          </select>
+        </label>
+
+        <div className="soft-divider sm:col-span-2" />
+        <button type="submit" className="btn-primary sm:col-span-2 sm:justify-self-end">
+          Add this chore
         </button>
       </form>
 
       {chores && chores.length > 0 ? (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-3">
           {chores.map((c) => {
             const overdue = c.next_due < today;
             const assignee = c.assignee?.display_name ?? "Unassigned";
             return (
-              <li key={c.id} className="card flex items-start gap-3 px-4 py-3">
+              <li key={c.id} className="card group flex items-start gap-3 p-3.5 transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300/70 hover:shadow-md sm:p-4">
                 <form action={completeChore} className="flex">
                   <input type="hidden" name="id" value={c.id} />
-                  <button type="submit" className="btn-primary px-3 py-1.5">
-                    Done
+                  <button type="submit" className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 transition hover:border-emerald-500 hover:bg-emerald-100" aria-label={`Complete ${c.title}`}>
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-4 w-4">
+                      <path d="m7 12.5 3.2 3.2L17.5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
                   </button>
                 </form>
 
-                <div className="flex flex-1 flex-col gap-1.5">
-                  <span className="font-medium text-stone-800 dark:text-stone-100">
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  <span className="font-semibold text-stone-800">
                     {c.title}
                   </span>
-                  <div className="flex flex-wrap items-center gap-2 text-sm text-stone-500 dark:text-stone-400">
-                    <span>{describe(c)}</span>
-                    <span aria-hidden>·</span>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-stone-500 sm:text-sm">
+                    <span className="rounded-full bg-[#e7f1f3] px-2.5 py-1 text-[#5d7e85]">{describe(c)}</span>
                     <span
                       className={
-                        overdue ? "font-medium text-red-600 dark:text-red-400" : ""
+                        "rounded-full px-2.5 py-1 " +
+                        (overdue ? "bg-red-50 font-semibold text-red-700" : "bg-[#f8ebc9] text-[#876523]")
                       }
                     >
-                      due {c.next_due}
-                      {overdue && " · overdue"}
+                      {overdue ? "Overdue · " : "Due · "}{c.next_due}
                     </span>
                     <span
-                      className="rounded-full bg-emerald-600/10 px-2 py-0.5 text-xs text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300"
+                      className="rounded-full bg-emerald-100/80 px-2.5 py-1 text-emerald-700"
                     >
                       {assignee}
                     </span>
                   </div>
-                  <form action={reassignChore} className="flex items-center gap-2 pt-0.5">
+                  <form action={reassignChore} className="flex flex-wrap items-center gap-2 pt-1">
                     <input type="hidden" name="id" value={c.id} />
                     <select
                       name="assignee_id"
                       defaultValue={c.assignee_id ?? ""}
-                      className="field px-2 py-1 text-xs"
+                      aria-label={`Assign ${c.title}`}
+                      className="field min-h-9 px-3 py-1 text-xs"
                     >
                       <MemberOptions members={memberList} />
                     </select>
-                    <button type="submit" className="btn-ghost px-2 py-1 text-xs">
-                      Reassign
+                    <button type="submit" className="btn-ghost min-h-9 px-3 py-1 text-xs">
+                      Save person
                     </button>
                   </form>
                 </div>
@@ -148,7 +162,9 @@ export default async function ChoresPage() {
                 <form action={deleteChore} className="flex">
                   <input type="hidden" name="id" value={c.id} />
                   <button type="submit" aria-label="Delete" className="icon-btn">
-                    ✕
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-4 w-4">
+                      <path d="m8 8 8 8m0-8-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                    </svg>
                   </button>
                 </form>
               </li>
@@ -156,9 +172,12 @@ export default async function ChoresPage() {
           })}
         </ul>
       ) : (
-        <p className="rounded-xl border border-dashed border-stone-300 px-4 py-8 text-center text-sm text-stone-400 dark:border-stone-700">
-          No chores yet — add a recurring task above.
-        </p>
+        <div className="empty-state">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100/70 text-emerald-600">
+            <TinyLeaf className="h-6 w-6" />
+          </span>
+          <p>No chores yet. Add the first rhythm for your home above.</p>
+        </div>
       )}
     </main>
   );
