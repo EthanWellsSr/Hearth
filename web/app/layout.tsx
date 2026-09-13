@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import pkg from "@/package.json";
+import { MeadowBackdrop } from "@/components/MeadowBackdrop";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,23 +16,26 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Hearth",
-  description: "Your household, in one place.",
+  description: "A softer way to care for home, together.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "Hearth", statusBarStyle: "default" },
-  icons: { icon: "/logo.png", apple: "/logo.png" },
+  icons: { icon: "/logo-meadow.png", apple: "/logo-meadow.png" },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#3f5623",
+  themeColor: "#f8f5ed",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
+        <MeadowBackdrop />
         {children}
-        <footer className="px-5 py-6 text-center text-xs text-stone-400 dark:text-stone-600">
-          Hearth v{pkg.version}
+        <footer className="flex h-16 items-center justify-center gap-2 px-5 text-center text-xs text-stone-400">
+          <span className="h-px w-8 bg-emerald-200" />
+          Hearth · v{pkg.version}
+          <span className="h-px w-8 bg-emerald-200" />
         </footer>
       </body>
     </html>

@@ -3,8 +3,9 @@
 Living doc so any new session can resume. Update it as work lands.
 
 ## Current state
-- Foundation: `CONTEXT.md` (glossary), `docs/adr/0001–0005` (decisions), `CLAUDE.md` (guide).
-- App scaffolded in `web/` — Next.js + TypeScript, App Router, no Tailwind.
+- Foundation: `CONTEXT.md` (glossary), `ROADMAP.md` (planned releases),
+  `docs/adr/0001–0007` (decisions), and `AGENTS.md` / `CLAUDE.md` (agent guides).
+- App scaffolded in `web/` — Next.js + TypeScript, App Router, Tailwind CSS v4.
 - **Home hub: DONE.** `/` is a link list to feature pages (only ones that exist).
 - **To-dos: DONE** (at `/todos`). Add, toggle done, delete; completed to-dos
   auto-purge nightly at midnight America/Chicago via pg_cron (DST-correct).
@@ -23,17 +24,21 @@ Living doc so any new session can resume. Update it as work lands.
   in `lib/recurrence.ts`). Overdue highlighted. Optional assignee per chore
   (a Member; reassignable). Member display names live on `memberships`.
 - **Tests: STARTED.** Vitest set up (`npm test`); `lib/recurrence.ts` covered.
-- **Styling: DONE.** **Tailwind CSS v4** (ADR 0007). Palette is the Hearth **logo**
-  (`public/logo.png`): forest-green + sage on warm cream, set by overriding the
-  emerald/stone scales in `app/globals.css` (so all utilities recolor at once).
-  Dark mode via `prefers-color-scheme`. Component classes + `components/AppHeader.tsx`.
-  Installable PWA (`app/manifest.ts`, logo icon).
+- **Styling: REDESIGNED (visually approved).** **Tailwind CSS v4**
+  (ADR 0007). Light, high-end meadow direction: soft green and blue, restrained
+  golden accents, modern typography, botanical details, larger touch targets, and
+  clearer wording across every screen. New softened brand mark at
+  `public/logo-meadow.png`; shared sprigs in `components/MeadowSprig.tsx` and a
+  layered field with edge vines in `components/MeadowBackdrop.tsx`.
+  Installable PWA (`app/manifest.ts`, meadow logo icon).
 - **Deployed** to Vercel (Hobby): https://hearth-omega-umber.vercel.app — root
   dir `web`, production branch `master`, 4 env vars set, auto-redeploys on push.
   Supabase Site URL points at the Vercel domain.
-- **Versioning:** semver git tags via `npm version` (release = `npm version minor`
-  from `web/`, then `git push Hearth master --follow-tags`); visible in the footer
-  from `package.json`. First release tagged **v0.1.0**.
+- **Versioning:** semver git tags via `npm version` from `web/` using the planned
+  patch/minor/major increment, then `git push Hearth master --follow-tags`; visible
+  in the footer from `package.json`. First release tagged **v0.1.0**.
+- **Current release:** **v0.2.0** adds self-serve Household onboarding, installable
+  PWA support, and the approved meadow visual redesign.
 
 ## Run it
 - `cd web && npm run dev` → http://localhost:3000
@@ -59,17 +64,17 @@ Living doc so any new session can resume. Update it as work lands.
 - `web/middleware.ts` — refreshes the auth session cookie on every request.
 - `web/app/login/` — email+password sign in / sign up / sign out.
 - `web/app/onboarding/` — create-or-join-household step for users with no membership.
-- `web/public/logo.png` — the Hearth logo (favicon, PWA icon, header/login mark).
+- `web/public/logo-meadow.png` — the current Hearth logo (PWA icon and header/login mark).
 - `web/supabase/migrations/0001_auth_tenancy.sql` — the tenancy migration (record).
 - DB: `todos`, `grocery_items` (now with `household_id`), `households`,
   `memberships`; RLS enforced on all via `is_member(household_id)`.
 
-## Next (deploy is LAST — only once the MVP is functional and the UI is done)
+## Next
 1. CI — run `npm test` on push (test runner already set up).
 
 ## Gotchas
 - `.env.local` never committed; secret key (`SUPABASE_SECRET_KEY`) is server-only.
-- Data is household-scoped and RLS-enforced. Note `household_id` becomes a Household
-  *setting* the day timezone/self-serve join land; for now membership is admin-only
-  (add a second Member via SQL/dashboard until an invite flow exists).
+- Data is Household-scoped and RLS-enforced. Self-serve onboarding supports creating
+  or joining a Household with an invite code. The Household timezone is still
+  hard-coded to America/Chicago and needs to become a Household setting later.
 - Since `Confirm email` is ON, a new signup must click the email link before signing in.

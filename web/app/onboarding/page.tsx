@@ -1,5 +1,7 @@
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { MeadowSprig, TinyLeaf } from "@/components/MeadowSprig";
 import { createHousehold, joinHousehold } from "./actions";
 
 export default async function OnboardingPage({
@@ -22,57 +24,61 @@ export default async function OnboardingPage({
   if (membership) redirect("/");
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-col gap-6 px-5 py-10">
-      <div className="flex items-center gap-2 text-stone-800 dark:text-stone-100">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="" className="h-10 w-10 rounded-full" />
-        <span className="text-xl font-semibold tracking-tight">Hearth</span>
+    <main className="app-shell max-w-4xl">
+      <div className="flex items-center gap-3 text-stone-800">
+        <span className="logo-frame h-11 w-11">
+          <Image src="/logo-meadow.png" alt="" width={44} height={44} priority />
+        </span>
+        <span className="text-xl font-semibold tracking-[-0.035em]">Hearth</span>
       </div>
 
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-stone-800 dark:text-stone-50">
-          Set up your household
-        </h1>
-        <p className="text-sm text-stone-500 dark:text-stone-400">
-          Create a new household, or join one with an invite code.
-        </p>
-      </div>
+      <header className="relative overflow-hidden py-3 sm:py-6">
+        <p className="page-kicker">Make yourself at home</p>
+        <h1 className="page-title">Where are you settling in?</h1>
+        <p className="page-description">Start a new household space, or join one that is already growing.</p>
+        <MeadowSprig className="absolute -right-4 top-0 hidden w-48 text-emerald-500/30 sm:block" />
+      </header>
 
       {params.error && (
-        <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400">
+        <p className="status-message bg-red-500/10 text-red-700">
           {params.error}
         </p>
       )}
 
-      <form action={createHousehold} className="card flex flex-col gap-3 p-5">
-        <h2 className="font-semibold text-stone-800 dark:text-stone-100">
-          Create a household
-        </h2>
-        <input
-          name="name"
-          placeholder="Household name (e.g. Wells)"
-          className="field"
-          required
-        />
-        <button type="submit" className="btn-primary">
-          Create
-        </button>
-      </form>
+      <div className="grid gap-4 md:grid-cols-2">
+        <form action={createHousehold} className="card botanical-card flex flex-col gap-5 p-6 sm:p-7">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+            <TinyLeaf className="h-6 w-6" />
+          </span>
+          <div>
+            <h2 className="text-lg font-semibold text-stone-800">Begin a household</h2>
+            <p className="mt-1 text-sm leading-6 text-stone-500">Create the shared space and invite someone afterward.</p>
+          </div>
+          <label>
+            <span className="subtle-label">Household name</span>
+            <input name="name" placeholder="For example, Wells" className="field w-full" required />
+          </label>
+          <button type="submit" className="btn-primary">Create our space</button>
+        </form>
 
-      <form action={joinHousehold} className="card flex flex-col gap-3 p-5">
-        <h2 className="font-semibold text-stone-800 dark:text-stone-100">
-          Join a household
-        </h2>
-        <input
-          name="code"
-          placeholder="Invite code"
-          className="field uppercase"
-          required
-        />
-        <button type="submit" className="btn-ghost">
-          Join
-        </button>
-      </form>
+        <form action={joinHousehold} className="card botanical-card flex flex-col gap-5 p-6 sm:p-7">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#e2eff1] text-[#5c8790]">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+              <path d="M4 11.5 12 5l8 6.5V20H4v-8.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+              <path d="M9.5 20v-5h5v5" stroke="currentColor" strokeWidth="1.7" />
+            </svg>
+          </span>
+          <div>
+            <h2 className="text-lg font-semibold text-stone-800">Join your household</h2>
+            <p className="mt-1 text-sm leading-6 text-stone-500">Use the six-character invitation shared with you.</p>
+          </div>
+          <label>
+            <span className="subtle-label">Invite code</span>
+            <input name="code" placeholder="ABC123" className="field w-full uppercase tracking-[0.18em]" required />
+          </label>
+          <button type="submit" className="btn-primary">Join the space</button>
+        </form>
+      </div>
     </main>
   );
 }

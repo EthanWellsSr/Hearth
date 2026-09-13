@@ -18,9 +18,12 @@ export function CheckableList({
 }) {
   if (items.length === 0) {
     return (
-      <p className="rounded-xl border border-dashed border-stone-300 px-4 py-8 text-center text-sm text-stone-400 dark:border-stone-700">
-        {emptyText}
-      </p>
+      <div className="empty-state">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100/70 text-emerald-600">
+          <TinyLeaf className="h-6 w-6" />
+        </span>
+        <p>{emptyText}</p>
+      </div>
     );
   }
 
@@ -29,7 +32,7 @@ export function CheckableList({
       {items.map((item) => (
         <li
           key={item.id}
-          className="card group flex items-center gap-3 px-4 py-2.5"
+          className="card group flex min-h-16 items-center gap-3 px-3.5 py-2.5 transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300/70 hover:shadow-md sm:px-4"
         >
           <form action={toggleAction} className="flex">
             <input type="hidden" name="id" value={item.id} />
@@ -38,10 +41,10 @@ export function CheckableList({
               type="submit"
               aria-label={item.checked ? "Mark not done" : "Mark done"}
               className={
-                "flex h-6 w-6 items-center justify-center rounded-full border text-xs transition " +
+                "flex h-8 w-8 items-center justify-center rounded-full border text-xs font-bold transition " +
                 (item.checked
-                  ? "border-emerald-600 bg-emerald-600 text-white dark:border-emerald-500 dark:bg-emerald-500"
-                  : "border-stone-300 text-transparent hover:border-emerald-500 dark:border-stone-600")
+                  ? "border-emerald-600 bg-emerald-600 text-white shadow-sm"
+                  : "border-emerald-200 bg-emerald-50/60 text-transparent hover:border-emerald-500")
               }
             >
               ✓
@@ -52,8 +55,8 @@ export function CheckableList({
             className={
               "flex-1 " +
               (item.checked
-                ? "text-stone-400 line-through dark:text-stone-500"
-                : "text-stone-700 dark:text-stone-200")
+                ? "text-stone-400 line-through"
+                : "text-stone-700")
             }
           >
             {item.label}
@@ -64,9 +67,11 @@ export function CheckableList({
             <button
               type="submit"
               aria-label="Delete"
-              className="icon-btn opacity-60 transition-opacity group-hover:opacity-100"
+              className="icon-btn opacity-70 transition-opacity group-hover:opacity-100"
             >
-              ✕
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-4 w-4">
+                <path d="m8 8 8 8m0-8-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
             </button>
           </form>
         </li>
@@ -74,3 +79,4 @@ export function CheckableList({
     </ul>
   );
 }
+import { TinyLeaf } from "./MeadowSprig";
