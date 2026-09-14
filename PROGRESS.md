@@ -70,7 +70,10 @@ Living doc so any new session can resume. Update it as work lands.
   `memberships`; RLS enforced on all via `is_member(household_id)`.
 
 ## Next
-1. CI — run `npm test` on push (test runner already set up).
+1. **v0.3.0 — Familiar Faces:** User profiles, optional avatar photos with the
+   Hearth logo as the default, personalized Chore assignments, and a Household
+   people screen. See `ROADMAP.md`.
+2. CI — run `npm test` on push (test runner already set up).
 
 ## Gotchas
 - `.env.local` never committed; secret key (`SUPABASE_SECRET_KEY`) is server-only.
