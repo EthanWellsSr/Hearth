@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { requireProfile } from "@/lib/auth";
 import { MeadowSprig, TinyLeaf } from "@/components/MeadowSprig";
 import { createHousehold, joinHousehold } from "./actions";
 
@@ -10,11 +10,7 @@ export default async function OnboardingPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const params = await searchParams;
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const { supabase, user } = await requireProfile();
 
   const { data: membership } = await supabase
     .from("memberships")
@@ -56,7 +52,7 @@ export default async function OnboardingPage({
           </div>
           <label>
             <span className="subtle-label">Household name</span>
-            <input name="name" placeholder="For example, Wells" className="field w-full" required />
+            <input name="name" placeholder="For example, Wells" maxLength={50} className="field w-full" required />
           </label>
           <button type="submit" className="btn-primary">Create our space</button>
         </form>
@@ -70,11 +66,11 @@ export default async function OnboardingPage({
           </span>
           <div>
             <h2 className="text-lg font-semibold text-stone-800">Join your household</h2>
-            <p className="mt-1 text-sm leading-6 text-stone-500">Use the six-character invitation shared with you.</p>
+            <p className="mt-1 text-sm leading-6 text-stone-500">Use the eight-character invitation shared with you.</p>
           </div>
           <label>
             <span className="subtle-label">Invite code</span>
-            <input name="code" placeholder="ABC123" className="field w-full uppercase tracking-[0.18em]" required />
+            <input name="code" placeholder="MEADOW42" maxLength={8} pattern="[A-HJ-NP-Z2-9]{8}" className="field w-full uppercase tracking-[0.18em]" required />
           </label>
           <button type="submit" className="btn-primary">Join the space</button>
         </form>

@@ -1,8 +1,12 @@
 import { requireHousehold } from "@/lib/auth";
 import { todayInChicago } from "@/lib/recurrence";
 import { AppHeader } from "@/components/AppHeader";
+import { AssigneePicker, type AssigneeOption } from "@/components/AssigneePicker";
+import { MemberAvatar } from "@/components/MemberAvatar";
 import { TinyLeaf } from "@/components/MeadowSprig";
-import { addChore, completeChore, deleteChore, reassignChore } from "./actions";
+import { signedAvatarUrls } from "@/lib/avatar-server";
+import { DEFAULT_AVATAR_URL } from "@/lib/profile";
+import { addChore, completeChore, deleteChore } from "./actions";
 
 const WEEKDAYS = [
   "Sunday",
@@ -25,36 +29,47 @@ function describe(chore: {
     : `every ${chore.interval_days} days`;
 }
 
-type Member = { id: string; display_name: string | null };
-
-function MemberOptions({ members }: { members: Member[] }) {
-  return (
-    <>
-      <option value="">Unassigned</option>
-      {members.map((m) => (
-        <option key={m.id} value={m.id}>
-          {m.display_name ?? "Member"}
-        </option>
-      ))}
-    </>
-  );
-}
+type Membership = { id: string; user_id: string };
+type UserProfile = { user_id: string; display_name: string; avatar_path: string | null };
 
 export default async function ChoresPage() {
   const { supabase } = await requireHousehold();
 
   const { data: members } = await supabase
     .from("memberships")
-    .select("id, display_name")
-    .order("display_name");
+    .select("id, user_id");
 
   const { data: chores } = await supabase
     .from("chores")
-    .select("*, assignee:assignee_id(display_name)")
+    .select("*")
     .order("next_due", { ascending: true });
 
   const today = todayInChicago();
-  const memberList = (members ?? []) as Member[];
+  const memberships = (members ?? []) as Membership[];
+  const { data: profileRows } = memberships.length
+    ? await supabase
+        .from("user_profiles")
+        .select("user_id, display_name, avatar_path")
+        .in("user_id", memberships.map((member) => member.user_id))
+    : { data: [] };
+  const profiles = (profileRows ?? []) as UserProfile[];
+  const profileByUser = new Map(profiles.map((profile) => [profile.user_id, profile]));
+  const avatarUrls = await signedAvatarUrls(profiles.map((profile) => profile.avatar_path));
+  const memberList: AssigneeOption[] = memberships
+    .map((membership) => {
+      const profile = profileByUser.get(membership.user_id);
+      if (!profile) return null;
+      return {
+        membershipId: membership.id,
+        name: profile.display_name,
+        avatarUrl: profile.avatar_path
+          ? avatarUrls.get(profile.avatar_path) || DEFAULT_AVATAR_URL
+          : DEFAULT_AVATAR_URL,
+      };
+    })
+    .filter((member): member is AssigneeOption => Boolean(member))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const memberById = new Map(memberList.map((member) => [member.membershipId, member]));
 
   return (
     <main className="app-shell">
@@ -66,7 +81,7 @@ export default async function ChoresPage() {
         <p className="page-description">Create simple routines so caring for your space feels shared and steady.</p>
       </header>
 
-      <form action={addChore} className="card botanical-card grid gap-4 p-4 sm:grid-cols-2 sm:p-6">
+      <form action={addChore} className="card botanical-card grid overflow-visible gap-4 p-4 sm:grid-cols-2 sm:p-6">
         <label className="sm:col-span-2">
           <span className="subtle-label">What needs tending?</span>
           <input name="title" placeholder="For example, water the plants" className="field w-full" />
@@ -96,9 +111,7 @@ export default async function ChoresPage() {
 
         <label>
           <span className="subtle-label">Who is tending to it?</span>
-          <select name="assignee_id" className="field w-full">
-            <MemberOptions members={memberList} />
-          </select>
+          <AssigneePicker members={memberList} />
         </label>
 
         <div className="soft-divider sm:col-span-2" />
@@ -111,7 +124,7 @@ export default async function ChoresPage() {
         <ul className="flex flex-col gap-3">
           {chores.map((c) => {
             const overdue = c.next_due < today;
-            const assignee = c.assignee?.display_name ?? "Unassigned";
+            const assignee = c.assignee_id ? memberById.get(c.assignee_id) : undefined;
             return (
               <li key={c.id} className="card group flex items-start gap-3 p-3.5 transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300/70 hover:shadow-md sm:p-4">
                 <form action={completeChore} className="flex">
@@ -137,26 +150,18 @@ export default async function ChoresPage() {
                     >
                       {overdue ? "Overdue · " : "Due · "}{c.next_due}
                     </span>
-                    <span
-                      className="rounded-full bg-emerald-100/80 px-2.5 py-1 text-emerald-700"
-                    >
-                      {assignee}
+                    <span className="flex items-center gap-1.5 rounded-full bg-emerald-100/80 py-1 pl-1 pr-2.5 text-emerald-700">
+                      {assignee ? (
+                        <MemberAvatar src={assignee.avatarUrl} name={assignee.name} size={24} />
+                      ) : (
+                        <span className="h-6 w-6 rounded-full border border-dashed border-emerald-300 bg-white/60" />
+                      )}
+                      {assignee?.name || "Unassigned"}
                     </span>
                   </div>
-                  <form action={reassignChore} className="flex flex-wrap items-center gap-2 pt-1">
-                    <input type="hidden" name="id" value={c.id} />
-                    <select
-                      name="assignee_id"
-                      defaultValue={c.assignee_id ?? ""}
-                      aria-label={`Assign ${c.title}`}
-                      className="field min-h-9 px-3 py-1 text-xs"
-                    >
-                      <MemberOptions members={memberList} />
-                    </select>
-                    <button type="submit" className="btn-ghost min-h-9 px-3 py-1 text-xs">
-                      Save person
-                    </button>
-                  </form>
+                  <div className="max-w-64 pt-1">
+                    <AssigneePicker members={memberList} initialValue={c.assignee_id ?? ""} choreId={c.id} />
+                  </div>
                 </div>
 
                 <form action={deleteChore} className="flex">

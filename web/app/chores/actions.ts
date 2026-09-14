@@ -15,6 +15,7 @@ export async function addChore(formData: FormData) {
   const freq = String(formData.get("freq"));
   const assigneeId = String(formData.get("assignee_id") ?? "");
   const { supabase, householdId } = await requireHousehold();
+  const safeAssigneeId = await householdAssigneeId(supabase, householdId, assigneeId);
 
   let rule: Recurrence;
   let cols: { interval_days: number | null; weekday: number | null };
@@ -34,7 +35,7 @@ export async function addChore(formData: FormData) {
     ...cols,
     next_due: firstDue(rule, todayInChicago()),
     household_id: householdId,
-    assignee_id: assigneeId || null,
+    assignee_id: safeAssigneeId,
   });
   revalidatePath("/chores");
 }
@@ -42,12 +43,28 @@ export async function addChore(formData: FormData) {
 export async function reassignChore(formData: FormData) {
   const id = String(formData.get("id"));
   const assigneeId = String(formData.get("assignee_id") ?? "");
-  const { supabase } = await requireHousehold();
+  const { supabase, householdId } = await requireHousehold();
+  const safeAssigneeId = await householdAssigneeId(supabase, householdId, assigneeId);
   await supabase
     .from("chores")
-    .update({ assignee_id: assigneeId || null })
+    .update({ assignee_id: safeAssigneeId })
     .eq("id", id);
   revalidatePath("/chores");
+}
+
+async function householdAssigneeId(
+  supabase: Awaited<ReturnType<typeof requireHousehold>>["supabase"],
+  householdId: string,
+  assigneeId: string
+) {
+  if (!assigneeId) return null;
+  const { data } = await supabase
+    .from("memberships")
+    .select("id")
+    .eq("id", assigneeId)
+    .eq("household_id", householdId)
+    .maybeSingle();
+  return data?.id ?? null;
 }
 
 export async function completeChore(formData: FormData) {

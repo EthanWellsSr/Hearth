@@ -33,3 +33,9 @@ per-household isolation, built to transfer to a production app.
 - The JWT must move between browser and the Next.js server via cookies
   (`@supabase/ssr`); the client switch is the **last** migration step, to avoid
   locking ourselves out (RLS on + no session = no rows).
+
+## Later amendments
+
+Self-serve Household creation and joining arrived in v0.2.0. ADR 0009 replaces
+the initial admin-managed Membership workflow with narrow authenticated database
+functions for creation, joining, Invite Code rotation, and Member removal.
