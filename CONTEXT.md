@@ -17,6 +17,16 @@ A single global login identity (one person, one email). A User signs in, then
 acts within a Household.
 _Avoid_: account, login, profile
 
+**User Profile**:
+The global display identity for a User, containing a required display name and an
+optional Avatar. One User Profile follows the User across Household memberships.
+_Avoid_: Member profile, account
+
+**Avatar**:
+The image representing a User throughout Hearth. It is optional; Hearth displays
+its logo when a User has not selected one.
+_Avoid_: profile picture, headshot
+
 **Membership**:
 The link that makes a User part of a Household. A User participates in a
 Household only through a Membership.
@@ -26,6 +36,11 @@ _Avoid_: seat
 A User as seen from inside a Household (a User via their Membership). "Assign
 the chore to a Member."
 _Avoid_: partner, resident, participant
+
+**Invite Code**:
+A short Household code that lets an authenticated User join as a Member. Rotating
+it invalidates the previous code.
+_Avoid_: password, access key
 
 **Assignee**:
 The Member responsible for a specific Chore or To-do. May be unset (anyone can

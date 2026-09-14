@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { requireHousehold } from "@/lib/auth";
 import { AppHeader } from "@/components/AppHeader";
+import { MemberAvatar } from "@/components/MemberAvatar";
 import { MeadowSprig } from "@/components/MeadowSprig";
+import { signedAvatarUrls } from "@/lib/avatar-server";
+import { DEFAULT_AVATAR_URL } from "@/lib/profile";
 
 const FEATURES = [
   {
@@ -45,11 +48,15 @@ const FEATURES = [
 
 export default async function Home() {
   const { supabase, householdId } = await requireHousehold();
-  const { data: household } = await supabase
-    .from("households")
-    .select("name, invite_code")
-    .eq("id", householdId)
-    .maybeSingle();
+  const [{ data: household }, { data: memberships }] = await Promise.all([
+    supabase.from("households").select("name").eq("id", householdId).maybeSingle(),
+    supabase.from("memberships").select("user_id").eq("household_id", householdId),
+  ]);
+  const userIds = (memberships ?? []).map((membership) => membership.user_id);
+  const { data: profiles } = userIds.length
+    ? await supabase.from("user_profiles").select("user_id, display_name, avatar_path").in("user_id", userIds)
+    : { data: [] };
+  const avatarUrls = await signedAvatarUrls((profiles ?? []).map((profile) => profile.avatar_path));
 
   return (
     <main className="app-shell">
@@ -65,13 +72,24 @@ export default async function Home() {
             A calm place for everything that keeps life moving.
           </p>
           {household && (
-            <div className="mt-6 flex flex-wrap items-center gap-2 text-sm text-stone-600">
+            <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-stone-600">
               <span className="rounded-full bg-emerald-100/70 px-3 py-1.5 font-medium text-emerald-800">
                 {household.name} household
               </span>
-              <span className="rounded-full bg-[#e7f1f3] px-3 py-1.5 text-[#55737a]">
-                Invite · <span className="font-mono font-semibold tracking-wider">{household.invite_code}</span>
-              </span>
+              <Link href="/people" className="group flex items-center rounded-full bg-[#e7f1f3] py-1 pl-1 pr-3 text-[#55737a] transition hover:bg-[#dcebee]">
+                <span className="flex -space-x-2">
+                  {(profiles ?? []).slice(0, 4).map((profile) => (
+                    <MemberAvatar
+                      key={profile.user_id}
+                      src={profile.avatar_path ? avatarUrls.get(profile.avatar_path) || DEFAULT_AVATAR_URL : DEFAULT_AVATAR_URL}
+                      name={profile.display_name}
+                      size={28}
+                      className="transition-transform group-hover:-translate-y-0.5"
+                    />
+                  ))}
+                </span>
+                <span className="ml-2 font-medium">{userIds.length} {userIds.length === 1 ? "person" : "people"}</span>
+              </Link>
             </div>
           )}
         </div>

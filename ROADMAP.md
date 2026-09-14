@@ -20,29 +20,45 @@ with `npx skills@latest add mattpocock/skills` before beginning implementation.
 
 ## v0.3.0 — Familiar Faces
 
-**Status:** Next implementation
+**Status:** Released 2026-09-14
 
 **Goal:** Make every Member recognizable by name and face wherever household work
 is assigned.
 
 ### Features
 
-- [ ] Add a profile for each User
+- [x] Add a profile for each User
   - A User can set and edit their display name
   - A User can upload, replace, or remove their avatar photo
   - Hearth uses the Hearth logo as the default avatar when no photo is selected
   - Avatar files live in private storage; the database stores their file locations
-- [ ] Add profile setup and management
-  - New Users choose a display name during onboarding; an avatar remains optional
-  - Existing Users can edit their own profile from a profile settings screen
-- [ ] Personalize Chore assignments
+  - Display names are required, 1–50 characters, and do not need to be unique
+- [x] Add profile setup and management
+  - After authentication, new Users complete their profile before creating or
+    joining a Household
+  - Existing Users review their prefilled display name once after the upgrade
+  - Users can edit their own profile from a profile settings screen
+  - The avatar editor supports crop, pan, zoom, and 90-degree rotation, then saves
+    a normalized 512×512 image
+  - The editor accepts JPEG, PNG, WebP, and iPhone HEIC source images up to 10 MB
+- [x] Personalize Chore assignments
   - Each assigned Chore shows the Assignee's avatar and display name
   - The assignment control presents Members by avatar and display name
   - Chores can remain Unassigned
-- [ ] Add a Household people screen
-  - Members can see the other Members in their Household
-  - The screen provides the Household invite code and access to the current User's
-    profile settings
+  - Selecting an Assignee saves immediately
+- [x] Add a Household people screen
+  - Members can see every Member's avatar, display name, and Membership role, but
+    not their email address
+  - Every Member can view, copy, and share the current Invite Code
+  - An owner can rotate the Invite Code, immediately invalidating the previous code
+  - New Invite Codes contain eight readable characters and join attempts are
+    throttled
+  - An owner can remove another non-owner Member after explicit confirmation;
+    their User Profile and Avatar remain, their Chores become Unassigned, and the
+    Invite Code rotates automatically
+- [x] Add profile and people navigation
+  - The header avatar opens My profile, Household people, and Sign out actions
+  - The home welcome card links to Household people with a compact Member avatar row
 
 ## v0.4.0 — Calendar
 
@@ -61,6 +77,9 @@ Ethan first.
 - [ ] Provide useful month and upcoming views at desktop and phone widths
 - [ ] Make the Household timezone configurable and use it consistently for Events
 - [ ] Keep external calendar synchronization out of this release
+- [ ] Let a non-owner Member leave a Household voluntarily
+- [ ] Let an owner transfer ownership before leaving a Household
+- [ ] Add optional Assignees to To-dos and show their Avatars and display names
 
 ## v0.5.0 — Meal Plan
 
@@ -118,13 +137,37 @@ Grocery Items.
 - [ ] Combine duplicate Ingredients and preserve useful quantities where practical
 - [ ] Explain what Household information is sent to the AI provider before generation
 
+## v0.8.0 — Household Messaging & Notifications
+
+**Status:** Planned
+
+**Pre-code gate:** Required; complete Matt Pocock's `grill-with-docs` process with
+Ethan first.
+
+**Goal:** Let Members communicate inside Hearth and reliably notice new Messages
+and Chore activity that needs their attention.
+
+### Proposed scope
+
+- [ ] Add a Household messaging interface
+  - Let Members send and receive Messages within their Household
+  - Show each sender's Avatar and display name with the Message timestamp
+  - Provide unread state so Members can distinguish new Messages
+- [ ] Add a shared notification system for Messages and Chores
+  - Notify Members about new unread Messages
+  - Notify a Member when a Chore is assigned or reassigned to them
+  - Notify the Assignee when a Chore is approaching its due time or becomes overdue
+  - Let Members view notifications in Hearth and mark them as read
+  - Decide browser or device push delivery and notification preferences during the
+    pre-code design gate
+- [ ] Keep all Messages and notifications Household-scoped and protected by RLS
+
 ## Unscheduled product scope
 
 These capabilities are part of Hearth's documented product vocabulary but have not
 been assigned to a release:
 
 - Notes
-- Messages
 
 ## Unscheduled platform work
 

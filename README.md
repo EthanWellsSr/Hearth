@@ -29,7 +29,9 @@ grocery list, chores, and more — in one place.
 
 ```
 CONTEXT.md            # the domain glossary — the words Hearth uses
+CHANGELOG.md          # high-level contents of each shipped version and Git tag
 PROGRESS.md           # living status / handoff between work sessions
+ROADMAP.md            # planned future releases
 docs/adr/             # architecture decision records (why, not just what)
 web/                  # the Next.js app
   app/                # routes (/, /login, /todos, /groceries, /chores) + server actions
@@ -81,4 +83,5 @@ Hosted on Vercel (Hobby):
   git push Hearth master --follow-tags
   ```
 
-  The app footer shows the current version, read from `web/package.json`.
+  The app footer shows the current version, read from `web/package.json`. Shipped
+  release contents are recorded in [`CHANGELOG.md`](CHANGELOG.md).
