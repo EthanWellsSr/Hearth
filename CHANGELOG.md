@@ -4,6 +4,17 @@ This file records the high-level contents of shipped Hearth releases. Planned
 releases belong in `ROADMAP.md`; the current implementation and handoff state
 belong in `PROGRESS.md`.
 
+## v0.3.1 — 2026-09-14
+
+- Fixed Avatar saves from iPhone Photos by using a broadly supported browser
+  encoding and normalizing uploaded image contents on the server.
+- Added server-side Avatar validation and stable 512×512 WebP output without
+  changing the existing private Supabase Storage model.
+- Fixed inactive profile controls during local iPhone testing by permitting
+  Next.js development resources from the development machine's LAN addresses.
+- Expanded automated coverage to 19 tests, including browser image-format
+  fallback and server-side Avatar normalization.
+
 ## v0.3.0 — Familiar Faces — 2026-09-14
 
 - Added required User Profiles with editable display names and private Avatars.

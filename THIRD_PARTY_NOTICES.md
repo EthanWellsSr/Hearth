@@ -9,3 +9,7 @@ Hearth uses the following client-side image libraries for Avatar editing:
   the installed package at `web/node_modules/heic-to/LICENSE`.
 
 Hearth does not modify either library.
+
+Hearth uses [`sharp`](https://github.com/lovell/sharp), Apache License 2.0, on the
+server to validate and normalize Avatar images to WebP. Its complete license is
+available in the linked repository and at `web/node_modules/sharp/LICENSE`.

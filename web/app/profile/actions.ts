@@ -3,10 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
+import { normalizeAvatarUpload } from "@/lib/avatar-image-server";
 import { supabase as admin } from "@/lib/supabase";
 import {
   displayNameError,
-  isWebp,
   normalizeDisplayName,
 } from "@/lib/profile";
 
@@ -32,14 +32,17 @@ export async function saveProfile(
   let avatarPath = removeAvatar ? null : existing?.avatar_path ?? null;
 
   if (avatar instanceof File && avatar.size > 0) {
-    if (!(await isWebp(avatar))) {
+    let normalizedAvatar: Buffer;
+    try {
+      normalizedAvatar = await normalizeAvatarUpload(avatar);
+    } catch {
       return { error: "The edited Avatar could not be saved. Please choose the photo again." };
     }
 
     avatarPath = `${user.id}/avatar.webp`;
     const { error: uploadError } = await admin.storage
       .from("avatars")
-      .upload(avatarPath, avatar, {
+      .upload(avatarPath, normalizedAvatar, {
         contentType: "image/webp",
         cacheControl: "3600",
         upsert: true,

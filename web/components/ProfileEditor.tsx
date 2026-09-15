@@ -64,8 +64,8 @@ async function cropAvatar(src: string, area: Area, rotation: number) {
   return new Promise<Blob>((resolve, reject) => {
     output.toBlob(
       (blob) => (blob ? resolve(blob) : reject(new Error("Image conversion failed"))),
-      "image/webp",
-      0.86
+      "image/jpeg",
+      0.9
     );
   });
 }
@@ -138,7 +138,13 @@ export function ProfileEditor({
     try {
       if (source && croppedArea) {
         const blob = await cropAvatar(source, croppedArea, rotation);
-        formData.set("avatar", new File([blob], "avatar.webp", { type: "image/webp" }));
+        const extension = blob.type === "image/png" ? "png" : blob.type === "image/webp" ? "webp" : "jpg";
+        formData.set(
+          "avatar",
+          new File([blob], `avatar-source.${extension}`, {
+            type: blob.type || "application/octet-stream",
+          })
+        );
       }
       formData.set("remove_avatar", String(removeAvatar));
       startTransition(() => formAction(formData));

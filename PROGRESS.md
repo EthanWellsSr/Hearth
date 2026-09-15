@@ -29,8 +29,14 @@ Living doc so any new session can resume. Update it as work lands.
   setup and editing with crop/pan/zoom/rotation; header profile menu; Member Avatar
   row on the hub; `/people` directory; readable Invite Codes; owner rotation and
   Member removal. Migration 0006 is applied to Supabase. See ADRs 0008 and 0009.
+- **iPhone Avatar compatibility: RELEASED in v0.3.1.** The browser
+  submits the image format it actually produced, then the server validates and
+  normalizes it to the existing 512×512 WebP storage format. This avoids Safari's
+  canvas WebP fallback without changing the database or Supabase bucket. Local
+  network testing also allows the profile editor to hydrate on a physical iPhone.
 - **Tests: STARTED.** Vitest set up (`npm test`); recurrence, User Profile name
-  rules, and Avatar form-action dispatch are covered (16 tests total).
+  rules, Avatar form-action dispatch, browser format fallback, and server-side
+  Avatar normalization are covered (19 tests total).
 - **Styling: REDESIGNED (visually approved).** **Tailwind CSS v4**
   (ADR 0007). Light, high-end meadow direction: soft green and blue, restrained
   golden accents, modern typography, botanical details, larger touch targets, and
@@ -41,18 +47,20 @@ Living doc so any new session can resume. Update it as work lands.
 - **Deployed** to Vercel (Hobby): https://hearth-omega-umber.vercel.app — root
   dir `web`, production branch `master`, 4 env vars set, auto-redeploys on push.
   Supabase Site URL points at the Vercel domain.
-- **Versioning:** semver git tags via `npm version` from `web/` using the planned
-  patch/minor/major increment, then `git push Hearth master --follow-tags`; visible
-  in the footer from `package.json`. First release tagged **v0.1.0**.
-- **Current release:** **v0.3.0 — Familiar Faces** adds User Profiles, private
-  Avatars, personalized Chore assignments, the Household people screen, readable
-  Invite Codes, owner-controlled code rotation, and Member removal. Production
-  deployment confirmation is pending.
+- **Versioning:** semver package versions and annotated Git tags. Release changes
+  land on `dev`, merge into `master`, and the tag points to the release merge
+  commit. The package version is visible in the app footer.
+- **Current release:** **v0.3.1** fixes iPhone Avatar upload compatibility and
+  local-network profile editor hydration. Production deployment confirmation is
+  pending.
 - **Next release:** **v0.4.0 — Calendar** is planned and requires Matt Pocock's
   `grill-with-docs` process with Ethan before code is written.
 
 ## Run it
 - `cd web && npm run dev` → http://localhost:3000
+- For phone testing on the same network, start with `--hostname 0.0.0.0` and open
+  the Mac's LAN address on the phone. `next.config.ts` automatically permits the
+  development machine's IPv4 interfaces.
 - Requires `web/.env.local` (gitignored) with 4 keys: `SUPABASE_URL`,
   `SUPABASE_SECRET_KEY` (admin, server-only), `NEXT_PUBLIC_SUPABASE_URL`,
   `NEXT_PUBLIC_SUPABASE_ANON_KEY` (publishable, user-scoped client). Same values
@@ -74,7 +82,10 @@ Living doc so any new session can resume. Update it as work lands.
 - `web/lib/auth.ts` — User, User Profile, and Household route/action gates.
 - `web/app/profile/` — required User Profile setup and later profile editing.
 - `web/components/ProfileEditor.tsx` — Avatar source validation and crop/pan/zoom/
-  rotation editor; normalizes uploads to 512×512 WebP.
+  rotation editor; prepares a browser-compatible cropped image.
+- `web/lib/avatar-image-server.ts` — validates Avatar contents and normalizes the
+  stored image to 512×512 WebP.
+- `web/next.config.ts` — permits profile editor hydration during LAN device testing.
 - `web/app/people/` — Household people directory and owner membership controls.
 - `web/lib/avatar-server.ts` — short-lived signed URLs for private Avatars.
 - `web/middleware.ts` — refreshes the auth session cookie on every request.
@@ -87,7 +98,7 @@ Living doc so any new session can resume. Update it as work lands.
   `invite_join_attempts`; RLS protects Household and User Profile data.
 
 ## Next
-1. Confirm the Vercel production deployment for `v0.3.0`.
+1. Confirm the Vercel production deployment for `v0.3.1`.
 2. Complete Matt Pocock's `grill-with-docs` process with Ethan before beginning
    `v0.4.0 — Calendar`.
 3. Add CI that runs `npm test` on every push (test runner already set up).
