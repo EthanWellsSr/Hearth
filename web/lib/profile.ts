@@ -18,15 +18,3 @@ export function displayNameError(name: string) {
 export function defaultDisplayName(email?: string | null) {
   return email?.split("@")[0]?.slice(0, DISPLAY_NAME_MAX_LENGTH) || "";
 }
-
-export async function isWebp(file: File) {
-  if (file.type !== "image/webp" || file.size > AVATAR_UPLOAD_MAX_BYTES) {
-    return false;
-  }
-  const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
-  return (
-    bytes.length === 12 &&
-    String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" &&
-    String.fromCharCode(...bytes.slice(8, 12)) === "WEBP"
-  );
-}

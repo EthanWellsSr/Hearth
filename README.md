@@ -12,9 +12,11 @@ grocery list, chores, and more — in one place.
 - **Grocery List** — add, check off (bought), delete, and "clear bought"; bought
   items sink to the bottom.
 - **Chores** — recurring tasks (every N days, or weekly on a weekday); `next_due`
-  advances on completion; optional assignee.
+  advances on completion; optional assignment by Member name and Avatar.
 - **Auth + Households** — email/password login; all data is scoped to a Household
   and enforced by Postgres row-level security (see `docs/adr/0006`).
+- **User Profiles + Household people** — display names, private Avatars, reusable
+  Invite Codes, and owner-controlled Member removal.
 - Installable as a PWA (Add to Home Screen).
 
 ## Stack
@@ -22,6 +24,7 @@ grocery list, chores, and more — in one place.
 - **Next.js** (App Router) + **TypeScript** — app lives in [`web/`](web/)
 - **Supabase** (Postgres, Auth, RLS, `pg_cron`)
 - **Tailwind CSS v4** for styling
+- **Sharp** for server-side Avatar validation and normalization
 - **Vitest** for unit tests
 - **Vercel** for hosting
 
@@ -36,7 +39,7 @@ docs/adr/             # architecture decision records (why, not just what)
 web/                  # the Next.js app
   app/                # routes (/, /login, /todos, /groceries, /chores) + server actions
   components/         # shared UI (AppHeader, CheckableList, PlantMark)
-  lib/                # supabase clients, auth gate, recurrence math
+  lib/                # Supabase, auth, recurrence, and Avatar normalization
   supabase/migrations # SQL migrations (run by hand in the Supabase SQL editor)
 ```
 
@@ -48,6 +51,10 @@ npm install
 npm run dev        # http://localhost:3000
 npm test           # run the unit tests
 ```
+
+For phone testing on the same Wi-Fi network, run
+`npm run dev -- --hostname 0.0.0.0` and open the Mac's LAN address on the phone.
+Hearth automatically permits the development machine's current IPv4 addresses.
 
 Create `web/.env.local` (gitignored) with:
 
@@ -76,10 +83,18 @@ Hosted on Vercel (Hobby):
 ## Branches & versioning
 
 - `dev` — day-to-day work; merge into `master` to release
-- Releases use semver git tags via `npm version` (from `web/`):
+- Releases use semver package versions and annotated Git tags. Update the package
+  version on `dev`, commit the release and documentation, merge `dev` into
+  `master`, then tag the merge commit:
 
   ```bash
-  npm version minor              # bumps package.json, commits, tags vX.Y.Z
+  npm version patch --no-git-tag-version
+  cd ..
+  git add -A
+  git commit -m "release vX.Y.Z"
+  git switch master
+  git merge --no-ff dev -m "merge dev for vX.Y.Z"
+  git tag -a vX.Y.Z -m "vX.Y.Z"
   git push Hearth master --follow-tags
   ```
 

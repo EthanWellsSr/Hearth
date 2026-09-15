@@ -1,12 +1,16 @@
 // @vitest-environment jsdom
 
 import React, { useEffect } from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ProfileEditor } from "./ProfileEditor";
 
 const { saveProfileMock } = vi.hoisted(() => ({
-  saveProfileMock: vi.fn(async () => ({ error: null })),
+  saveProfileMock: vi.fn(async (state: unknown, formData: FormData) => {
+    void state;
+    void formData;
+    return { error: null };
+  }),
 }));
 
 vi.mock("@/app/profile/actions", () => ({ saveProfile: saveProfileMock }));
@@ -61,6 +65,7 @@ describe("ProfileEditor upload submission", () => {
   });
 
   afterEach(() => {
+    cleanup();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
   });
@@ -80,5 +85,25 @@ describe("ProfileEditor upload submission", () => {
         String(call[0]).includes("useActionState was called outside of a transition")
       )
     ).toBe(false);
+  });
+
+  it("preserves the browser's actual fallback image format", async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, "toBlob").mockImplementationOnce((callback) => {
+      callback(new Blob(["png-avatar"], { type: "image/png" }));
+    });
+
+    render(<ProfileEditor initialName="Ethan" setup />);
+
+    fireEvent.change(screen.getByLabelText("Choose photo"), {
+      target: { files: [new File(["photo"], "photo.jpg", { type: "image/jpeg" })] },
+    });
+    await screen.findByTestId("cropper");
+    fireEvent.click(await screen.findByRole("button", { name: "Continue" }));
+
+    await waitFor(() => expect(saveProfileMock).toHaveBeenCalledOnce());
+    const formData = saveProfileMock.mock.calls[0]?.[1] as FormData;
+    const avatar = formData.get("avatar") as File;
+    expect(avatar.type).toBe("image/png");
+    expect(avatar.name).toBe("avatar-source.png");
   });
 });
