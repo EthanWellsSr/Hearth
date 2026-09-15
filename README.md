@@ -16,7 +16,7 @@ grocery list, chores, and more — in one place.
 - **Auth + Households** — email/password login; all data is scoped to a Household
   and enforced by Postgres row-level security (see `docs/adr/0006`).
 - **User Profiles + Household people** — display names, private Avatars, reusable
-  Invite Codes, and owner-controlled Member removal.
+  Invitation Links with readable backup codes, and owner-controlled Member removal.
 - Installable as a PWA (Add to Home Screen).
 
 ## Stack

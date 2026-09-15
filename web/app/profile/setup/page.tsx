@@ -4,9 +4,17 @@ import { ProfileEditor } from "@/components/ProfileEditor";
 import { MeadowSprig } from "@/components/MeadowSprig";
 import { requireUser } from "@/lib/auth";
 import { signedAvatarUrl } from "@/lib/avatar-server";
+import { invitePath, normalizeInviteCode } from "@/lib/invite";
+import { pendingInviteCode } from "@/lib/pending-invite";
 import { defaultDisplayName } from "@/lib/profile";
 
-export default async function ProfileSetupPage() {
+export default async function ProfileSetupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ invite?: string }>;
+}) {
+  const params = await searchParams;
+  const invite = normalizeInviteCode(params.invite) ?? (await pendingInviteCode());
   const { supabase, user } = await requireUser();
   const { data: profile } = await supabase
     .from("user_profiles")
@@ -20,7 +28,7 @@ export default async function ProfileSetupPage() {
       .select("id")
       .eq("user_id", user.id)
       .maybeSingle();
-    redirect(membership ? "/" : "/onboarding");
+    redirect(membership ? "/" : invitePath(invite ?? "") ?? "/onboarding");
   }
 
   const avatarUrl = await signedAvatarUrl(profile?.avatar_path);
@@ -42,6 +50,7 @@ export default async function ProfileSetupPage() {
       <ProfileEditor
         initialName={profile?.display_name || defaultDisplayName(user.email)}
         initialAvatarUrl={avatarUrl}
+        inviteCode={invite}
         setup
       />
     </main>

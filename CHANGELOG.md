@@ -4,6 +4,19 @@ This file records the high-level contents of shipped Hearth releases. Planned
 releases belong in `ROADMAP.md`; the current implementation and handoff state
 belong in `PROGRESS.md`.
 
+## v0.3.2 — Invitation Links — 2026-09-15
+
+- Added complete Invitation Links that Members can copy or share from Household
+  people while retaining the readable Invite Code as a backup.
+- Added a public invitation screen that identifies the Household and carries the
+  invitation through sign-in, signup, and User Profile setup.
+- Added explicit join confirmation and clear invalid, rotated, and already-joined
+  invitation states while preserving the existing rate-limited join function.
+- Added selectable-link, text-message, and email fallbacks for browsers that
+  restrict clipboard and native sharing APIs, including plain-HTTP phone testing.
+- Expanded automated coverage to 28 tests, including Invitation Link construction,
+  login preservation, sharing controls, and restricted-browser fallbacks.
+
 ## v0.3.1 — 2026-09-14
 
 - Fixed Avatar saves from iPhone Photos by using a broadly supported browser

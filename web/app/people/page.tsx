@@ -95,7 +95,9 @@ export default async function PeoplePage({
           <aside className="card botanical-card self-start p-5 sm:p-6">
             <p className="page-kicker">Invite someone</p>
             <h2 className="text-lg font-semibold text-stone-800">Grow the {household.name} Household</h2>
-            <p className="mb-5 mt-1 text-sm leading-6 text-stone-500">Share this code with someone you trust. Every Member can see and share it.</p>
+            <p className="mb-5 mt-1 text-sm leading-6 text-stone-500">
+              Share the invitation link with someone you trust. The Invite Code remains available as a backup.
+            </p>
             <InviteCodeControls code={household.invite_code} householdName={household.name} owner={isOwner} />
           </aside>
         )}

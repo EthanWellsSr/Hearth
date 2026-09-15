@@ -70,7 +70,7 @@ export default async function OnboardingPage({
           </div>
           <label>
             <span className="subtle-label">Invite code</span>
-            <input name="code" placeholder="MEADOW42" maxLength={8} pattern="[A-HJ-NP-Z2-9]{8}" className="field w-full uppercase tracking-[0.18em]" required />
+            <input name="code" placeholder="HEARTH42" maxLength={8} pattern="[A-HJ-NP-Z2-9]{8}" className="field w-full uppercase tracking-[0.18em]" required />
           </label>
           <button type="submit" className="btn-primary">Join the space</button>
         </form>

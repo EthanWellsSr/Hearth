@@ -21,9 +21,20 @@ Member and rotating the code occur in the same transaction. Direct Household upd
 remain unavailable through the client API. This keeps authorization and multi-step
 changes atomic at the tenancy boundary instead of relying on screen logic.
 
+Members share an Invitation Link containing the current Invite Code. A public,
+server-rendered invitation screen resolves only the matching Household name and ID
+through the server-only client. Opening the link stores the code for seven days in
+an HTTP-only, same-site cookie so the invitation survives sign-in and User Profile
+setup. Joining remains an explicit action and still goes through the authenticated,
+rate-limited database function.
+
 ## Consequences
 
-- Every Member may view, copy, and share the current Invite Code.
+- Every Member may copy and share an Invitation Link; the readable Invite Code
+  remains visible as a backup.
+- Rotating an Invite Code immediately invalidates Invitation Links containing the
+  previous code.
+- No invitation table or additional database migration is required for this flow.
 - Only an owner may rotate the code or remove another non-owner Member.
 - Removing a Member also rotates the Invite Code in the same transaction.
 - Voluntary leaving and ownership transfer remain deferred to v0.4.0.

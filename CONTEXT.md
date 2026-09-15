@@ -42,6 +42,11 @@ A short Household code that lets an authenticated User join as a Member. Rotatin
 it invalidates the previous code.
 _Avoid_: password, access key
 
+**Invitation Link**:
+A browser link containing the current Invite Code. It carries a User through sign-in
+and User Profile setup to an explicit Household join confirmation.
+_Avoid_: app link, signup link
+
 **Assignee**:
 The Member responsible for a specific Chore or To-do. May be unset (anyone can
 do it).

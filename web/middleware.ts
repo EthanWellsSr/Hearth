@@ -1,5 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import {
+  normalizeInviteCode,
+  PENDING_INVITE_COOKIE,
+  PENDING_INVITE_MAX_AGE_SECONDS,
+} from "@/lib/invite";
 
 // Runs on every request. Keeps the user's session cookie fresh (refreshes the
 // JWT before it expires) so both the browser and server always see a valid login.
@@ -28,6 +33,19 @@ export async function middleware(request: NextRequest) {
   );
 
   await supabase.auth.getUser();
+
+  const invitationMatch = request.nextUrl.pathname.match(/^\/invite\/([^/]+)$/);
+  const inviteCode = normalizeInviteCode(invitationMatch?.[1]);
+  if (inviteCode) {
+    response.cookies.set(PENDING_INVITE_COOKIE, inviteCode, {
+      httpOnly: true,
+      maxAge: PENDING_INVITE_MAX_AGE_SECONDS,
+      path: "/",
+      sameSite: "lax",
+      secure: request.nextUrl.protocol === "https:",
+    });
+  }
+
   return response;
 }
 

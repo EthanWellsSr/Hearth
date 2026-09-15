@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { normalizeAvatarUpload } from "@/lib/avatar-image-server";
+import { invitePath, normalizeInviteCode } from "@/lib/invite";
+import { pendingInviteCode } from "@/lib/pending-invite";
 import { supabase as admin } from "@/lib/supabase";
 import {
   displayNameError,
@@ -70,5 +72,7 @@ export async function saveProfile(
     .select("id")
     .eq("user_id", user.id)
     .maybeSingle();
-  redirect(membership ? "/" : "/onboarding");
+  const invitation =
+    normalizeInviteCode(formData.get("invite")) ?? (await pendingInviteCode());
+  redirect(membership ? "/" : invitePath(invitation ?? "") ?? "/onboarding");
 }
