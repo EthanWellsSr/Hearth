@@ -34,9 +34,17 @@ Living doc so any new session can resume. Update it as work lands.
   normalizes it to the existing 512×512 WebP storage format. This avoids Safari's
   canvas WebP fallback without changing the database or Supabase bucket. Local
   network testing also allows the profile editor to hydrate on a physical iPhone.
+- **Invitation Links: RELEASED in v0.3.2.** Every Member can share or
+  copy a browser link that opens a public Household invitation, persists through
+  sign-in and User Profile setup, and ends with an explicit join confirmation.
+  Invalid, rotated, and already-joined states are handled without changing the
+  existing Invite Code schema or database join function. On plain-HTTP local
+  network testing, restricted share and clipboard APIs fall back to a selectable
+  link plus text-message and email actions. See ADR 0009.
 - **Tests: STARTED.** Vitest set up (`npm test`); recurrence, User Profile name
   rules, Avatar form-action dispatch, browser format fallback, and server-side
-  Avatar normalization are covered (19 tests total).
+  Avatar normalization, Invitation Link construction, login preservation, and
+  sharing controls and restricted-browser fallbacks are covered (28 tests total).
 - **Styling: REDESIGNED (visually approved).** **Tailwind CSS v4**
   (ADR 0007). Light, high-end meadow direction: soft green and blue, restrained
   golden accents, modern typography, botanical details, larger touch targets, and
@@ -50,9 +58,9 @@ Living doc so any new session can resume. Update it as work lands.
 - **Versioning:** semver package versions and annotated Git tags. Release changes
   land on `dev`, merge into `master`, and the tag points to the release merge
   commit. The package version is visible in the app footer.
-- **Current release:** **v0.3.1** fixes iPhone Avatar upload compatibility and
-  local-network profile editor hydration. Production deployment confirmation is
-  pending.
+- **Current release:** **v0.3.2 — Invitation Links** adds the complete browser
+  invitation flow and restricted-browser sharing fallbacks. Production deployment
+  confirmation is pending.
 - **Next release:** **v0.4.0 — Calendar** is planned and requires Matt Pocock's
   `grill-with-docs` process with Ethan before code is written.
 
@@ -91,6 +99,11 @@ Living doc so any new session can resume. Update it as work lands.
 - `web/middleware.ts` — refreshes the auth session cookie on every request.
 - `web/app/login/` — email+password sign in / sign up / sign out.
 - `web/app/onboarding/` — create-or-join-household step for users with no membership.
+- `web/app/invite/[code]/` — public Invitation Link preview, confirmation, and
+  join actions.
+- `web/lib/invite.ts` — Invite Code validation and Invitation Link construction.
+- `web/lib/pending-invite.ts` — reads and clears the short-lived pending
+  invitation cookie used across authentication and profile setup.
 - `web/public/logo-meadow.png` — the current Hearth logo (PWA icon and header/login mark).
 - `web/supabase/migrations/0001_auth_tenancy.sql` — the tenancy migration (record).
 - DB: `todos`, `grocery_items` (now with `household_id`), `households`,
@@ -98,7 +111,7 @@ Living doc so any new session can resume. Update it as work lands.
   `invite_join_attempts`; RLS protects Household and User Profile data.
 
 ## Next
-1. Confirm the Vercel production deployment for `v0.3.1`.
+1. Confirm the Vercel production deployment for `v0.3.2`.
 2. Complete Matt Pocock's `grill-with-docs` process with Ethan before beginning
    `v0.4.0 — Calendar`.
 3. Add CI that runs `npm test` on every push (test runner already set up).
@@ -110,3 +123,6 @@ Living doc so any new session can resume. Update it as work lands.
   carry Household roles and remain the target of Chore assignments. The Household timezone is still
   hard-coded to America/Chicago and needs to become a Household setting later.
 - Since `Confirm email` is ON, a new signup must click the email link before signing in.
+- Invitation Links contain the reusable Invite Code. Treat the link as private;
+  owner rotation invalidates it, and a seven-day HTTP-only cookie preserves it
+  through sign-in and User Profile setup.

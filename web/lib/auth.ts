@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { invitePath, loginPath } from "./invite";
+import { pendingInviteCode } from "./pending-invite";
 import { createSupabaseServerClient } from "./supabase-server";
 
 export async function requireUser() {
@@ -6,7 +8,7 @@ export async function requireUser() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect(loginPath({ invite: await pendingInviteCode() }));
 
   return { supabase, user };
 }
@@ -19,7 +21,10 @@ export async function requireProfile() {
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (!profile?.setup_completed) redirect("/profile/setup");
+  if (!profile?.setup_completed) {
+    const invite = await pendingInviteCode();
+    redirect(invite ? `/profile/setup?invite=${invite}` : "/profile/setup");
+  }
   return { supabase, user, profile };
 }
 
@@ -34,7 +39,9 @@ export async function requireHousehold() {
     .select("household_id")
     .eq("user_id", user.id)
     .maybeSingle();
-  if (!membership) redirect("/onboarding");
+  if (!membership) {
+    redirect(invitePath((await pendingInviteCode()) ?? "") ?? "/onboarding");
+  }
 
   return {
     supabase,

@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { requireProfile } from "@/lib/auth";
+import { clearPendingInvite } from "@/lib/pending-invite";
 
 export async function createHousehold(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
@@ -13,6 +14,7 @@ export async function createHousehold(formData: FormData) {
   });
   if (error)
     redirect("/onboarding?error=" + encodeURIComponent("Could not create household."));
+  await clearPendingInvite();
   redirect("/");
 }
 
@@ -33,5 +35,6 @@ export async function joinHousehold(formData: FormData) {
   if (result !== "joined") {
     redirect("/onboarding?error=" + encodeURIComponent("You already belong to a Household."));
   }
+  await clearPendingInvite();
   redirect("/");
 }

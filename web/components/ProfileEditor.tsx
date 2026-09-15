@@ -81,10 +81,12 @@ async function browserReadyImage(file: File) {
 export function ProfileEditor({
   initialName,
   initialAvatarUrl,
+  inviteCode,
   setup = false,
 }: {
   initialName: string;
   initialAvatarUrl?: string | null;
+  inviteCode?: string | null;
   setup?: boolean;
 }) {
   const [state, formAction, pending] = useActionState(saveProfile, initialState);
@@ -158,6 +160,7 @@ export function ProfileEditor({
   return (
     <form action={submit} className="card botanical-card flex flex-col gap-6 p-5 sm:p-7">
       <input type="hidden" name="destination" value={setup ? "setup" : "profile"} />
+      {inviteCode && <input type="hidden" name="invite" value={inviteCode} />}
 
       <div className="flex items-center gap-4">
         <MemberAvatar src={shownAvatar} name={initialName || "Your"} size={72} />

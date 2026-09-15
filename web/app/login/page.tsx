@@ -1,13 +1,16 @@
 import Image from "next/image";
 import { signIn, signUp } from "./actions";
 import { MeadowSprig } from "@/components/MeadowSprig";
+import { normalizeInviteCode } from "@/lib/invite";
+import { pendingInviteCode } from "@/lib/pending-invite";
 
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; message?: string }>;
+  searchParams: Promise<{ error?: string; message?: string; invite?: string }>;
 }) {
   const params = await searchParams;
+  const invite = normalizeInviteCode(params.invite) ?? (await pendingInviteCode());
 
   return (
     <main className="auth-shell">
@@ -41,7 +44,9 @@ export default async function LoginPage({
               Come on in
             </h1>
             <p className="text-sm leading-6 text-stone-500">
-              Sign in to your shared household space.
+              {invite
+                ? "Sign in or create a new sign-in to continue your Household invitation."
+                : "Sign in to your shared household space."}
             </p>
           </div>
 
@@ -57,6 +62,7 @@ export default async function LoginPage({
           )}
 
           <form className="flex flex-col gap-4">
+            {invite && <input type="hidden" name="invite" value={invite} />}
             <label>
               <span className="subtle-label">Email</span>
               <input name="email" type="email" placeholder="you@example.com" required className="field w-full" />

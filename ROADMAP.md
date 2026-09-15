@@ -60,6 +60,26 @@ is assigned.
   - The header avatar opens My profile, Household people, and Sign out actions
   - The home welcome card links to Household people with a compact Member avatar row
 
+## v0.3.2 — Invitation Links
+
+**Status:** Released 2026-09-15
+
+**Goal:** Let someone who has never used Hearth open a Household invitation and
+complete the entire joining flow in their browser.
+
+### Features
+
+- [x] Share and copy a complete Invitation Link from Household people
+- [x] Keep the readable Invite Code visible as a backup
+- [x] Provide manual, text-message, and email fallbacks when browser sharing APIs
+  are unavailable
+- [x] Add a public invitation screen that identifies the inviting Household
+- [x] Carry the invitation through sign-in, signup, and User Profile setup
+- [x] Require explicit confirmation before creating the Membership
+- [x] Explain invalid, rotated, and already-joined invitation states
+- [x] Keep the existing Invite Code rotation, throttling, and join database function
+- [x] Support desktop and phone layouts without requiring Hearth to be installed
+
 ## v0.4.0 — Calendar
 
 **Status:** Planned
