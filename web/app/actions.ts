@@ -6,9 +6,47 @@ import { requireHousehold } from "@/lib/auth";
 export async function addTodo(formData: FormData) {
   const text = String(formData.get("text") ?? "").trim();
   if (!text) return;
+  const assigneeId = String(formData.get("assignee_id") ?? "");
   const { supabase, householdId } = await requireHousehold();
-  await supabase.from("todos").insert({ text, household_id: householdId });
+  const safeAssigneeId = await householdAssigneeId(
+    supabase,
+    householdId,
+    assigneeId
+  );
+  await supabase.from("todos").insert({
+    text,
+    household_id: householdId,
+    assignee_id: safeAssigneeId,
+  });
   revalidatePath("/todos");
+}
+
+export async function reassignTodo(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const assigneeId = String(formData.get("assignee_id") ?? "");
+  const { supabase, householdId } = await requireHousehold();
+  const safeAssigneeId = await householdAssigneeId(
+    supabase,
+    householdId,
+    assigneeId
+  );
+  await supabase.from("todos").update({ assignee_id: safeAssigneeId }).eq("id", id);
+  revalidatePath("/todos");
+}
+
+async function householdAssigneeId(
+  supabase: Awaited<ReturnType<typeof requireHousehold>>["supabase"],
+  householdId: string,
+  assigneeId: string
+) {
+  if (!assigneeId) return null;
+  const { data } = await supabase
+    .from("memberships")
+    .select("id")
+    .eq("id", assigneeId)
+    .eq("household_id", householdId)
+    .maybeSingle();
+  return data?.id ?? null;
 }
 
 export async function toggleTodo(formData: FormData) {

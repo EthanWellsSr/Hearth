@@ -74,12 +74,17 @@ _Avoid_: product
 ### Calendar
 
 **Event**:
-A dated entry on the household Calendar, with a time and title, visible to all
-Members.
+A dated entry on the Household Calendar, visible to all Members. An Event has a
+title and may be all-day or timed, on one day or across multiple days.
 _Avoid_: appointment, meeting, reminder
 
 **Calendar**:
 The household's shared collection of Events.
+
+**Household timezone**:
+The single timezone in which a Household enters and views timed Events. It belongs
+to the Household rather than to an individual Member or device.
+_Avoid_: User timezone, device timezone
 
 ### Meals
 

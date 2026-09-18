@@ -3,14 +3,20 @@
 import { redirect } from "next/navigation";
 import { requireProfile } from "@/lib/auth";
 import { clearPendingInvite } from "@/lib/pending-invite";
+import { isValidTimeZone } from "@/lib/calendar";
 
 export async function createHousehold(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
+  const timezone = String(formData.get("timezone") ?? "").trim();
   const { supabase } = await requireProfile();
   if (!name) redirect("/onboarding?error=" + encodeURIComponent("Enter a household name."));
+  if (!isValidTimeZone(timezone)) {
+    redirect("/onboarding?error=" + encodeURIComponent("Choose a valid Household timezone."));
+  }
 
   const { error } = await supabase.rpc("create_household_with_owner", {
     household_name: name,
+    household_timezone: timezone,
   });
   if (error)
     redirect("/onboarding?error=" + encodeURIComponent("Could not create household."));

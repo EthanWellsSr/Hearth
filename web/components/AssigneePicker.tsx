@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { reassignChore } from "@/app/chores/actions";
+import { reassignTodo } from "@/app/actions";
 import { MemberAvatar } from "./MemberAvatar";
 
 export type AssigneeOption = {
@@ -23,11 +24,11 @@ function UnassignedAvatar() {
 export function AssigneePicker({
   members,
   initialValue = "",
-  choreId,
+  target,
 }: {
   members: AssigneeOption[];
   initialValue?: string;
-  choreId?: string;
+  target?: { kind: "chore" | "todo"; id: string };
 }) {
   const [selectedId, setSelectedId] = useState(initialValue);
   const [pending, startTransition] = useTransition();
@@ -37,17 +38,20 @@ export function AssigneePicker({
   function choose(nextId: string) {
     setSelectedId(nextId);
     details.current?.removeAttribute("open");
-    if (choreId) {
+    if (target) {
       const formData = new FormData();
-      formData.set("id", choreId);
+      formData.set("id", target.id);
       formData.set("assignee_id", nextId);
-      startTransition(() => void reassignChore(formData));
+      startTransition(() => {
+        if (target.kind === "chore") void reassignChore(formData);
+        else void reassignTodo(formData);
+      });
     }
   }
 
   return (
     <details ref={details} className="assignee-picker relative">
-      {!choreId && <input type="hidden" name="assignee_id" value={selectedId} />}
+      {!target && <input type="hidden" name="assignee_id" value={selectedId} />}
       <summary className="field flex cursor-pointer list-none items-center gap-2 py-1.5 pr-10">
         {selected ? <MemberAvatar src={selected.avatarUrl} name={selected.name} size={32} /> : <UnassignedAvatar />}
         <span className="min-w-0 flex-1 truncate">{pending ? "Saving…" : selected?.name || "Unassigned"}</span>

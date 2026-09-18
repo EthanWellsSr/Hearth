@@ -4,6 +4,23 @@ This file records the high-level contents of shipped Hearth releases. Planned
 releases belong in `ROADMAP.md`; the current implementation and handoff state
 belong in `PROGRESS.md`.
 
+## v0.4.0 — Calendar — 2026-09-18
+
+- Added the shared Household Calendar with responsive month and upcoming views,
+  all-day and timed Events, multi-day spans, details, editing, deletion, and
+  optimistic concurrency protection.
+- Added one configurable Household timezone, daylight-saving validation, and
+  stable absolute-time storage for timed Events while preserving all-day dates.
+- Added owner-only timezone management and ownership transfer, plus voluntary
+  Household leaving with Invite Code rotation and Former Member attribution.
+- Added optional To-do Assignees with Member display names and Avatars; departing
+  Members are automatically unassigned from Chores and To-dos.
+- Added migration `0007`, applied it to Supabase, and completed isolated live
+  acceptance checks for Event CRUD, database constraints, RLS, ownership, leaving,
+  and assignment cleanup.
+- Expanded automated coverage to 45 tests and added Calendar as the first feature
+  on the home hub.
+
 ## v0.3.2 — Invitation Links — 2026-09-15
 
 - Added complete Invitation Links that Members can copy or share from Household

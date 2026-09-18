@@ -4,8 +4,9 @@ Living doc so any new session can resume. Update it as work lands.
 
 ## Current state
 - Foundation: `CONTEXT.md` (glossary), `CHANGELOG.md` (shipped releases),
-  `ROADMAP.md` (planned releases), `docs/adr/0001–0009` (decisions), and
-  `AGENTS.md` / `CLAUDE.md` (agent guides).
+  `ROADMAP.md` (planned releases), `docs/adr/0001–0010` (decisions),
+  `docs/design/` (active release specifications), and `AGENTS.md` / `CLAUDE.md`
+  (agent guides).
 - App scaffolded in `web/` — Next.js + TypeScript, App Router, Tailwind CSS v4.
 - **Home hub: DONE.** `/` is a link list to feature pages (only ones that exist).
 - **To-dos: DONE** (at `/todos`). Add, toggle done, delete; completed to-dos
@@ -41,10 +42,21 @@ Living doc so any new session can resume. Update it as work lands.
   existing Invite Code schema or database join function. On plain-HTTP local
   network testing, restricted share and clipboard APIs fall back to a selectable
   link plus text-message and email actions. See ADR 0009.
-- **Tests: STARTED.** Vitest set up (`npm test`); recurrence, User Profile name
-  rules, Avatar form-action dispatch, browser format fallback, and server-side
-  Avatar normalization, Invitation Link construction, login preservation, and
-  sharing controls and restricted-browser fallbacks are covered (28 tests total).
+- **Calendar: IMPLEMENTED LOCALLY for v0.4.0.** Shared Event creation, editing,
+  deletion, month and upcoming views, single- and multi-day rendering, optimistic
+  concurrency, Household timezone behavior, and daylight-saving validation are in
+  place. Calendar is first on the home hub. Migration `0007` is applied to
+  Supabase. Isolated live acceptance passed for Event CRUD, constraints,
+  concurrency, RLS, timezone permissions, ownership transfer, leaving, Former
+  Member attribution, Invite Code rotation, and assignment cleanup. See ADR 0010
+  and `docs/design/v0.4.0-calendar.md`.
+- **Household management + To-do Assignees: IMPLEMENTED LOCALLY for v0.4.0.** An
+  owner can set the Household timezone or transfer ownership; a non-owner can
+  leave; To-dos support optional Member assignment by Avatar and display name.
+  Membership deletion leaves Events intact and clears Chore and To-do Assignees.
+- **Tests: STARTED.** Vitest covers recurrence, User Profiles and Avatars,
+  Invitation Links and sharing fallbacks, Calendar time/range/month behavior, and
+  Event form state (45 tests total).
 - **Styling: REDESIGNED (visually approved).** **Tailwind CSS v4**
   (ADR 0007). Light, high-end meadow direction: soft green and blue, restrained
   golden accents, modern typography, botanical details, larger touch targets, and
@@ -58,11 +70,13 @@ Living doc so any new session can resume. Update it as work lands.
 - **Versioning:** semver package versions and annotated Git tags. Release changes
   land on `dev`, merge into `master`, and the tag points to the release merge
   commit. The package version is visible in the app footer.
-- **Current release:** **v0.3.2 — Invitation Links** adds the complete browser
-  invitation flow and restricted-browser sharing fallbacks. Production deployment
-  confirmation is pending.
-- **Next release:** **v0.4.0 — Calendar** is planned and requires Matt Pocock's
-  `grill-with-docs` process with Ethan before code is written.
+- **Current release:** **v0.4.0 — Calendar** adds the shared Calendar, Household
+  timezone, ownership transfer, voluntary leaving, and To-do Assignees. Migration
+  `0007` is applied and isolated live database acceptance passes. Production
+  deployment confirmation is pending.
+- **Next planned feature release:** **v0.4.1 — Calendar Rhythm**. Before beginning
+  its required design process, decide where CI and deployment checks belong in the
+  roadmap.
 
 ## Run it
 - `cd web && npm run dev` → http://localhost:3000
@@ -77,7 +91,10 @@ Living doc so any new session can resume. Update it as work lands.
 ## Key files
 - `web/app/page.tsx` — home **hub**: links to feature pages (only ones that exist).
 - `web/app/todos/page.tsx` — To-dos feature at `/todos`; reads todos, list + add form.
-- `web/app/actions.ts` — to-do server actions: `addTodo`, `toggleTodo` (revalidate `/todos`).
+- `web/app/actions.ts` — To-do create, assignment, completion, and deletion actions.
+- `web/app/calendar/` — shared Calendar month/upcoming views and Event CRUD routes.
+- `web/lib/calendar.ts` — Household-timezone conversion, Event validation, ranges,
+  sorting, month grids, and upcoming selection.
 - `web/components/CheckableList.tsx` — shared list view (todos + groceries; normalize
   rows to {id,label,checked} + pass toggle/delete actions). Reuse for future lists.
 - `web/app/chores/` — Chores feature; recurrence math in `web/lib/recurrence.ts`
@@ -106,22 +123,27 @@ Living doc so any new session can resume. Update it as work lands.
   invitation cookie used across authentication and profile setup.
 - `web/public/logo-meadow.png` — the current Hearth logo (PWA icon and header/login mark).
 - `web/supabase/migrations/0001_auth_tenancy.sql` — the tenancy migration (record).
+- `web/supabase/migrations/0007_calendar_membership_and_todo_assignments.sql` —
+  applied v0.4.0 schema: Events, Household timezone, ownership/leave functions,
+  and To-do Assignees.
 - DB: `todos`, `grocery_items` (now with `household_id`), `households`,
   `memberships`, and after migration 0006 `user_profiles` and
   `invite_join_attempts`; RLS protects Household and User Profile data.
 
 ## Next
-1. Confirm the Vercel production deployment for `v0.3.2`.
-2. Complete Matt Pocock's `grill-with-docs` process with Ethan before beginning
-   `v0.4.0 — Calendar`.
-3. Add CI that runs `npm test` on every push (test runner already set up).
+1. Confirm the Vercel production deployment for v0.4.0.
+2. Decide where CI, database integration checks, Vercel preview smoke tests, and
+   production health checks belong in the roadmap.
+3. Complete physical-iPhone and keyboard/focus/contrast follow-up for v0.4.0.
 
 ## Gotchas
 - `.env.local` never committed; secret key (`SUPABASE_SECRET_KEY`) is server-only.
 - Data is Household-scoped and RLS-enforced. Self-serve onboarding supports creating
   or joining a Household with an Invite Code. User Profiles are global; Memberships
-  carry Household roles and remain the target of Chore assignments. The Household timezone is still
-  hard-coded to America/Chicago and needs to become a Household setting later.
+  carry Household roles and remain the target of Chore and To-do assignments.
+  Migration `0007` is applied and is required by the local v0.4.0 Calendar,
+  Household timezone, ownership transfer, voluntary leave, and To-do assignment
+  features.
 - Since `Confirm email` is ON, a new signup must click the email link before signing in.
 - Invitation Links contain the reusable Invite Code. Treat the link as private;
   owner rotation invalidates it, and a seven-day HTTP-only cookie preserves it

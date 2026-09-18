@@ -5,6 +5,10 @@ import { RemoveMemberButton } from "@/components/RemoveMemberButton";
 import { requireHousehold } from "@/lib/auth";
 import { DEFAULT_AVATAR_URL } from "@/lib/profile";
 import { signedAvatarUrls } from "@/lib/avatar-server";
+import {
+  MemberHouseholdManagement,
+  OwnerHouseholdManagement,
+} from "@/components/HouseholdManagement";
 
 type Membership = {
   id: string;
@@ -22,12 +26,18 @@ type UserProfile = {
 export default async function PeoplePage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; removed?: string; rotated?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    removed?: string;
+    rotated?: string;
+    timezone?: string;
+    transferred?: string;
+  }>;
 }) {
   const params = await searchParams;
   const { supabase, user, householdId } = await requireHousehold();
   const [{ data: household }, { data: membershipRows }] = await Promise.all([
-    supabase.from("households").select("name, invite_code").eq("id", householdId).single(),
+    supabase.from("households").select("name, invite_code, timezone").eq("id", householdId).single(),
     supabase.from("memberships").select("id, user_id, role, created_at").eq("household_id", householdId),
   ]);
 
@@ -61,6 +71,8 @@ export default async function PeoplePage({
       {params.error && <p className="status-message bg-red-500/10 text-red-700">{params.error}</p>}
       {params.removed && <p className="status-message bg-emerald-100/80 text-emerald-800">Member removed. A new Invite Code is ready.</p>}
       {params.rotated && <p className="status-message bg-emerald-100/80 text-emerald-800">Your new Invite Code is ready.</p>}
+      {params.timezone && <p className="status-message bg-emerald-100/80 text-emerald-800">Household timezone updated.</p>}
+      {params.transferred && <p className="status-message bg-emerald-100/80 text-emerald-800">Ownership transferred.</p>}
 
       <section className="grid gap-5 md:grid-cols-[1.15fr_0.85fr]">
         <div>
@@ -102,6 +114,22 @@ export default async function PeoplePage({
           </aside>
         )}
       </section>
+
+      {household && (
+        isOwner ? (
+          <OwnerHouseholdManagement
+            currentTimeZone={household.timezone || "America/Chicago"}
+            transferOptions={people
+              .filter(({ membership }) => membership.user_id !== user.id && membership.role === "member")
+              .map(({ membership, profile }) => ({
+                membershipId: membership.id,
+                name: profile.display_name,
+              }))}
+          />
+        ) : (
+          <MemberHouseholdManagement />
+        )
+      )}
     </main>
   );
 }

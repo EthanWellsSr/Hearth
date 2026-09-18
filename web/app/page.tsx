@@ -8,6 +8,18 @@ import { DEFAULT_AVATAR_URL } from "@/lib/profile";
 
 const FEATURES = [
   {
+    href: "/calendar",
+    title: "Calendar",
+    desc: "See what is happening around your home.",
+    accent: "bg-[#e3f0f2] text-[#557f88]",
+    icon: (
+      <>
+        <rect x="4" y="5" width="16" height="15" rx="2" />
+        <path d="M8 3v4m8-4v4M4 10h16" />
+      </>
+    ),
+  },
+  {
     href: "/todos",
     title: "To-dos",
     desc: "Keep the little things from getting lost.",
@@ -104,7 +116,7 @@ export default async function Home() {
           </div>
           <span className="hidden text-xs text-stone-400 sm:block">Choose a space</span>
         </div>
-        <nav className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <nav className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {FEATURES.map((f) => (
           <Link
             key={f.href}

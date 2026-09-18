@@ -82,24 +82,142 @@ complete the entire joining flow in their browser.
 
 ## v0.4.0 — Calendar
 
+**Status:** Released 2026-09-18
+
+**Pre-code gate:** Complete. Ethan confirmed the shared design in
+`docs/design/v0.4.0-calendar.md` before implementation began.
+
+**Goal:** Give every Member a shared view of what is happening in the Household.
+
+### Confirmed scope
+
+- [x] Add the shared Household Calendar
+- [x] Let every Member create, edit, and delete every Event
+- [x] Support single-day and multi-day Events
+  - Require a 1–100 character title and start
+  - Support all-day Events and timed Events with an optional end after the start
+  - Treat an all-day end date as inclusive
+  - Support up to 2,000 characters of plain-text details
+  - Record the creating Member and creation/update timestamps
+  - Store timed Events as absolute moments and all-day Events as calendar dates
+  - Reject nonexistent daylight-saving times and disambiguate repeated times
+  - Retain past Events and require confirmation before deletion
+  - Detect concurrent edits instead of silently overwriting another Member's work
+- [x] Present Events using familiar Google Calendar behavior
+  - Render multi-day Events as continuous bars spanning their affected dates
+  - Render timed Events as compact time-and-title rows in month cells
+  - Show up to four Events per date on desktop and three on phones before using a
+    visible overflow count, reducing this only when screen height requires it
+  - Show each Event once in the upcoming list with its complete date range
+  - Order all-day and multi-day Events before chronological timed Events
+  - Include an Event on every date and upcoming window it overlaps
+- [x] Provide a month view and nearby upcoming list on desktop
+- [x] Open to the upcoming list on phones, with an easy switch to month view
+  - Show compact truncated time-and-title entries and an overflow count in the
+    phone month view
+- [x] Show Events from the next seven days in the upcoming list
+  - If that period is empty, show the next future Event
+- [x] Sort and display overlapping Events without warnings or restrictions
+- [x] Start weeks on Sunday, show adjacent-month dates in a muted style, and
+  provide Today and previous/next controls
+- [x] Provide an Add Event action, prefill a selected date, and open an Event into
+  a responsive details screen with Edit and Delete actions
+  - Preserve entered values and show an inline error when a save fails
+  - Use stable routes and keep the selected month in the URL
+  - Return Members to Calendar with a clear explanation when an Event is deleted or
+    inaccessible
+- [x] Add Calendar as the first feature card on the home hub
+- [x] Use one soft blue Event treatment, green navigation accents, and restrained
+  yellow highlighting for today until Event colors arrive in v0.4.2
+- [x] Store a configurable Household timezone
+  - Grandfather existing Households into `America/Chicago`
+  - Detect the creator's timezone for new Households
+  - Allow only an owner to change it from Household people
+  - Use a friendly searchable timezone selector backed by IANA identifiers
+  - Interpret Event input in the Household timezone regardless of a Member's
+    current device timezone
+  - Display Event times in the Household timezone without rewriting their absolute
+    moments when the timezone changes
+  - Keep all-day Events on their selected dates when the timezone changes
+  - Warn the owner before a timezone change and explain its effect on timed and
+    all-day Events
+- [x] Keep external calendar synchronization out of this release
+- [x] Keep recurrence, reminders, notifications, Chore display, locations, colors,
+  categories, attendees, and attachments out of this release
+- [x] Let a non-owner Member leave a Household after explicit confirmation
+  - Rotate the Invite Code, retain their Events and User Profile, and make their
+    assigned Chores and To-dos Unassigned
+- [x] Let an owner transfer ownership to another Member after explicit confirmation
+  - Enforce exactly one owner per Household
+  - The prior owner becomes a Member and may then leave separately
+  - A sole owner cannot leave or delete the Household in this release
+  - Place transfer and leave controls in Household management on Household people
+- [x] Add one optional Assignee to each To-do
+  - Allow assignment during creation and immediate reassignment afterward
+  - Show the Assignee's Avatar and display name and retain Unassigned as an option
+  - Keep the Assignee visible after completion until normal To-do cleanup
+- [x] Apply migration `0007` and verify live Event CRUD, database constraints,
+  concurrent-edit detection, Household RLS, owner-only timezone changes, ownership
+  transfer, voluntary leaving, Former Member attribution, Invite Code rotation, and
+  To-do assignment/unassignment using isolated temporary Households
+- [x] Verify ranges across month/year boundaries, daylight-saving behavior, and
+  desktop/phone layouts through automated and browser checks
+- [ ] Complete physical-iPhone, keyboard navigation, visible focus, and readable
+  contrast follow-up after the initial release
+
+## v0.4.1 — Calendar Rhythm
+
 **Status:** Planned
 
 **Pre-code gate:** Required; complete Matt Pocock's `grill-with-docs` process with
 Ethan first.
 
-**Goal:** Give every Member a shared view of what is happening in the Household.
+**Goal:** Bring repeating Household responsibilities and timely reminders into the
+Calendar.
 
 ### Proposed scope
 
-- [ ] Add the shared Household Calendar
-- [ ] Let Members create, edit, and delete Events
-- [ ] Support timed and all-day Events with a title, date, time, and optional details
-- [ ] Provide useful month and upcoming views at desktop and phone widths
-- [ ] Make the Household timezone configurable and use it consistently for Events
-- [ ] Keep external calendar synchronization out of this release
-- [ ] Let a non-owner Member leave a Household voluntarily
-- [ ] Let an owner transfer ownership before leaving a Household
-- [ ] Add optional Assignees to To-dos and show their Avatars and display names
+- [ ] Add recurring Events
+- [ ] Add Event reminders and notifications
+- [ ] Add a seven-day time-grid view with Events positioned by time
+- [ ] Show Chores on the Calendar
+- [ ] Make Chore scheduling and Calendar presentation use the Household timezone
+- [ ] Make completed To-do cleanup use the Household timezone
+- [ ] Decide recurrence rules, reminder delivery channels, notification preferences,
+  and Chore presentation during the pre-code design gate
+
+## v0.4.2 — Event Organization
+
+**Status:** Planned
+
+**Pre-code gate:** Required; complete Matt Pocock's `grill-with-docs` process with
+Ethan first.
+
+**Goal:** Help Members organize and distinguish a busier Household Calendar.
+
+### Proposed scope
+
+- [ ] Add an optional location to Events
+- [ ] Add Event colors
+- [ ] Add Event categories
+- [ ] Decide whether colors belong to individual Events, categories, Members, or a
+  combination during the pre-code design gate
+
+## v0.4.3 — Event Collaboration
+
+**Status:** Planned
+
+**Pre-code gate:** Required; complete Matt Pocock's `grill-with-docs` process with
+Ethan first.
+
+**Goal:** Let Members coordinate attendance and supporting material for Events.
+
+### Proposed scope
+
+- [ ] Add Event attendees
+- [ ] Add Event attachments
+- [ ] Decide attendance states, attachment limits, storage, and access rules during
+  the pre-code design gate
 
 ## v0.5.0 — Meal Plan
 
@@ -181,6 +299,25 @@ and Chore activity that needs their attention.
   - Decide browser or device push delivery and notification preferences during the
     pre-code design gate
 - [ ] Keep all Messages and notifications Household-scoped and protected by RLS
+
+## v0.9.0 — Restricted Accounts
+
+**Status:** Planned; exact roles and permissions intentionally undecided
+
+**Pre-code gate:** Required; complete Matt Pocock's `grill-with-docs` process with
+Ethan first.
+
+**Goal:** Let a Household include people who should not receive every adult-level
+permission.
+
+### Proposed scope
+
+- [ ] Define the restricted-account roles and their intended users
+- [ ] Define permissions for Household data, communication, assignments, settings,
+  invitations, and account management
+- [ ] Define guardian or owner controls and safety boundaries
+- [ ] Do not implement permissions until the complete design tree is resolved and
+  Ethan confirms the model
 
 ## Unscheduled product scope
 
