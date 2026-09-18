@@ -160,7 +160,11 @@ export default async function ChoresPage() {
                     </span>
                   </div>
                   <div className="max-w-64 pt-1">
-                    <AssigneePicker members={memberList} initialValue={c.assignee_id ?? ""} choreId={c.id} />
+                    <AssigneePicker
+                      members={memberList}
+                      initialValue={c.assignee_id ?? ""}
+                      target={{ kind: "chore", id: c.id }}
+                    />
                   </div>
                 </div>
 

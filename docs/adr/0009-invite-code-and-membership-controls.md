@@ -37,4 +37,5 @@ rate-limited database function.
 - No invitation table or additional database migration is required for this flow.
 - Only an owner may rotate the code or remove another non-owner Member.
 - Removing a Member also rotates the Invite Code in the same transaction.
-- Voluntary leaving and ownership transfer remain deferred to v0.4.0.
+- v0.4.0 adds separate transactional functions for ownership transfer and
+  voluntary leaving. Leaving rotates the Invite Code; transfer does not.

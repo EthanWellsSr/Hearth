@@ -1,0 +1,108 @@
+import Link from "next/link";
+import {
+  type CalendarEvent,
+  eventDateRange,
+  eventsForDate,
+  formatEventTime,
+  monthGrid,
+  shiftMonth,
+} from "@/lib/calendar";
+
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+export function CalendarMonth({
+  events,
+  month,
+  today,
+  timeZone,
+  view,
+}: {
+  events: CalendarEvent[];
+  month: string;
+  today: string;
+  timeZone: string;
+  view: "month" | "upcoming";
+}) {
+  const grid = monthGrid(month);
+  const viewSuffix = view === "month" ? "&view=month" : "";
+
+  return (
+    <section aria-labelledby="month-heading" className="card overflow-hidden bg-white/85">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 px-4 py-4 sm:px-5">
+        <div className="flex items-center gap-2">
+          <Link href={`/calendar?month=${today.slice(0, 7)}${viewSuffix}`} className="btn-ghost min-h-9 border border-emerald-100 bg-white px-3 text-xs">
+            Today
+          </Link>
+          <Link aria-label="Previous month" href={`/calendar?month=${shiftMonth(month, -1)}${viewSuffix}`} className="icon-btn border border-emerald-100 bg-white">←</Link>
+          <Link aria-label="Next month" href={`/calendar?month=${shiftMonth(month, 1)}${viewSuffix}`} className="icon-btn border border-emerald-100 bg-white">→</Link>
+        </div>
+        <h2 id="month-heading" className="text-xl font-semibold tracking-tight text-stone-800">
+          {grid.label}
+        </h2>
+        <Link href={`/calendar/new?date=${month}-01`} className="btn-primary min-h-10 px-4 text-xs">
+          Add Event
+        </Link>
+      </div>
+
+      <div className="calendar-month-grid" role="grid" aria-label={grid.label}>
+        {WEEKDAYS.map((weekday) => (
+          <div key={weekday} role="columnheader" className="calendar-weekday">
+            {weekday}
+          </div>
+        ))}
+        {grid.weeks.flat().map((date) => {
+          const dayEvents = eventsForDate(events, date, timeZone);
+          const inMonth = date.slice(0, 7) === month;
+          const isToday = date === today;
+          const desktopMore = Math.max(0, dayEvents.length - 4);
+          const phoneMore = Math.max(0, dayEvents.length - 3);
+
+          return (
+            <div
+              key={date}
+              role="gridcell"
+              aria-label={date}
+              className={`calendar-day ${inMonth ? "" : "calendar-day-outside"} ${isToday ? "calendar-day-today" : ""}`}
+            >
+              <div className="mb-1 flex items-center justify-between gap-1">
+                <Link
+                  href={`/calendar/new?date=${date}`}
+                  aria-label={`Add Event on ${date}`}
+                  className="calendar-day-number"
+                >
+                  {Number(date.slice(-2))}
+                </Link>
+              </div>
+              <div className="calendar-day-events">
+                {dayEvents.slice(0, 4).map((event, index) => {
+                  const range = eventDateRange(event, timeZone);
+                  const spansDays = range.start !== range.end;
+                  return (
+                    <Link
+                      key={event.id}
+                      href={`/calendar/${event.id}`}
+                      title={`${formatEventTime(event, timeZone)} · ${event.title}`}
+                      className={`calendar-event ${event.allDay || spansDays ? "calendar-event-bar" : "calendar-event-time"} ${index === 3 ? "calendar-event-fourth" : ""} ${range.start < date ? "calendar-event-continues-before" : ""} ${range.end > date ? "calendar-event-continues-after" : ""}`}
+                    >
+                      {!event.allDay && !spansDays && (
+                        <span className="calendar-event-clock">{formatEventTime(event, timeZone).split("–")[0]}</span>
+                      )}
+                      <span className="truncate">{event.title}</span>
+                    </Link>
+                  );
+                })}
+                {desktopMore > 0 && (
+                  <span className="calendar-more calendar-more-desktop">+{desktopMore} more</span>
+                )}
+                {phoneMore > 0 && (
+                  <span className="calendar-more calendar-more-phone">+{phoneMore} more</span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+

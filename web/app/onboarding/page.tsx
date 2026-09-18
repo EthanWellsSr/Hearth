@@ -3,11 +3,12 @@ import { redirect } from "next/navigation";
 import { requireProfile } from "@/lib/auth";
 import { MeadowSprig, TinyLeaf } from "@/components/MeadowSprig";
 import { createHousehold, joinHousehold } from "./actions";
+import { TimezoneField } from "@/components/TimezoneField";
 
 export default async function OnboardingPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; left?: string }>;
 }) {
   const params = await searchParams;
   const { supabase, user } = await requireProfile();
@@ -40,6 +41,11 @@ export default async function OnboardingPage({
           {params.error}
         </p>
       )}
+      {params.left && (
+        <p className="status-message bg-emerald-100/80 text-emerald-800">
+          You left the Household. You can begin another space or join with a new Invitation Link.
+        </p>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2">
         <form action={createHousehold} className="card botanical-card flex flex-col gap-5 p-6 sm:p-7">
@@ -54,6 +60,7 @@ export default async function OnboardingPage({
             <span className="subtle-label">Household name</span>
             <input name="name" placeholder="For example, Wells" maxLength={50} className="field w-full" required />
           </label>
+          <TimezoneField />
           <button type="submit" className="btn-primary">Create our space</button>
         </form>
 

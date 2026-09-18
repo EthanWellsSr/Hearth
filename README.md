@@ -7,12 +7,14 @@ grocery list, chores, and more — in one place.
 
 ## Features
 
-- **To-dos** — one-off tasks; add, check off, delete; completed ones auto-purge
-  nightly (Supabase `pg_cron`, midnight America/Chicago).
+- **To-dos** — one-off tasks; add, assign by Member name and Avatar, check off,
+  and delete; completed ones auto-purge nightly.
 - **Grocery List** — add, check off (bought), delete, and "clear bought"; bought
   items sink to the bottom.
 - **Chores** — recurring tasks (every N days, or weekly on a weekday); `next_due`
   advances on completion; optional assignment by Member name and Avatar.
+- **Calendar** — shared all-day and timed Events, including multi-day Events, with
+  month and upcoming views in the Household timezone.
 - **Auth + Households** — email/password login; all data is scoped to a Household
   and enforced by Postgres row-level security (see `docs/adr/0006`).
 - **User Profiles + Household people** — display names, private Avatars, reusable
@@ -37,9 +39,9 @@ PROGRESS.md           # living status / handoff between work sessions
 ROADMAP.md            # planned future releases
 docs/adr/             # architecture decision records (why, not just what)
 web/                  # the Next.js app
-  app/                # routes (/, /login, /todos, /groceries, /chores) + server actions
+  app/                # routes (including /calendar) + server actions
   components/         # shared UI (AppHeader, CheckableList, PlantMark)
-  lib/                # Supabase, auth, recurrence, and Avatar normalization
+  lib/                # Supabase, auth, Calendar, recurrence, and Avatar normalization
   supabase/migrations # SQL migrations (run by hand in the Supabase SQL editor)
 ```
 

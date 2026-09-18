@@ -36,7 +36,7 @@ export async function requireHousehold() {
 
   const { data: membership } = await supabase
     .from("memberships")
-    .select("household_id")
+    .select("id, household_id, role")
     .eq("user_id", user.id)
     .maybeSingle();
   if (!membership) {
@@ -47,6 +47,8 @@ export async function requireHousehold() {
     supabase,
     user,
     profile,
+    membershipId: membership.id as string,
+    membershipRole: membership.role as "owner" | "member",
     householdId: membership.household_id as string,
   };
 }

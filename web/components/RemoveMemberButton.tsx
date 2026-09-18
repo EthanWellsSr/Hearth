@@ -7,7 +7,7 @@ export function RemoveMemberButton({ membershipId, name }: { membershipId: strin
     <form
       action={removeMember}
       onSubmit={(event) => {
-        if (!window.confirm(`Remove ${name} from this Household? Their Chores will become Unassigned and the Invite Code will rotate.`)) {
+        if (!window.confirm(`Remove ${name} from this Household? Their Chores and To-dos will become Unassigned, their Events will remain, and the Invite Code will rotate.`)) {
           event.preventDefault();
         }
       }}

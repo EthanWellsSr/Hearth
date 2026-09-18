@@ -1,0 +1,45 @@
+export type TimeZoneOption = { value: string; label: string };
+
+export const TIME_ZONE_OPTIONS: TimeZoneOption[] = [
+  { value: "Pacific/Honolulu", label: "Honolulu (Hawaii)" },
+  { value: "America/Anchorage", label: "Anchorage (Alaska)" },
+  { value: "America/Los_Angeles", label: "Los Angeles (Pacific)" },
+  { value: "America/Phoenix", label: "Phoenix (Arizona)" },
+  { value: "America/Denver", label: "Denver (Mountain)" },
+  { value: "America/Chicago", label: "Chicago (Central)" },
+  { value: "America/New_York", label: "New York (Eastern)" },
+  { value: "America/Halifax", label: "Halifax (Atlantic)" },
+  { value: "America/St_Johns", label: "St. John’s (Newfoundland)" },
+  { value: "America/Toronto", label: "Toronto" },
+  { value: "America/Vancouver", label: "Vancouver" },
+  { value: "America/Mexico_City", label: "Mexico City" },
+  { value: "America/Bogota", label: "Bogotá" },
+  { value: "America/Lima", label: "Lima" },
+  { value: "America/Sao_Paulo", label: "São Paulo" },
+  { value: "America/Argentina/Buenos_Aires", label: "Buenos Aires" },
+  { value: "Atlantic/Reykjavik", label: "Reykjavík" },
+  { value: "Europe/London", label: "London" },
+  { value: "Europe/Paris", label: "Paris" },
+  { value: "Europe/Berlin", label: "Berlin" },
+  { value: "Europe/Athens", label: "Athens" },
+  { value: "Europe/Helsinki", label: "Helsinki" },
+  { value: "Europe/Istanbul", label: "Istanbul" },
+  { value: "Africa/Cairo", label: "Cairo" },
+  { value: "Africa/Johannesburg", label: "Johannesburg" },
+  { value: "Asia/Dubai", label: "Dubai" },
+  { value: "Asia/Kolkata", label: "Mumbai / Kolkata" },
+  { value: "Asia/Bangkok", label: "Bangkok" },
+  { value: "Asia/Singapore", label: "Singapore" },
+  { value: "Asia/Hong_Kong", label: "Hong Kong" },
+  { value: "Asia/Shanghai", label: "Shanghai" },
+  { value: "Asia/Tokyo", label: "Tokyo" },
+  { value: "Asia/Seoul", label: "Seoul" },
+  { value: "Australia/Perth", label: "Perth" },
+  { value: "Australia/Adelaide", label: "Adelaide" },
+  { value: "Australia/Sydney", label: "Sydney" },
+  { value: "Pacific/Auckland", label: "Auckland" },
+];
+
+export function timeZoneLabel(value: string) {
+  return TIME_ZONE_OPTIONS.find((option) => option.value === value)?.label || value;
+}
