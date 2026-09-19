@@ -12,7 +12,8 @@ the active plan changes and as part of every release.
 - Event reminders and browser push were split into their own release (v0.4.2).
 - Migrations `0008`, `0009`, `0011` are applied to Supabase (`0010` reminder/push
   schema is applied as groundwork).
-- Production deployment and post-deploy performance confirmation are outstanding.
+- The v0.4.1 production deployment is confirmed. A follow-up authenticated
+  navigation optimization is implemented locally and awaits review/deployment.
 
 ## Verified this cycle
 
@@ -22,8 +23,14 @@ the active plan changes and as part of every release.
   this-and-future split, whole-series edit.
 - Optimistic concurrency: a stale write is rejected in ~0.6s with a clear message
   and applies nothing.
-- `npm run lint`, `npm test` (58), `npm run build -- --webpack`, and
+- `npm run lint`, `npm test` (61), `npm run build -- --webpack`, and
   `npm run notices:check` all pass.
+- Request-scoped authentication context now deduplicates User/User Profile work,
+  loads Membership and User Profile concurrently, and includes the Household
+  timezone. Middleware and application guards use verified JWT claims instead of
+  mandatory Auth-server User lookups.
+- Authenticated local navigation improved from roughly 1.7–2.7s before the fix to
+  659–681ms between Calendar views and 935ms from Home to Calendar after warm-up.
 
 ## Reminders split — state of the deferred work (v0.4.2)
 
@@ -57,13 +64,15 @@ the active plan changes and as part of every release.
   functions use `P0001` and none use `serialization_failure`. The retry counter
   did not increase across a 12-second sample, all database sessions were idle,
   and refreshed CPU had recovered from 95.92% to 1.47%.
-- Do not begin another feature until v0.4.1 is deployed and authenticated
-  interaction timing confirms the app remains responsive under normal use.
+- The local performance repro passes. Keep the feature gate closed until this
+  optimization is deployed and the same production timings remain below one
+  second under normal warm use.
 
 ## Next
 
-1. Confirm the v0.4.1 production deployment, measure authenticated navigation and
-   mutation latency, and verify CPU remains normal with no new 504 retry storm.
+1. Review and deploy the authenticated-navigation optimization, then repeat the
+   production navigation timings and verify CPU remains normal with no new 504
+   retry storm.
 2. Dev-database cleanup of verification artifacts: the "Weekly standup"/"Standup
    v4" split pair and the "Concurrency probe v3" series (awaiting Ethan's go-ahead).
 3. Only after the performance gate passes, begin v0.4.2 (Event Reminders & Browser
@@ -71,4 +80,5 @@ the active plan changes and as part of every release.
 
 ## Blockers
 
-- Feature work is paused pending post-deploy performance confirmation.
+- Feature work is paused pending deployment and production verification of the
+  navigation optimization.

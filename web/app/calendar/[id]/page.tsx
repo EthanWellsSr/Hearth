@@ -24,11 +24,12 @@ export default async function EventDetailsPage({
   searchParams: Promise<{ error?: string; occurrence?: string }>;
 }) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
-  const { supabase, householdId } = await requireHousehold();
-  const [{ data: household }, { data: row }] = await Promise.all([
-    supabase.from("households").select("timezone").eq("id", householdId).single(),
-    supabase.from("events").select("*").eq("id", id).maybeSingle(),
-  ]);
+  const { supabase, householdTimeZone } = await requireHousehold();
+  const { data: row } = await supabase
+    .from("events")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
   if (!row) {
     return (
       <main className="app-shell max-w-3xl">
@@ -43,7 +44,7 @@ export default async function EventDetailsPage({
   }
 
   const series = calendarEventFromRow(row as EventRow);
-  const timeZone = series.recurrenceTimeZone || household?.timezone || "America/Chicago";
+  const timeZone = series.recurrenceTimeZone || householdTimeZone;
   const recurrence = describeEventRecurrence(series);
 
   // Occurrence-scoped view of a recurring series.

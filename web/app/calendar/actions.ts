@@ -39,15 +39,7 @@ async function eventPayload(formData: FormData) {
     return { ok: false, state: { error: "Event details must be 2,000 characters or fewer." } } as const;
   }
 
-  const { supabase, householdId, membershipId } = await requireHousehold();
-  const { data: household } = await supabase
-    .from("households")
-    .select("timezone")
-    .eq("id", householdId)
-    .single();
-  if (!household?.timezone) {
-    return { ok: false, state: { error: "Hearth could not determine the Household timezone." } } as const;
-  }
+  const { supabase, householdId, membershipId, householdTimeZone } = await requireHousehold();
 
   const times = validateEventTimes(
     {
@@ -59,7 +51,7 @@ async function eventPayload(formData: FormData) {
       startDisambiguation: disambiguation(formData, "start_disambiguation"),
       endDisambiguation: disambiguation(formData, "end_disambiguation"),
     },
-    household.timezone
+    householdTimeZone
   );
   if (times.status === "invalid") {
     return { ok: false, state: { error: times.message } } as const;
@@ -115,7 +107,7 @@ async function eventPayload(formData: FormData) {
         return { ok: false, state: { error: "Choose between 1 and 999 occurrences." } } as const;
       }
     }
-    recurrenceTimeZone = value(formData, "recurrence_timezone") || household.timezone;
+    recurrenceTimeZone = value(formData, "recurrence_timezone") || householdTimeZone;
   }
 
   return {
