@@ -35,6 +35,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <footer className="flex h-16 items-center justify-center gap-2 px-5 text-center text-xs text-stone-400">
           <span className="h-px w-8 bg-emerald-200" />
           Hearth · v{pkg.version}
+          <span aria-hidden="true">·</span>
+          <a
+            className="underline decoration-stone-300 underline-offset-4 transition hover:text-stone-600"
+            href="/legal/THIRD_PARTY_NOTICES.txt"
+          >
+            Licenses
+          </a>
           <span className="h-px w-8 bg-emerald-200" />
         </footer>
       </body>

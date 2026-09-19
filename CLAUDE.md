@@ -3,14 +3,37 @@
 Shared web app for one household (Ethan + wife): calendar, chores, to-dos,
 groceries, meal planning, notes, messaging, expenses.
 
-- **Status** — current progress and what's next in [PROGRESS.md](PROGRESS.md).
-- **Roadmap** — planned releases and future features in [ROADMAP.md](ROADMAP.md).
-- **Vocabulary** — use the exact terms in [CONTEXT.md](CONTEXT.md).
+- **Status** — current progress and what's next in
+  [STATUS.md](docs/STATUS.md).
+- **Roadmap** — planned releases and future features in
+  [ROADMAP.md](docs/ROADMAP.md).
+- **Vocabulary** — use the exact terms in
+  [CONTEXT.md](CONTEXT.md).
 - **Decisions** — recorded in [docs/adr/](docs/adr/).
 
-**Keep [PROGRESS.md](PROGRESS.md) current at every step.** Update it as work lands
-_and_ the moment a new task is added to the plan — never let it drift from reality.
-It is the handoff doc between sessions; a stale one misleads the next instance.
+**Keep [STATUS.md](docs/STATUS.md) current.** Update it when active work, next
+actions, or blockers change. It is the handoff between sessions.
+
+## Release documentation
+
+Before every release:
+
+- Move completed `CHANGELOG.md` entries from `Unreleased` into a dated version.
+- Remove the shipped release from `docs/ROADMAP.md` and verify the remaining
+  release order, dependencies, and scope.
+- Update `docs/STATUS.md` with the released version, current work, next actions,
+  and blockers.
+- Review `CONTEXT.md`; change it only when Hearth's domain language changed.
+- From `web/`, run `npm run notices` and include the regenerated
+  `public/legal/THIRD_PARTY_NOTICES.txt`.
+
+## Feature design gate
+
+Before code for `v0.4.0` or any later feature release, invoke `grill-with-docs`
+and record the agreed goal, user flows, data model, boundaries, and acceptance
+criteria in `docs/design/`. Implementation begins only after Ethan confirms that
+the design tree is fully resolved. Update `CONTEXT.md` inline when domain language
+changes and add an ADR only for a hard-to-reverse decision with a real trade-off.
 
 **Commits use a single-line message** that summarizes the contents. No multi-line
 bodies or bulleted commit descriptions.

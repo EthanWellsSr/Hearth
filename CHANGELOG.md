@@ -1,10 +1,24 @@
-# Hearth changelog
+# Changelog
 
-This file records the high-level contents of shipped Hearth releases. Planned
-releases belong in `ROADMAP.md`; the current implementation and handoff state
-belong in `PROGRESS.md`.
+All notable changes to Hearth are documented here. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and Hearth uses
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v0.4.0 — Calendar — 2026-09-18
+Planned releases belong in [`docs/ROADMAP.md`](docs/ROADMAP.md). Current work and
+handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
+
+## [Unreleased]
+
+### Changed
+
+- Reorganized project documentation around a root domain glossary and changelog,
+  a future-only roadmap, and a concise release status handoff.
+- Added generated third-party software notices and a Licenses link in the app
+  footer.
+
+## [0.4.0] - 2026-09-18
+
+### Added
 
 - Added the shared Household Calendar with responsive month and upcoming views,
   all-day and timed Events, multi-day spans, details, editing, deletion, and
@@ -21,7 +35,9 @@ belong in `PROGRESS.md`.
 - Expanded automated coverage to 45 tests and added Calendar as the first feature
   on the home hub.
 
-## v0.3.2 — Invitation Links — 2026-09-15
+## [0.3.2] - 2026-09-15
+
+### Added
 
 - Added complete Invitation Links that Members can copy or share from Household
   people while retaining the readable Invite Code as a backup.
@@ -34,7 +50,9 @@ belong in `PROGRESS.md`.
 - Expanded automated coverage to 28 tests, including Invitation Link construction,
   login preservation, sharing controls, and restricted-browser fallbacks.
 
-## v0.3.1 — 2026-09-14
+## [0.3.1] - 2026-09-14
+
+### Fixed
 
 - Fixed Avatar saves from iPhone Photos by using a broadly supported browser
   encoding and normalizing uploaded image contents on the server.
@@ -45,7 +63,9 @@ belong in `PROGRESS.md`.
 - Expanded automated coverage to 19 tests, including browser image-format
   fallback and server-side Avatar normalization.
 
-## v0.3.0 — Familiar Faces — 2026-09-14
+## [0.3.0] - 2026-09-14
+
+### Added
 
 - Added required User Profiles with editable display names and private Avatars.
 - Added an Avatar editor with crop, pan, zoom, rotation, HEIC support, and the
@@ -61,7 +81,9 @@ belong in `PROGRESS.md`.
 - Expanded automated coverage to 16 tests across recurrence, profile validation,
   and Avatar form submission.
 
-## v0.2.0 — 2026-09-12
+## [0.2.0] - 2026-09-12
+
+### Added
 
 - Added self-serve Household onboarding: a User can create a Household or join one
   with an Invite Code.
@@ -71,7 +93,9 @@ belong in `PROGRESS.md`.
   and responsive layouts.
 - Added the repository guides used by contributors and coding agents.
 
-## v0.1.0 — 2026-09-11
+## [0.1.0] - 2026-09-11
+
+### Added
 
 - Added email-and-password authentication.
 - Added Household tenancy with Memberships and row-level security (RLS).
@@ -80,3 +104,11 @@ belong in `PROGRESS.md`.
 - Added recurring Chores with due-date advancement and optional Member assignment.
 - Added the initial responsive botanical interface and home navigation hub.
 - Added recurrence tests and the application version footer.
+
+[Unreleased]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/EthanWellsSr/Hearth/compare/v0.3.2...v0.4.0
+[0.3.2]: https://github.com/EthanWellsSr/Hearth/compare/v0.3.1...v0.3.2
+[0.3.1]: https://github.com/EthanWellsSr/Hearth/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/EthanWellsSr/Hearth/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/EthanWellsSr/Hearth/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/EthanWellsSr/Hearth/releases/tag/v0.1.0
