@@ -3,6 +3,7 @@
 import { useActionState, useMemo, useState } from "react";
 import type { CalendarEvent } from "@/lib/calendar";
 import { eventFormDates } from "@/lib/calendar";
+import type { RecurrenceFrequency } from "@/lib/calendar";
 import {
   type EventFormState,
 } from "@/app/calendar/actions";
@@ -20,16 +21,27 @@ const TIME_SUGGESTIONS = Array.from({ length: 96 }, (_, index) => {
   return `${hours}:${minutes}`;
 });
 
+type OccurrenceContext = {
+  key: string;
+  seriesId: string;
+  seriesVersion: number;
+  exceptionVersion: number | null;
+};
+
 export function EventForm({
   action,
   timeZone,
   initialDate,
+  initialTime,
   event,
+  occurrence,
 }: {
   action: EventAction;
   timeZone: string;
   initialDate: string;
+  initialTime?: string;
   event?: CalendarEvent;
+  occurrence?: OccurrenceContext;
 }) {
   const initial = useMemo(
     () =>
@@ -38,10 +50,10 @@ export function EventForm({
         : {
             startDate: initialDate,
             endDate: initialDate,
-            startTime: "09:00",
+            startTime: initialTime || "09:00",
             endTime: "",
           },
-    [event, initialDate, timeZone]
+    [event, initialDate, initialTime, timeZone]
   );
   const [state, formAction, pending] = useActionState(
     action,
@@ -52,16 +64,51 @@ export function EventForm({
   const [endDate, setEndDate] = useState(initial.endDate);
   const [startTime, setStartTime] = useState(initial.startTime);
   const [endTime, setEndTime] = useState(initial.endTime);
+  const [frequency, setFrequency] = useState<RecurrenceFrequency | "none">(
+    event?.recurrenceFrequency ?? "none"
+  );
+  const [recurrenceEnd, setRecurrenceEnd] = useState<"never" | "date" | "count">(
+    event?.recurrenceEndDate ? "date" : event?.recurrenceCount ? "count" : "never"
+  );
+  const [scope, setScope] = useState<"occurrence" | "future">("occurrence");
 
   return (
     <form action={formAction} className="card botanical-card grid gap-5 overflow-visible p-5 sm:grid-cols-2 sm:p-7">
-      {event && (
+      {occurrence ? (
         <>
-          <input type="hidden" name="id" value={event.id} />
-          <input type="hidden" name="version" value={event.version} />
+          <input type="hidden" name="series_id" value={occurrence.seriesId} />
+          <input type="hidden" name="occurrence" value={occurrence.key} />
+          <input type="hidden" name="series_version" value={occurrence.seriesVersion} />
+          {occurrence.exceptionVersion !== null && (
+            <input type="hidden" name="exception_version" value={occurrence.exceptionVersion} />
+          )}
+          <input type="hidden" name="scope" value={scope} />
+          <fieldset className="sm:col-span-2 rounded-2xl border border-emerald-100 bg-white/60 p-4">
+            <legend className="px-1 text-sm font-semibold text-stone-700">Apply changes to</legend>
+            <div className="mt-1 flex flex-col gap-2">
+              <label className="flex items-center gap-2 text-sm text-stone-700">
+                <input type="radio" name="scope_choice" value="occurrence" checked={scope === "occurrence"} onChange={() => setScope("occurrence")} />
+                This occurrence only
+              </label>
+              <label className="flex items-center gap-2 text-sm text-stone-700">
+                <input type="radio" name="scope_choice" value="future" checked={scope === "future"} onChange={() => setScope("future")} />
+                This and all future occurrences
+              </label>
+            </div>
+          </fieldset>
         </>
+      ) : (
+        event && (
+          <>
+            <input type="hidden" name="id" value={event.id} />
+            <input type="hidden" name="version" value={event.version} />
+          </>
+        )
       )}
       <input type="hidden" name="all_day" value={String(allDay)} />
+      {!occurrence && event?.recurrenceTimeZone && (
+        <input type="hidden" name="recurrence_timezone" value={event.recurrenceTimeZone} />
+      )}
 
       <label className="sm:col-span-2">
         <span className="subtle-label">Event title</span>
@@ -124,6 +171,76 @@ export function EventForm({
           />
         </label>
       )}
+
+      <fieldset className={`grid gap-4 rounded-2xl border border-emerald-100 bg-white/60 p-4 sm:col-span-2 sm:grid-cols-2 ${occurrence ? "hidden" : ""}`}>
+        <legend className="px-1 text-sm font-semibold text-stone-700">Repeats</legend>
+        <label>
+          <span className="subtle-label">Frequency</span>
+          <select
+            name="recurrence_frequency"
+            value={frequency}
+            onChange={(event) => setFrequency(event.target.value as RecurrenceFrequency | "none")}
+            className="field w-full"
+          >
+            <option value="none">Does not repeat</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </label>
+
+        {frequency !== "none" && (
+          <>
+            <label>
+              <span className="subtle-label">Every</span>
+              <span className="flex items-center gap-2">
+                <input name="recurrence_interval" type="number" min="1" max="99" defaultValue={event?.recurrenceInterval || 1} className="field w-24" />
+                <span className="text-sm text-stone-500">{frequency === "daily" ? "day(s)" : frequency === "weekly" ? "week(s)" : frequency === "monthly" ? "month(s)" : "year(s)"}</span>
+              </span>
+            </label>
+
+            {frequency === "weekly" && (
+              <fieldset className="sm:col-span-2">
+                <legend className="subtle-label">On</legend>
+                <div className="flex flex-wrap gap-2">
+                  {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((label, weekday) => {
+                    const selected = event?.recurrenceWeekdays?.includes(weekday) ??
+                      new Date(`${startDate}T00:00:00Z`).getUTCDay() === weekday;
+                    return (
+                      <label key={label} className="flex items-center gap-1.5 rounded-full border border-emerald-100 bg-white px-3 py-2 text-xs font-semibold text-stone-600">
+                        <input type="checkbox" name="recurrence_weekday" value={weekday} defaultChecked={selected} />
+                        {label}
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            )}
+
+            <label>
+              <span className="subtle-label">Ends</span>
+              <select name="recurrence_end" value={recurrenceEnd} onChange={(event) => setRecurrenceEnd(event.target.value as "never" | "date" | "count")} className="field w-full">
+                <option value="never">Never</option>
+                <option value="date">On a date</option>
+                <option value="count">After a number of occurrences</option>
+              </select>
+            </label>
+            {recurrenceEnd === "date" && (
+              <label>
+                <span className="subtle-label">Last occurrence date</span>
+                <input name="recurrence_end_date" type="date" min={startDate} defaultValue={event?.recurrenceEndDate || startDate} className="field w-full" />
+              </label>
+            )}
+            {recurrenceEnd === "count" && (
+              <label>
+                <span className="subtle-label">Occurrences</span>
+                <input name="recurrence_count" type="number" min="1" max="999" defaultValue={event?.recurrenceCount || 10} className="field w-full" />
+              </label>
+            )}
+          </>
+        )}
+      </fieldset>
 
       <label>
         <span className="subtle-label">Ends {allDay ? "(optional)" : "date"}</span>
@@ -197,7 +314,7 @@ export function EventForm({
 
       <div className="soft-divider sm:col-span-2" />
       <button disabled={pending} type="submit" className="btn-primary sm:col-span-2 sm:justify-self-end">
-        {pending ? "Saving…" : event ? "Save Event" : "Add Event"}
+        {pending ? "Saving…" : occurrence ? "Save changes" : event ? "Save Event" : "Add Event"}
       </button>
     </form>
   );

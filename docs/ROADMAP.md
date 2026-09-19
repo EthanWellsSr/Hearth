@@ -3,25 +3,39 @@
 Future work is grouped into planned releases. Release names and contents are
 plans; shipped work moves to [`CHANGELOG.md`](../CHANGELOG.md).
 
-## v0.4.1 — Calendar Rhythm
+## v0.4.2 — Event Reminders & Browser Push
 
-**Status:** Planned
+**Status:** Planned; design already recorded in
+[`docs/design/v0.4.1-calendar-rhythm.md`](design/v0.4.1-calendar-rhythm.md)
 
-**Goal:** Bring repeating Household responsibilities and timely reminders into the
-Calendar.
+**Goal:** Deliver timely Event reminders to opted-in Members through browser push.
+
+**Split note:** This scope began as part of v0.4.1 (Calendar Rhythm). Recurring
+Events, the week view, Chores on the Calendar, and timezone-correct maintenance
+shipped in v0.4.1; reminders were split into their own release because they
+require deployment secrets, Supabase Cron, and real-device testing that the rest
+of the calendar work did not. The reminder/push schema (migration `0010`:
+`event_reminders`, `push_subscriptions`, `event_reminder_deliveries`) is already
+applied as groundwork, and unwired opt-in/service-worker scaffolding exists in the
+working tree.
 
 ### Proposed scope
 
-- [ ] Add recurring Events
-- [ ] Add Event reminders and notifications
-- [ ] Add a seven-day time-grid view with Events positioned by time
-- [ ] Show Chores on the Calendar
-- [ ] Make Chore scheduling and Calendar presentation use the Household timezone
-- [ ] Make completed To-do cleanup use the Household timezone
-- [ ] Decide recurrence rules, reminder delivery channels, notification preferences,
-  and Chore presentation during the pre-code design gate
+- [ ] Configure reminder offsets on Events (multiple offsets or none), inherited by
+  a series unless an Event Occurrence overrides them
+- [ ] Persist Event and reminder changes together transactionally
+- [ ] Populate an idempotent delivery outbox keyed by reminder, occurrence,
+  recipient, and channel, with all-day reminders at 9:00 AM in the Event timezone
+- [ ] Add a protected sender (route or Supabase Edge Function) invoked by Supabase
+  Cron using deployment-held VAPID secrets, rechecking Event, Membership, and
+  subscription state before sending
+- [ ] Send per-device browser push to opted-in Members with a payload of title and
+  time only — never Event details
+- [ ] Handle retries and remove expired (404/410) subscriptions
+- [x] Decide recurrence rules, reminder delivery channels, notification
+  preferences, and Chore presentation during the pre-code design gate
 
-## v0.4.2 — Event Organization
+## v0.4.3 — Event Organization
 
 **Status:** Planned
 
@@ -35,7 +49,7 @@ Calendar.
 - [ ] Decide whether colors belong to individual Events, categories, Members, or a
   combination during the pre-code design gate
 
-## v0.4.3 — Event Collaboration
+## v0.4.4 — Event Collaboration
 
 **Status:** Planned
 

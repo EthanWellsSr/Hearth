@@ -1,5 +1,5 @@
 import { requireHousehold } from "@/lib/auth";
-import { todayInChicago } from "@/lib/recurrence";
+import { todayInTimeZone } from "@/lib/calendar";
 import { AppHeader } from "@/components/AppHeader";
 import { AssigneePicker, type AssigneeOption } from "@/components/AssigneePicker";
 import { MemberAvatar } from "@/components/MemberAvatar";
@@ -33,7 +33,7 @@ type Membership = { id: string; user_id: string };
 type UserProfile = { user_id: string; display_name: string; avatar_path: string | null };
 
 export default async function ChoresPage() {
-  const { supabase } = await requireHousehold();
+  const { supabase, householdId } = await requireHousehold();
 
   const { data: members } = await supabase
     .from("memberships")
@@ -44,7 +44,12 @@ export default async function ChoresPage() {
     .select("*")
     .order("next_due", { ascending: true });
 
-  const today = todayInChicago();
+  const { data: household } = await supabase
+    .from("households")
+    .select("timezone")
+    .eq("id", householdId)
+    .single();
+  const today = todayInTimeZone(household?.timezone || "America/Chicago");
   const memberships = (members ?? []) as Membership[];
   const { data: profileRows } = memberships.length
     ? await supabase

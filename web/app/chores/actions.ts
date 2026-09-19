@@ -5,9 +5,9 @@ import { requireHousehold } from "@/lib/auth";
 import {
   computeNextDue,
   firstDue,
-  todayInChicago,
   type Recurrence,
 } from "@/lib/recurrence";
+import { todayInTimeZone } from "@/lib/calendar";
 
 export async function addChore(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
@@ -15,6 +15,12 @@ export async function addChore(formData: FormData) {
   const freq = String(formData.get("freq"));
   const assigneeId = String(formData.get("assignee_id") ?? "");
   const { supabase, householdId } = await requireHousehold();
+  const { data: household } = await supabase
+    .from("households")
+    .select("timezone")
+    .eq("id", householdId)
+    .single();
+  const today = todayInTimeZone(household?.timezone || "America/Chicago");
   const safeAssigneeId = await householdAssigneeId(supabase, householdId, assigneeId);
 
   let rule: Recurrence;
@@ -33,11 +39,12 @@ export async function addChore(formData: FormData) {
     title,
     freq: rule.freq,
     ...cols,
-    next_due: firstDue(rule, todayInChicago()),
+    next_due: firstDue(rule, today),
     household_id: householdId,
     assignee_id: safeAssigneeId,
   });
   revalidatePath("/chores");
+  revalidatePath("/calendar");
 }
 
 export async function reassignChore(formData: FormData) {
@@ -50,6 +57,7 @@ export async function reassignChore(formData: FormData) {
     .update({ assignee_id: safeAssigneeId })
     .eq("id", id);
   revalidatePath("/chores");
+  revalidatePath("/calendar");
 }
 
 async function householdAssigneeId(
@@ -69,13 +77,16 @@ async function householdAssigneeId(
 
 export async function completeChore(formData: FormData) {
   const id = String(formData.get("id"));
-  const { supabase } = await requireHousehold();
+  const { supabase, householdId } = await requireHousehold();
 
-  const { data: chore } = await supabase
-    .from("chores")
-    .select()
-    .eq("id", id)
-    .maybeSingle();
+  const [{ data: chore }, { data: household }] = await Promise.all([
+    supabase.from("chores").select().eq("id", id).maybeSingle(),
+    supabase
+      .from("households")
+      .select("timezone")
+      .eq("id", householdId)
+      .single(),
+  ]);
   if (!chore) return;
 
   const rule: Recurrence =
@@ -83,9 +94,15 @@ export async function completeChore(formData: FormData) {
       ? { freq: "weekly", weekday: chore.weekday }
       : { freq: "every_n_days", intervalDays: chore.interval_days };
 
-  const next_due = computeNextDue(rule, chore.next_due, todayInChicago());
-  await supabase.from("chores").update({ next_due }).eq("id", id);
+  const today = todayInTimeZone(household?.timezone || "America/Chicago");
+  const next_due = computeNextDue(rule, chore.next_due, today);
+  await supabase
+    .from("chores")
+    .update({ next_due })
+    .eq("id", id)
+    .eq("next_due", chore.next_due);
   revalidatePath("/chores");
+  revalidatePath("/calendar");
 }
 
 export async function deleteChore(formData: FormData) {
@@ -93,4 +110,5 @@ export async function deleteChore(formData: FormData) {
   const { supabase } = await requireHousehold();
   await supabase.from("chores").delete().eq("id", id);
   revalidatePath("/chores");
+  revalidatePath("/calendar");
 }

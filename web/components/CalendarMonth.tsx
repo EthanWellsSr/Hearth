@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { completeChore } from "@/app/chores/actions";
 import {
-  type CalendarEvent,
-  eventDateRange,
-  eventsForDate,
-  formatEventTime,
+  type CalendarItem,
+  calendarItemDateRange,
+  calendarItemsForDate,
+  formatCalendarItemTime,
   monthGrid,
   shiftMonth,
 } from "@/lib/calendar";
@@ -11,13 +12,13 @@ import {
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export function CalendarMonth({
-  events,
+  items,
   month,
   today,
   timeZone,
   view,
 }: {
-  events: CalendarEvent[];
+  items: CalendarItem[];
   month: string;
   today: string;
   timeZone: string;
@@ -51,11 +52,11 @@ export function CalendarMonth({
           </div>
         ))}
         {grid.weeks.flat().map((date) => {
-          const dayEvents = eventsForDate(events, date, timeZone);
+          const dayItems = calendarItemsForDate(items, date, timeZone);
           const inMonth = date.slice(0, 7) === month;
           const isToday = date === today;
-          const desktopMore = Math.max(0, dayEvents.length - 4);
-          const phoneMore = Math.max(0, dayEvents.length - 3);
+          const desktopMore = Math.max(0, dayItems.length - 4);
+          const phoneMore = Math.max(0, dayItems.length - 3);
 
           return (
             <div
@@ -74,20 +75,39 @@ export function CalendarMonth({
                 </Link>
               </div>
               <div className="calendar-day-events">
-                {dayEvents.slice(0, 4).map((event, index) => {
-                  const range = eventDateRange(event, timeZone);
+                {dayItems.slice(0, 4).map((item, index) => {
+                  const range = calendarItemDateRange(item, timeZone);
                   const spansDays = range.start !== range.end;
+                  const eventClass = `calendar-event ${item.source === "chore" ? "calendar-chore" : item.allDay || spansDays ? "calendar-event-bar" : "calendar-event-time"} ${index === 3 ? "calendar-event-fourth" : ""} ${range.start < date ? "calendar-event-continues-before" : ""} ${range.end > date ? "calendar-event-continues-after" : ""}`;
+                  if (item.source === "chore") {
+                    return (
+                      <div key={item.key} className={eventClass}>
+                        <Link
+                          href={item.href}
+                          title={`Due · ${item.title}`}
+                          className="min-w-0 flex-1 truncate"
+                        >
+                          <span aria-hidden className="mr-1">✓</span>
+                          {item.title}
+                        </Link>
+                        <form action={completeChore} className="calendar-chore-action">
+                          <input type="hidden" name="id" value={item.sourceId} />
+                          <button type="submit" aria-label={`Complete Chore: ${item.title}`}>Done</button>
+                        </form>
+                      </div>
+                    );
+                  }
                   return (
                     <Link
-                      key={event.id}
-                      href={`/calendar/${event.id}`}
-                      title={`${formatEventTime(event, timeZone)} · ${event.title}`}
-                      className={`calendar-event ${event.allDay || spansDays ? "calendar-event-bar" : "calendar-event-time"} ${index === 3 ? "calendar-event-fourth" : ""} ${range.start < date ? "calendar-event-continues-before" : ""} ${range.end > date ? "calendar-event-continues-after" : ""}`}
+                      key={item.key}
+                      href={item.href}
+                      title={`${formatCalendarItemTime(item, timeZone)} · ${item.title}`}
+                      className={eventClass}
                     >
-                      {!event.allDay && !spansDays && (
-                        <span className="calendar-event-clock">{formatEventTime(event, timeZone).split("–")[0]}</span>
+                      {!item.allDay && !spansDays && (
+                        <span className="calendar-event-clock">{formatCalendarItemTime(item, timeZone).split("–")[0]}</span>
                       )}
-                      <span className="truncate">{event.title}</span>
+                      <span className="truncate">{item.title}</span>
                     </Link>
                   );
                 })}
@@ -105,4 +125,3 @@ export function CalendarMonth({
     </section>
   );
 }
-

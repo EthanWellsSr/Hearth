@@ -9,12 +9,58 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-09-19
+
+### Added
+
+- Added Recurring Events with a typed, RFC 5545-compatible rule set: daily,
+  weekly, monthly, and yearly frequencies; configurable intervals; multiple
+  weekdays for weekly rules; and never, on-a-date, or after-a-count end
+  conditions. Occurrences expand only for the requested Calendar window.
+- Added a series master plus Event Occurrence exceptions, with per-occurrence,
+  this-and-future, and entire-series changes and deletions. Moved occurrences keep
+  their original identity, this-and-future changes split the series transactionally,
+  and all mutations use optimistic concurrency that rejects stale writes.
+- Added the seven-day Week view with an all-day lane and a 24-hour time grid,
+  side-by-side overlaps, phone horizontal scrolling with sticky day headers and
+  time gutter, an Upcoming sidebar at wide widths, and click-to-prefill of a new
+  Event's date and time.
+- Added Chores on the Calendar as all-day Calendar Items on their stored `next_due`
+  date, an explicit Upcoming overdue section, and direct completion that refreshes
+  both Calendar and Chores. Events and Chores remain separate entities.
+- Added a shared Calendar Item projection with bounded, date-range Calendar queries
+  so Month, Upcoming, and Week never load the full Event history.
+- Made Chore scheduling and completed To-do cleanup use each Household's timezone;
+  completed To-dos now record `completed_at` and are cleared per Household-local
+  day.
+- Added migrations `0008` (Household-timezone maintenance), `0009` (Recurring
+  Events and occurrence exceptions), and `0011` (transactional occurrence mutation
+  functions), applied to Supabase. Migration `0010` (reminder and push schema) is
+  applied as groundwork for the reminders release.
+- Hardened the PWA manifest (id, scope, icons) and added 192px and 512px app
+  icons.
+- Expanded automated coverage to 58 tests across recurrence expansion, occurrence
+  exceptions, and split arithmetic.
+
 ### Changed
 
 - Reorganized project documentation around a root domain glossary and changelog,
   a future-only roadmap, and a concise release status handoff.
 - Added generated third-party software notices and a Licenses link in the app
   footer.
+
+### Fixed
+
+- Prevented stale-write conflicts in recurring Event mutations from using
+  PostgreSQL's automatically retried serialization-failure code. Conflicts now
+  return immediately as non-retryable application errors while real row-lock
+  contention retains a three-second timeout.
+
+### Deferred
+
+- Event reminders and browser push moved to their own release (v0.4.2) because
+  they require deployment secrets, Supabase Cron, and real-device testing. Unwired
+  opt-in and service-worker scaffolding remains in the working tree.
 
 ## [0.4.0] - 2026-09-18
 
@@ -105,7 +151,8 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 - Added the initial responsive botanical interface and home navigation hub.
 - Added recurrence tests and the application version footer.
 
-[Unreleased]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/EthanWellsSr/Hearth/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/EthanWellsSr/Hearth/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/EthanWellsSr/Hearth/compare/v0.3.0...v0.3.1
