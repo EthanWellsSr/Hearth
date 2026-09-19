@@ -14,13 +14,8 @@ export async function addChore(formData: FormData) {
   if (!title) return;
   const freq = String(formData.get("freq"));
   const assigneeId = String(formData.get("assignee_id") ?? "");
-  const { supabase, householdId } = await requireHousehold();
-  const { data: household } = await supabase
-    .from("households")
-    .select("timezone")
-    .eq("id", householdId)
-    .single();
-  const today = todayInTimeZone(household?.timezone || "America/Chicago");
+  const { supabase, householdId, householdTimeZone } = await requireHousehold();
+  const today = todayInTimeZone(householdTimeZone);
   const safeAssigneeId = await householdAssigneeId(supabase, householdId, assigneeId);
 
   let rule: Recurrence;
@@ -77,16 +72,12 @@ async function householdAssigneeId(
 
 export async function completeChore(formData: FormData) {
   const id = String(formData.get("id"));
-  const { supabase, householdId } = await requireHousehold();
-
-  const [{ data: chore }, { data: household }] = await Promise.all([
-    supabase.from("chores").select().eq("id", id).maybeSingle(),
-    supabase
-      .from("households")
-      .select("timezone")
-      .eq("id", householdId)
-      .single(),
-  ]);
+  const { supabase, householdTimeZone } = await requireHousehold();
+  const { data: chore } = await supabase
+    .from("chores")
+    .select()
+    .eq("id", id)
+    .maybeSingle();
   if (!chore) return;
 
   const rule: Recurrence =
@@ -94,7 +85,7 @@ export async function completeChore(formData: FormData) {
       ? { freq: "weekly", weekday: chore.weekday }
       : { freq: "every_n_days", intervalDays: chore.interval_days };
 
-  const today = todayInTimeZone(household?.timezone || "America/Chicago");
+  const today = todayInTimeZone(householdTimeZone);
   const next_due = computeNextDue(rule, chore.next_due, today);
   await supabase
     .from("chores")

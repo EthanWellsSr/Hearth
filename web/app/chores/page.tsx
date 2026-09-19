@@ -33,23 +33,13 @@ type Membership = { id: string; user_id: string };
 type UserProfile = { user_id: string; display_name: string; avatar_path: string | null };
 
 export default async function ChoresPage() {
-  const { supabase, householdId } = await requireHousehold();
+  const { supabase, householdTimeZone } = await requireHousehold();
 
-  const { data: members } = await supabase
-    .from("memberships")
-    .select("id, user_id");
-
-  const { data: chores } = await supabase
-    .from("chores")
-    .select("*")
-    .order("next_due", { ascending: true });
-
-  const { data: household } = await supabase
-    .from("households")
-    .select("timezone")
-    .eq("id", householdId)
-    .single();
-  const today = todayInTimeZone(household?.timezone || "America/Chicago");
+  const [{ data: members }, { data: chores }] = await Promise.all([
+    supabase.from("memberships").select("id, user_id"),
+    supabase.from("chores").select("*").order("next_due", { ascending: true }),
+  ]);
+  const today = todayInTimeZone(householdTimeZone);
   const memberships = (members ?? []) as Membership[];
   const { data: profileRows } = memberships.length
     ? await supabase

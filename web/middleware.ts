@@ -32,7 +32,9 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  await supabase.auth.getUser();
+  // Verifies the JWT signature and refreshes near-expiry sessions without an
+  // Auth-server round trip when the project uses asymmetric signing keys.
+  await supabase.auth.getClaims();
 
   const invitationMatch = request.nextUrl.pathname.match(/^\/invite\/([^/]+)$/);
   const inviteCode = normalizeInviteCode(invitationMatch?.[1]);

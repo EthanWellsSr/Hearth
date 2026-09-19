@@ -9,6 +9,15 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+### Fixed
+
+- Reduced authenticated navigation latency by deduplicating request-scoped User
+  and User Profile loading, validating sessions with locally verifiable JWT
+  claims, loading Memberships alongside User Profiles, and reusing the Household
+  timezone returned with Membership context.
+- Removed redundant Household-timezone queries from Calendar and Chore screens
+  and mutations, and parallelized the independent Chore-list queries.
+
 ## [0.4.1] - 2026-09-19
 
 ### Added

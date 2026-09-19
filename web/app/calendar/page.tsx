@@ -20,13 +20,8 @@ export default async function CalendarPage({
   searchParams: Promise<{ month?: string; week?: string; view?: string; deleted?: string }>;
 }) {
   const params = await searchParams;
-  const { supabase, householdId } = await requireHousehold();
-  const { data: household } = await supabase
-    .from("households")
-    .select("timezone")
-    .eq("id", householdId)
-    .single();
-  const timeZone = household?.timezone || "America/Chicago";
+  const { supabase, householdId, householdTimeZone } = await requireHousehold();
+  const timeZone = householdTimeZone;
   const today = todayInTimeZone(timeZone);
   const month = normalizeMonth(params.month, today);
   const view = params.view === "week" ? "week" : params.view === "month" ? "month" : "upcoming";
