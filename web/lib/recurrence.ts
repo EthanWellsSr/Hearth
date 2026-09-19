@@ -1,6 +1,6 @@
 // Recurrence math for Chores. Pure functions over calendar dates (YYYY-MM-DD
-// strings, no time/zone) so they're easy to reason about and test. The only
-// impure helper is todayInChicago(), kept separate.
+// strings, no time/zone) so they're easy to reason about and test. Callers
+// supply the current Household-local date.
 
 export type Recurrence =
   | { freq: "every_n_days"; intervalDays: number }
@@ -40,10 +40,4 @@ export function addDays(ymd: string, n: number): string {
 export function dayOfWeek(ymd: string): number {
   const [y, m, d] = ymd.split("-").map(Number);
   return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
-}
-
-// Today's calendar date in the household timezone (America/Chicago). en-CA
-// formats as YYYY-MM-DD. Impure (reads the clock) — kept out of the math above.
-export function todayInChicago(): string {
-  return new Date().toLocaleDateString("en-CA", { timeZone: "America/Chicago" });
 }

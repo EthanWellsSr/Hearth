@@ -6,9 +6,9 @@ the Grocery List, meal planning, Notes, Messages, and Expenses.
 ## Sources of truth
 
 - `CONTEXT.md` defines the exact product vocabulary. Use those terms.
-- `ROADMAP.md` organizes future work by planned release.
-- `PROGRESS.md` records the current implemented state, immediate next work, and
-  operational notes. Keep it synchronized with changes as they land.
+- `docs/ROADMAP.md` organizes future work by planned release.
+- `docs/STATUS.md` records the current release, active work, next actions, and
+  blockers. Keep it synchronized as the active plan changes.
 - `docs/adr/` records architectural decisions and their reasoning.
 
 ## Workflow
@@ -20,6 +20,30 @@ the Grocery List, meal planning, Notes, Messages, and Expenses.
 - Preserve unrelated working-tree changes. Inspect the current diff before
   editing and before reporting completion.
 - Run commands from `web/` unless a command is repository-wide.
+
+## Release documentation
+
+Before every release:
+
+- Move the completed entries in `CHANGELOG.md` from `Unreleased` into a dated
+  version section.
+- Remove the shipped release from `docs/ROADMAP.md` and verify the remaining
+  release order, dependencies, and scope.
+- Update `docs/STATUS.md` with the released version, current work, next actions,
+  and blockers.
+- Review `CONTEXT.md` and update it only when the release changes Hearth's domain
+  language.
+- Run `npm run notices` from `web/` and include the regenerated
+  `web/public/legal/THIRD_PARTY_NOTICES.txt`.
+
+## Feature design gate
+
+- Before code for `v0.4.0` or any later feature release, invoke
+  `grill-with-docs` and record the agreed goal, user flows, data model,
+  boundaries, and acceptance criteria in `docs/design/`.
+- Implementation begins only after Ethan confirms that the design tree is fully
+  resolved. Update `CONTEXT.md` inline when domain language changes and add an ADR
+  only for a hard-to-reverse decision with a real trade-off.
 
 ## Required verification
 

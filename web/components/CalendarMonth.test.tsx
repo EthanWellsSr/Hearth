@@ -3,7 +3,7 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import type { CalendarEvent } from "@/lib/calendar";
+import { calendarItemFromEvent, type CalendarEvent } from "@/lib/calendar";
 import { CalendarMonth } from "./CalendarMonth";
 
 function event(overrides: Partial<CalendarEvent>): CalendarEvent {
@@ -20,6 +20,12 @@ function event(overrides: Partial<CalendarEvent>): CalendarEvent {
     version: 1,
     createdAt: "2026-09-01T00:00:00Z",
     updatedAt: "2026-09-01T00:00:00Z",
+    recurrenceFrequency: null,
+    recurrenceInterval: null,
+    recurrenceWeekdays: null,
+    recurrenceEndDate: null,
+    recurrenceCount: null,
+    recurrenceTimeZone: null,
     ...overrides,
   };
 }
@@ -30,7 +36,7 @@ describe("Calendar month", () => {
   it("renders a multi-day Event on every affected date with continuation styling", () => {
     render(
       <CalendarMonth
-        events={[event({})]}
+        items={[calendarItemFromEvent(event({}))]}
         month="2026-09"
         today="2026-09-17"
         timeZone="America/Chicago"
@@ -49,8 +55,8 @@ describe("Calendar month", () => {
   it("shows timed Events with their Household-local start time", () => {
     render(
       <CalendarMonth
-        events={[
-          event({
+        items={[
+          calendarItemFromEvent(event({
             id: "timed",
             title: "Dinner",
             allDay: false,
@@ -58,7 +64,7 @@ describe("Calendar month", () => {
             endDate: null,
             startsAt: "2026-09-18T00:00:00Z",
             endsAt: null,
-          }),
+          })),
         ]}
         month="2026-09"
         today="2026-09-17"
@@ -71,4 +77,3 @@ describe("Calendar month", () => {
     expect(link.textContent).toContain("7:00 PM");
   });
 });
-

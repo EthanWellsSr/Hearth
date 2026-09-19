@@ -33,15 +33,17 @@ grocery list, chores, and more — in one place.
 ## Project layout
 
 ```
-CONTEXT.md            # the domain glossary — the words Hearth uses
-CHANGELOG.md          # high-level contents of each shipped version and Git tag
-PROGRESS.md           # living status / handoff between work sessions
-ROADMAP.md            # planned future releases
+CHANGELOG.md          # curated history for each shipped version
+CONTEXT.md            # canonical Hearth domain language
 docs/adr/             # architecture decision records (why, not just what)
+docs/design/          # confirmed feature designs
+docs/ROADMAP.md       # planned releases and dependencies
+docs/STATUS.md        # current release and immediate handoff
 web/                  # the Next.js app
   app/                # routes (including /calendar) + server actions
   components/         # shared UI (AppHeader, CheckableList, PlantMark)
   lib/                # Supabase, auth, Calendar, recurrence, and Avatar normalization
+  public/legal/       # deployed third-party license notices
   supabase/migrations # SQL migrations (run by hand in the Supabase SQL editor)
 ```
 
@@ -91,6 +93,7 @@ Hosted on Vercel (Hobby):
 
   ```bash
   npm version patch --no-git-tag-version
+  npm run notices
   cd ..
   git add -A
   git commit -m "release vX.Y.Z"

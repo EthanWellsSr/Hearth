@@ -78,8 +78,29 @@ A dated entry on the Household Calendar, visible to all Members. An Event has a
 title and may be all-day or timed, on one day or across multiple days.
 _Avoid_: appointment, meeting, reminder
 
+**Recurring Event**:
+An Event series whose recurrence rule produces Event Occurrences. The series owns
+the shared Event information and recurrence schedule.
+_Avoid_: repeating appointment, recurring Chore
+
+**Event Occurrence**:
+One scheduled instance of a Recurring Event. An Event Occurrence may inherit the
+series unchanged, be changed as an exception, or be cancelled.
+_Avoid_: Event copy, generated Event
+
+**Event Reminder**:
+A configured offset before an Event or Event Occurrence that can produce a browser
+push notification for opted-in Members.
+_Avoid_: alarm, notification
+
 **Calendar**:
-The household's shared collection of Events.
+The Household schedule that presents Events, Event Occurrences, and due Chores as
+Calendar Items.
+
+**Calendar Item**:
+A presentation of an Event, Event Occurrence, or due Chore in a bounded Calendar
+date range. It is a view of its source rather than a separate domain record.
+_Avoid_: Calendar Event, copied Event
 
 **Household timezone**:
 The single timezone in which a Household enters and views timed Events. It belongs

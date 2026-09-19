@@ -13,7 +13,15 @@ export type CalendarEvent = {
   version: number;
   createdAt: string;
   updatedAt: string;
+  recurrenceFrequency: RecurrenceFrequency | null;
+  recurrenceInterval: number | null;
+  recurrenceWeekdays: number[] | null;
+  recurrenceEndDate: string | null;
+  recurrenceCount: number | null;
+  recurrenceTimeZone: string | null;
 };
+
+export type RecurrenceFrequency = "daily" | "weekly" | "monthly" | "yearly";
 
 export type EventRow = {
   id: string;
@@ -28,7 +36,61 @@ export type EventRow = {
   version: number;
   created_at: string;
   updated_at: string;
+  recurrence_frequency?: RecurrenceFrequency | null;
+  recurrence_interval?: number | null;
+  recurrence_weekdays?: number[] | null;
+  recurrence_end_date?: string | null;
+  recurrence_count?: number | null;
+  recurrence_timezone?: string | null;
 };
+
+export type ChoreCalendarRow = {
+  id: string;
+  title: string;
+  next_due: string;
+};
+
+// A stored override for a single occurrence of a recurring series. The
+// original_occurrence_key preserves the occurrence's identity even when the
+// override moves it to a different date/time. `cancelled` removes the occurrence.
+export type EventOccurrenceException = {
+  id: string;
+  series_id: string;
+  original_occurrence_key: string;
+  cancelled: boolean;
+  title: string | null;
+  details: string | null;
+  all_day: boolean | null;
+  start_date: string | null;
+  end_date: string | null;
+  starts_at: string | null;
+  ends_at: string | null;
+  version: number;
+};
+
+type CalendarItemBase = {
+  key: string;
+  sourceId: string;
+  title: string;
+  allDay: boolean;
+  startDate: string | null;
+  endDate: string | null;
+  startsAt: string | null;
+  endsAt: string | null;
+  href: string;
+};
+
+export type EventCalendarItem = CalendarItemBase & {
+  source: "event";
+  event: CalendarEvent;
+};
+
+export type ChoreCalendarItem = CalendarItemBase & {
+  source: "chore";
+  dueDate: string;
+};
+
+export type CalendarItem = EventCalendarItem | ChoreCalendarItem;
 
 export type LocalTimeChoice = {
   value: "earlier" | "later";
@@ -81,6 +143,342 @@ export function calendarEventFromRow(row: EventRow): CalendarEvent {
     version: row.version,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    recurrenceFrequency: row.recurrence_frequency ?? null,
+    recurrenceInterval: row.recurrence_interval ?? null,
+    recurrenceWeekdays: row.recurrence_weekdays ?? null,
+    recurrenceEndDate: row.recurrence_end_date ?? null,
+    recurrenceCount: row.recurrence_count ?? null,
+    recurrenceTimeZone: row.recurrence_timezone ?? null,
+  };
+}
+
+export function calendarItemFromEvent(
+  event: CalendarEvent,
+  occurrenceKey?: string
+): EventCalendarItem {
+  return {
+    key: occurrenceKey ? `event:${event.id}:${occurrenceKey}` : `event:${event.id}`,
+    source: "event",
+    sourceId: event.id,
+    title: event.title,
+    allDay: event.allDay,
+    startDate: event.startDate,
+    endDate: event.endDate,
+    startsAt: event.startsAt,
+    endsAt: event.endsAt,
+    href: occurrenceKey
+      ? `/calendar/${event.id}?occurrence=${encodeURIComponent(occurrenceKey)}`
+      : `/calendar/${event.id}`,
+    event,
+  };
+}
+
+// Build the CalendarEvent for an overridden occurrence. Timing is taken wholly
+// from the exception; the occurrence keeps its series identity but is not itself
+// re-expanded, so the recurrence fields are cleared for safety.
+function overrideOccurrence(
+  series: CalendarEvent,
+  exception: EventOccurrenceException
+): CalendarEvent {
+  const allDay = exception.all_day ?? series.allDay;
+  return {
+    ...series,
+    title: exception.title ?? series.title,
+    details: exception.details,
+    allDay,
+    startDate: allDay ? exception.start_date : null,
+    endDate: allDay ? exception.end_date : null,
+    startsAt: allDay ? null : exception.starts_at,
+    endsAt: allDay ? null : exception.ends_at,
+    recurrenceFrequency: null,
+    recurrenceInterval: null,
+    recurrenceWeekdays: null,
+    recurrenceEndDate: null,
+    recurrenceCount: null,
+    recurrenceTimeZone: null,
+  };
+}
+
+// The calendar date (YYYY-MM-DD) a stable occurrence key falls on.
+export function occurrenceKeyDate(occurrenceKey: string): string {
+  return occurrenceKey.slice(0, 10);
+}
+
+// Rebuild the originally scheduled occurrence for a key, before any override.
+// Returns null when the key is malformed or names a nonexistent (spring-forward)
+// wall-clock time.
+export function baseOccurrence(
+  series: CalendarEvent,
+  occurrenceKey: string
+): CalendarEvent | null {
+  if (!series.recurrenceFrequency || !series.recurrenceTimeZone) return null;
+  const timeZone = series.recurrenceTimeZone;
+  const date = occurrenceKeyDate(occurrenceKey);
+  let plainDate: Temporal.PlainDate;
+  try {
+    plainDate = Temporal.PlainDate.from(date);
+  } catch {
+    return null;
+  }
+  const cleared = {
+    recurrenceFrequency: null,
+    recurrenceInterval: null,
+    recurrenceWeekdays: null,
+    recurrenceEndDate: null,
+    recurrenceCount: null,
+    recurrenceTimeZone: null,
+  };
+  if (series.allDay) {
+    const seedStart = Temporal.PlainDate.from(series.startDate!);
+    const allDayDuration = series.endDate
+      ? seedStart.until(Temporal.PlainDate.from(series.endDate)).days
+      : 0;
+    return {
+      ...series,
+      ...cleared,
+      startDate: date,
+      endDate: allDayDuration
+        ? plainDate.add({ days: allDayDuration }).toString()
+        : null,
+    };
+  }
+  const localTime = occurrenceKey.slice(11);
+  const resolved = resolveLocalDateTime(date, localTime, timeZone, "earlier");
+  if (resolved.status !== "valid") return null;
+  const seedStart = Temporal.Instant.from(series.startsAt!);
+  const durationMs = series.endsAt
+    ? Temporal.Instant.from(series.endsAt).epochMilliseconds -
+      seedStart.epochMilliseconds
+    : null;
+  const start = Temporal.Instant.from(resolved.instant);
+  return {
+    ...series,
+    ...cleared,
+    startsAt: start.toString(),
+    endsAt:
+      durationMs === null
+        ? null
+        : start.add({ milliseconds: durationMs }).toString(),
+  };
+}
+
+// The occurrence as it should currently appear: its override when one exists and
+// is not a cancellation, otherwise the originally scheduled occurrence.
+export function effectiveOccurrence(
+  series: CalendarEvent,
+  occurrenceKey: string,
+  exception: EventOccurrenceException | null
+): CalendarEvent | null {
+  if (exception && !exception.cancelled) {
+    return overrideOccurrence(series, exception);
+  }
+  return baseOccurrence(series, occurrenceKey);
+}
+
+// Occurrences generated by the rule strictly before a split date. Used to carry
+// a count-bounded series' remaining occurrences into the forward segment.
+function countOccurrencesBefore(
+  series: CalendarEvent,
+  splitDate: string
+): number {
+  if (!series.recurrenceFrequency || !series.recurrenceTimeZone) return 0;
+  const interval = series.recurrenceInterval || 1;
+  const timeZone = series.recurrenceTimeZone;
+  const seedStart = series.allDay
+    ? Temporal.PlainDate.from(series.startDate!)
+    : Temporal.Instant.from(series.startsAt!)
+        .toZonedDateTimeISO(timeZone)
+        .toPlainDate();
+  const seedTime = series.allDay
+    ? null
+    : Temporal.Instant.from(series.startsAt!)
+        .toZonedDateTimeISO(timeZone)
+        .toPlainTime();
+  const weekdays = series.recurrenceWeekdays ?? [seedStart.dayOfWeek % 7];
+  const seedWeek = seedStart.subtract({ days: seedStart.dayOfWeek % 7 });
+  const boundary = Temporal.PlainDate.from(splitDate);
+  let count = 0;
+  for (
+    let date = seedStart;
+    Temporal.PlainDate.compare(date, boundary) < 0;
+    date = date.add({ days: 1 })
+  ) {
+    const days = seedStart.until(date).days;
+    const months =
+      (date.year - seedStart.year) * 12 + date.month - seedStart.month;
+    const matches =
+      (series.recurrenceFrequency === "daily" && days % interval === 0) ||
+      (series.recurrenceFrequency === "weekly" &&
+        (seedWeek.until(date.subtract({ days: date.dayOfWeek % 7 })).days / 7) %
+          interval ===
+          0 &&
+        weekdays.includes(date.dayOfWeek % 7)) ||
+      (series.recurrenceFrequency === "monthly" &&
+        months % interval === 0 &&
+        date.day === seedStart.day) ||
+      (series.recurrenceFrequency === "yearly" &&
+        (date.year - seedStart.year) % interval === 0 &&
+        date.month === seedStart.month &&
+        date.day === seedStart.day);
+    if (!matches) continue;
+    if (!series.allDay) {
+      const resolved = resolveLocalDateTime(
+        date.toString(),
+        seedTime!.toString({ smallestUnit: "minute" }),
+        timeZone,
+        "earlier"
+      );
+      if (resolved.status !== "valid") continue;
+    }
+    count += 1;
+  }
+  return count;
+}
+
+// The count that the forward segment of a split keeps: the series total minus
+// the occurrences already generated before the split. Null when the series is
+// not count-bounded.
+export function remainingRecurrenceCount(
+  series: CalendarEvent,
+  splitDate: string
+): number | null {
+  if (!series.recurrenceCount) return null;
+  const remaining = series.recurrenceCount - countOccurrencesBefore(series, splitDate);
+  return remaining < 1 ? 1 : remaining;
+}
+
+export function expandRecurringEvent(
+  series: CalendarEvent,
+  range: { start: string; end: string },
+  exceptions: EventOccurrenceException[] = []
+) {
+  if (!series.recurrenceFrequency || !series.recurrenceTimeZone) {
+    return [calendarItemFromEvent(series)];
+  }
+  const exceptionsByKey = new Map(
+    exceptions.map((exception) => [exception.original_occurrence_key, exception])
+  );
+  const consumed = new Set<string>();
+  const pushIfInWindow = (item: CalendarItem, tz: string) => {
+    const occurrenceRange = calendarItemDateRange(item, tz);
+    if (occurrenceRange.end >= range.start && occurrenceRange.start <= range.end) {
+      items.push(item);
+    }
+  };
+  const interval = series.recurrenceInterval || 1;
+  const timeZone = series.recurrenceTimeZone;
+  const seedStart = series.allDay
+    ? Temporal.PlainDate.from(series.startDate!)
+    : Temporal.Instant.from(series.startsAt!)
+        .toZonedDateTimeISO(timeZone)
+        .toPlainDate();
+  const seedTime = series.allDay
+    ? null
+    : Temporal.Instant.from(series.startsAt!)
+        .toZonedDateTimeISO(timeZone)
+        .toPlainTime();
+  const allDayDuration = series.allDay && series.endDate
+    ? seedStart.until(Temporal.PlainDate.from(series.endDate)).days
+    : 0;
+  const timedDurationMs = !series.allDay && series.endsAt
+    ? Temporal.Instant.from(series.endsAt).epochMilliseconds -
+      Temporal.Instant.from(series.startsAt!).epochMilliseconds
+    : null;
+  const requestedEnd = Temporal.PlainDate.from(range.end);
+  const ruleEnd = series.recurrenceEndDate
+    ? Temporal.PlainDate.from(series.recurrenceEndDate)
+    : requestedEnd;
+  const generationEnd = Temporal.PlainDate.compare(ruleEnd, requestedEnd) < 0
+    ? ruleEnd
+    : requestedEnd;
+  const weekdays = series.recurrenceWeekdays ?? [seedStart.dayOfWeek % 7];
+  const seedWeek = seedStart.subtract({ days: seedStart.dayOfWeek % 7 });
+  const items: CalendarItem[] = [];
+  let occurrenceCount = 0;
+
+  for (
+    let date = seedStart;
+    Temporal.PlainDate.compare(date, generationEnd) <= 0;
+    date = date.add({ days: 1 })
+  ) {
+    const days = seedStart.until(date).days;
+    const months = (date.year - seedStart.year) * 12 + date.month - seedStart.month;
+    const matches =
+      (series.recurrenceFrequency === "daily" && days % interval === 0) ||
+      (series.recurrenceFrequency === "weekly" &&
+        seedWeek.until(date.subtract({ days: date.dayOfWeek % 7 })).days / 7 % interval === 0 &&
+        weekdays.includes(date.dayOfWeek % 7)) ||
+      (series.recurrenceFrequency === "monthly" &&
+        months % interval === 0 && date.day === seedStart.day) ||
+      (series.recurrenceFrequency === "yearly" &&
+        (date.year - seedStart.year) % interval === 0 &&
+        date.month === seedStart.month && date.day === seedStart.day);
+    if (!matches) continue;
+
+    let occurrence: CalendarEvent;
+    let occurrenceKey: string;
+    if (series.allDay) {
+      occurrenceKey = date.toString();
+      occurrence = {
+        ...series,
+        startDate: date.toString(),
+        endDate: allDayDuration ? date.add({ days: allDayDuration }).toString() : null,
+      };
+    } else {
+      const localTime = seedTime!.toString({ smallestUnit: "minute" });
+      const resolved = resolveLocalDateTime(date.toString(), localTime, timeZone, "earlier");
+      if (resolved.status !== "valid") continue;
+      occurrenceKey = `${date.toString()}T${localTime}`;
+      const start = Temporal.Instant.from(resolved.instant);
+      occurrence = {
+        ...series,
+        startsAt: start.toString(),
+        endsAt: timedDurationMs === null
+          ? null
+          : start.add({ milliseconds: timedDurationMs }).toString(),
+      };
+    }
+    occurrenceCount += 1;
+    if (series.recurrenceCount && occurrenceCount > series.recurrenceCount) break;
+    // A cancelled occurrence still consumes a count; an override replaces the
+    // occurrence's content while keeping its original identity.
+    const exception = exceptionsByKey.get(occurrenceKey);
+    if (exception) {
+      consumed.add(occurrenceKey);
+      if (exception.cancelled) continue;
+      occurrence = overrideOccurrence(series, exception);
+    }
+    pushIfInWindow(calendarItemFromEvent(occurrence, occurrenceKey), timeZone);
+  }
+
+  // Occurrences whose base date fell outside the generated window but were moved
+  // into it by an override still belong on the Calendar.
+  for (const exception of exceptions) {
+    if (consumed.has(exception.original_occurrence_key) || exception.cancelled) {
+      continue;
+    }
+    const overridden = overrideOccurrence(series, exception);
+    pushIfInWindow(
+      calendarItemFromEvent(overridden, exception.original_occurrence_key),
+      timeZone
+    );
+  }
+  return items;
+}
+
+export function calendarItemFromChore(row: ChoreCalendarRow): ChoreCalendarItem {
+  return {
+    key: `chore:${row.id}:${row.next_due}`,
+    source: "chore",
+    sourceId: row.id,
+    title: row.title,
+    allDay: true,
+    startDate: row.next_due,
+    endDate: row.next_due,
+    startsAt: null,
+    endsAt: null,
+    href: "/chores",
+    dueDate: row.next_due,
   };
 }
 
@@ -303,6 +701,24 @@ export function shiftMonth(month: string, months: number) {
   return Temporal.PlainYearMonth.from(month).add({ months }).toString();
 }
 
+export function weekRange(value: string | null | undefined, fallbackDate: string) {
+  let selected: Temporal.PlainDate;
+  try {
+    selected = Temporal.PlainDate.from(value || fallbackDate);
+  } catch {
+    selected = Temporal.PlainDate.from(fallbackDate);
+  }
+  const start = selected.subtract({ days: selected.dayOfWeek % 7 });
+  const dates = Array.from({ length: 7 }, (_, index) =>
+    start.add({ days: index }).toString()
+  );
+  return { start: dates[0], end: dates[6], dates };
+}
+
+export function shiftWeek(weekStart: string, weeks: number) {
+  return Temporal.PlainDate.from(weekStart).add({ weeks }).toString();
+}
+
 export function monthGrid(month: string) {
   const yearMonth = Temporal.PlainYearMonth.from(month);
   const first = yearMonth.toPlainDate({ day: 1 });
@@ -323,6 +739,34 @@ export function monthGrid(month: string) {
     weeks: Array.from({ length: 6 }, (_, index) =>
       dates.slice(index * 7, index * 7 + 7)
     ),
+  };
+}
+
+export function calendarQueryWindow(month: string, today: string) {
+  const grid = monthGrid(month);
+  const upcomingEnd = Temporal.PlainDate.from(today).add({ days: 6 }).toString();
+  return {
+    start: grid.start < today ? grid.start : today,
+    end: grid.end > upcomingEnd ? grid.end : upcomingEnd,
+  };
+}
+
+export function calendarRangeInstants(
+  start: string,
+  end: string,
+  timeZone: string
+) {
+  const startDate = Temporal.PlainDate.from(start);
+  const endExclusive = Temporal.PlainDate.from(end).add({ days: 1 });
+  return {
+    start: startDate
+      .toZonedDateTime({ timeZone, plainTime: Temporal.PlainTime.from("00:00") })
+      .toInstant()
+      .toString(),
+    endExclusive: endExclusive
+      .toZonedDateTime({ timeZone, plainTime: Temporal.PlainTime.from("00:00") })
+      .toInstant()
+      .toString(),
   };
 }
 
@@ -348,6 +792,11 @@ export function eventDateRange(event: CalendarEvent, timeZone: string) {
   return { start, end };
 }
 
+export function calendarItemDateRange(item: CalendarItem, timeZone: string) {
+  if (item.source === "event") return eventDateRange(item.event, timeZone);
+  return { start: item.dueDate, end: item.dueDate };
+}
+
 export function eventOverlapsDate(
   event: CalendarEvent,
   date: string,
@@ -365,6 +814,19 @@ export function eventsForDate(
   return events
     .filter((event) => eventOverlapsDate(event, date, timeZone))
     .sort((left, right) => compareEvents(left, right, timeZone));
+}
+
+export function calendarItemsForDate(
+  items: CalendarItem[],
+  date: string,
+  timeZone: string
+) {
+  return items
+    .filter((item) => {
+      const range = calendarItemDateRange(item, timeZone);
+      return range.start <= date && range.end >= date;
+    })
+    .sort((left, right) => compareCalendarItems(left, right, timeZone));
 }
 
 export function upcomingEvents(
@@ -387,6 +849,30 @@ export function upcomingEvents(
   return future.length ? [future[0]] : [];
 }
 
+export function upcomingCalendarItems(
+  items: CalendarItem[],
+  today: string,
+  timeZone: string
+) {
+  const end = Temporal.PlainDate.from(today).add({ days: 6 }).toString();
+  const overdueChores = items.filter(
+    (item) => item.source === "chore" && item.dueDate < today
+  );
+  const withinWeek = items.filter((item) => {
+    const range = calendarItemDateRange(item, timeZone);
+    return range.end >= today && range.start <= end;
+  });
+  const selected = [...overdueChores, ...withinWeek].sort((left, right) =>
+    compareCalendarItemsByStart(left, right, timeZone)
+  );
+  if (selected.length) return selected;
+
+  const future = items
+    .filter((item) => calendarItemDateRange(item, timeZone).start > end)
+    .sort((left, right) => compareCalendarItemsByStart(left, right, timeZone));
+  return future.length ? [future[0]] : [];
+}
+
 export function formatEventTime(event: CalendarEvent, timeZone: string) {
   if (event.allDay) return "All day";
   const formatter = new Intl.DateTimeFormat("en-US", {
@@ -397,6 +883,10 @@ export function formatEventTime(event: CalendarEvent, timeZone: string) {
   const start = formatter.format(new Date(event.startsAt!));
   if (!event.endsAt) return start;
   return `${start}–${formatter.format(new Date(event.endsAt))}`;
+}
+
+export function formatCalendarItemTime(item: CalendarItem, timeZone: string) {
+  return item.source === "chore" ? "Due" : formatEventTime(item.event, timeZone);
 }
 
 export function formatEventDateRange(event: CalendarEvent, timeZone: string) {
@@ -410,6 +900,68 @@ export function formatEventDateRange(event: CalendarEvent, timeZone: string) {
   const startLabel = formatter.format(new Date(`${start}T00:00:00Z`));
   if (end === start) return startLabel;
   return `${startLabel} – ${formatter.format(new Date(`${end}T00:00:00Z`))}`;
+}
+
+export function describeEventRecurrence(event: CalendarEvent) {
+  if (!event.recurrenceFrequency) return null;
+  const interval = event.recurrenceInterval || 1;
+  const unit = event.recurrenceFrequency.replace("daily", "day").replace("weekly", "week").replace("monthly", "month").replace("yearly", "year");
+  let description = interval === 1 ? `Every ${unit}` : `Every ${interval} ${unit}s`;
+  if (event.recurrenceFrequency === "weekly" && event.recurrenceWeekdays?.length) {
+    const labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    description += ` on ${event.recurrenceWeekdays.map((day) => labels[day]).join(", ")}`;
+  }
+  if (event.recurrenceEndDate) description += ` through ${event.recurrenceEndDate}`;
+  if (event.recurrenceCount) description += ` for ${event.recurrenceCount} occurrences`;
+  return description;
+}
+
+export function formatCalendarItemDateRange(
+  item: CalendarItem,
+  timeZone: string
+) {
+  if (item.source === "event") return formatEventDateRange(item.event, timeZone);
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${item.dueDate}T00:00:00Z`));
+}
+
+function compareCalendarItems(
+  left: CalendarItem,
+  right: CalendarItem,
+  timeZone: string
+) {
+  const leftRange = calendarItemDateRange(left, timeZone);
+  const rightRange = calendarItemDateRange(right, timeZone);
+  const leftIsBar = left.allDay || leftRange.start !== leftRange.end;
+  const rightIsBar = right.allDay || rightRange.start !== rightRange.end;
+  if (leftIsBar !== rightIsBar) return leftIsBar ? -1 : 1;
+  if (left.source !== right.source) return left.source === "event" ? -1 : 1;
+  return compareCalendarItemsByStart(left, right, timeZone);
+}
+
+function compareCalendarItemsByStart(
+  left: CalendarItem,
+  right: CalendarItem,
+  timeZone: string
+) {
+  const key = (item: CalendarItem) => {
+    if (item.source === "chore") return `${item.dueDate}T00:00:00`;
+    return item.allDay
+      ? `${calendarItemDateRange(item, timeZone).start}T00:00:00`
+      : Temporal.Instant.from(item.startsAt!)
+          .toZonedDateTimeISO(timeZone)
+          .toPlainDateTime()
+          .toString();
+  };
+  return (
+    key(left).localeCompare(key(right)) ||
+    (left.source === right.source ? 0 : left.source === "event" ? -1 : 1) ||
+    left.title.localeCompare(right.title)
+  );
 }
 
 function compareEvents(
