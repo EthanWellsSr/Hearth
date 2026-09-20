@@ -12,8 +12,8 @@ the active plan changes and as part of every release.
 - Event reminders and browser push were split into their own release (v0.4.2).
 - Migrations `0008`, `0009`, `0011` are applied to Supabase (`0010` reminder/push
   schema is applied as groundwork).
-- The v0.4.1 production deployment is confirmed. A follow-up authenticated
-  navigation optimization is implemented locally and awaits review/deployment.
+- The v0.4.1 production deployment and follow-up authenticated-navigation
+  optimization are confirmed in production.
 
 ## Verified this cycle
 
@@ -31,6 +31,9 @@ the active plan changes and as part of every release.
   mandatory Auth-server User lookups.
 - Authenticated local navigation improved from roughly 1.7–2.7s before the fix to
   659–681ms between Calendar views and 935ms from Home to Calendar after warm-up.
+- Production verification after deployment measured a warm Calendar view change
+  at 648ms and Home to Calendar at 977ms. The first two Calendar view changes
+  after a fresh reload were 1.40s and 1.52s; no browser errors were recorded.
 
 ## Reminders split — state of the deferred work (v0.4.2)
 
@@ -64,21 +67,18 @@ the active plan changes and as part of every release.
   functions use `P0001` and none use `serialization_failure`. The retry counter
   did not increase across a 12-second sample, all database sessions were idle,
   and refreshed CPU had recovered from 95.92% to 1.47%.
-- The local performance repro passes. Keep the feature gate closed until this
-  optimization is deployed and the same production timings remain below one
-  second under normal warm use.
+- The performance gate passed after deployment: normal warm navigation remained
+  below one second, browser logs were clean, and a freshly refreshed Supabase
+  report showed 0.40% CPU with no sign of another retry storm.
 
 ## Next
 
-1. Review and deploy the authenticated-navigation optimization, then repeat the
-   production navigation timings and verify CPU remains normal with no new 504
-   retry storm.
-2. Dev-database cleanup of verification artifacts: the "Weekly standup"/"Standup
+1. Dev-database cleanup of verification artifacts: the "Weekly standup"/"Standup
    v4" split pair and the "Concurrency probe v3" series (awaiting Ethan's go-ahead).
-3. Only after the performance gate passes, begin v0.4.2 (Event Reminders & Browser
-   Push) with the config/persistence slice, then delivery via Supabase Cron.
+2. Begin v0.4.2 (Event Reminders & Browser Push) with the config/persistence
+   slice, then delivery via Supabase Cron.
 
 ## Blockers
 
-- Feature work is paused pending deployment and production verification of the
-  navigation optimization.
+- No performance blocker remains. v0.4.2 still requires Ethan for VAPID
+  keys/secrets, Supabase Cron configuration, and installed-iPhone push testing.
