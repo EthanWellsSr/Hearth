@@ -9,7 +9,7 @@ the active plan changes and as part of every release.
   occurrence exceptions and mutations, the Week view, Chores on the Calendar,
   the Calendar Item projection, and Household-timezone maintenance.
 - `dev`, `master`, and tag `v0.4.1` resolve to the release merge.
-- Event reminders and browser push were split into their own release (v0.4.2).
+- Event reminders and browser push were split into their own release (now v0.4.3).
 - Migrations `0008`, `0009`, `0011` are applied to Supabase (`0010` reminder/push
   schema is applied as groundwork).
 - The v0.4.1 production deployment and follow-up authenticated-navigation
@@ -35,7 +35,25 @@ the active plan changes and as part of every release.
   at 648ms and Home to Calendar at 977ms. The first two Calendar view changes
   after a fresh reload were 1.40s and 1.52s; no browser errors were recorded.
 
-## Reminders split — state of the deferred work (v0.4.2)
+## Active work — v0.4.2 Responsive Application Architecture
+
+- Design is confirmed in `docs/design/v0.4.2-performance-architecture.md`.
+- Implementation is ready for verification: Vercel is configured for `pdx1`,
+  authenticated pages share a persistent shell and loading state, private Avatar
+  URLs are cached, Household context and Calendar reads have consolidated
+  RLS-active functions, and common mutations expose immediate pending state.
+- The app retains legacy read fallbacks until migration `0012` is applied, so the
+  current dev database continues to work but cannot demonstrate the final
+  database-round-trip improvement yet.
+- `npm run lint`, `npm test` (63), `npm run build -- --webpack`,
+  `npm run notices:check`, and local browser checks at desktop and 390px phone
+  width pass. The browser check visibly confirmed the persistent header and
+  route-group loading state during a slow navigation.
+- Deployment authorized and pushed to `master` on 2026-09-24. Migration `0012`
+  must be applied by Ethan in the Supabase SQL Editor (no DB credentials or CLI
+  are available to sessions); until then the legacy read fallbacks serve reads.
+
+## Reminders split — state of the deferred work (v0.4.3)
 
 - Design is recorded in `docs/design/v0.4.1-calendar-rhythm.md`.
 - Schema `0010` (`event_reminders`, `push_subscriptions`,
@@ -75,10 +93,12 @@ the active plan changes and as part of every release.
 
 1. Dev-database cleanup of verification artifacts: the "Weekly standup"/"Standup
    v4" split pair and the "Concurrency probe v3" series (awaiting Ethan's go-ahead).
-2. Begin v0.4.2 (Event Reminders & Browser Push) with the config/persistence
-   slice, then delivery via Supabase Cron.
+2. Ethan applies migration `0012` in Supabase, confirms the Vercel Functions
+   region shows `pdx1`, and tests whether production feels fast enough; then run
+   the production latency acceptance sample. If still sluggish, next lever is
+   client router caching (`staleTimes`) and broader optimistic UI.
 
 ## Blockers
 
-- No performance blocker remains. v0.4.2 still requires Ethan for VAPID
-  keys/secrets, Supabase Cron configuration, and installed-iPhone push testing.
+- Production latency acceptance is blocked on Ethan applying migration `0012`. v0.4.3 still requires Ethan for VAPID keys/secrets,
+  Supabase Cron configuration, and installed-iPhone push testing.

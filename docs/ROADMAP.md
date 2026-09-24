@@ -3,7 +3,27 @@
 Future work is grouped into planned releases. Release names and contents are
 plans; shipped work moves to [`CHANGELOG.md`](../CHANGELOG.md).
 
-## v0.4.2 — Event Reminders & Browser Push
+## v0.4.2 — Responsive Application Architecture
+
+**Status:** In development; design recorded in
+[`docs/design/v0.4.2-performance-architecture.md`](design/v0.4.2-performance-architecture.md)
+
+**Goal:** Make authenticated navigation and everyday interactions respond
+immediately while preserving server authorization and Household isolation.
+
+### Scope
+
+- [x] Run Vercel Functions near the Supabase primary
+- [x] Add a persistent authenticated shell and immediate loading states
+- [x] Reuse private Avatar signed URLs instead of recreating them per navigation
+- [x] Consolidate User Profile, Membership, and Household context into one
+  RLS-active database call
+- [x] Consolidate bounded Calendar source reads into one RLS-active database call
+- [x] Add immediate pending or optimistic feedback to existing high-frequency
+  interactions
+- [ ] Meet the latency and safety criteria recorded in the design
+
+## v0.4.3 — Event Reminders & Browser Push
 
 **Status:** Planned; design already recorded in
 [`docs/design/v0.4.1-calendar-rhythm.md`](design/v0.4.1-calendar-rhythm.md)
@@ -35,7 +55,7 @@ working tree.
 - [x] Decide recurrence rules, reminder delivery channels, notification
   preferences, and Chore presentation during the pre-code design gate
 
-## v0.4.3 — Event Organization
+## v0.4.4 — Event Organization
 
 **Status:** Planned
 
@@ -49,7 +69,7 @@ working tree.
 - [ ] Decide whether colors belong to individual Events, categories, Members, or a
   combination during the pre-code design gate
 
-## v0.4.4 — Event Collaboration
+## v0.4.5 — Event Collaboration
 
 **Status:** Planned
 

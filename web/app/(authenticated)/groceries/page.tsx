@@ -1,12 +1,12 @@
 import { requireHousehold } from "@/lib/auth";
-import { AppHeader } from "@/components/AppHeader";
 import { CheckableList } from "@/components/CheckableList";
+import { FormSubmitButton } from "@/components/FormSubmitButton";
 import {
   addGroceryItem,
   toggleGroceryItem,
   deleteGroceryItem,
   clearBought,
-} from "./actions";
+} from "@/app/groceries/actions";
 
 export default async function GroceriesPage() {
   const { supabase } = await requireHousehold();
@@ -24,9 +24,7 @@ export default async function GroceriesPage() {
   const hasBought = items.some((i) => i.checked);
 
   return (
-    <main className="app-shell">
-      <AppHeader />
-
+    <>
       <header className="flex items-end justify-between gap-4">
         <div>
           <p className="page-kicker">For the kitchen</p>
@@ -35,18 +33,18 @@ export default async function GroceriesPage() {
         </div>
         {hasBought && (
           <form action={clearBought}>
-            <button type="submit" className="btn-ghost whitespace-nowrap">
+            <FormSubmitButton pendingChildren="Clearing…" className="btn-ghost whitespace-nowrap">
               Clear bought
-            </button>
+            </FormSubmitButton>
           </form>
         )}
       </header>
 
       <form action={addGroceryItem} className="form-panel">
         <input name="name" placeholder="What do you need?" aria-label="New grocery item" className="field flex-1" />
-        <button type="submit" className="btn-primary">
+        <FormSubmitButton pendingChildren="Adding…" className="btn-primary">
           Add item
-        </button>
+        </FormSubmitButton>
       </form>
 
       <CheckableList
@@ -56,6 +54,6 @@ export default async function GroceriesPage() {
         checkedField="bought"
         emptyText="List is empty — add what you need above."
       />
-    </main>
+    </>
   );
 }

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AppHeader } from "@/components/AppHeader";
 import { EventForm } from "@/components/EventForm";
 import { requireHousehold } from "@/lib/auth";
 import {
@@ -9,7 +8,7 @@ import {
   type EventRow,
   todayInTimeZone,
 } from "@/lib/calendar";
-import { saveOccurrence, updateEvent } from "../../actions";
+import { saveOccurrence, updateEvent } from "@/app/calendar/actions";
 
 export default async function EditEventPage({
   params,
@@ -27,13 +26,12 @@ export default async function EditEventPage({
     .maybeSingle();
   if (!row) {
     return (
-      <main className="app-shell max-w-3xl">
-        <AppHeader />
+      <>
         <section className="empty-state">
           <h1 className="text-xl font-semibold text-stone-800">This Event is unavailable</h1>
           <Link href="/calendar" className="btn-primary">Return to Calendar</Link>
         </section>
-      </main>
+      </>
     );
   }
   const series = calendarEventFromRow(row as EventRow);
@@ -53,18 +51,16 @@ export default async function EditEventPage({
     const occurrence = effectiveOccurrence(series, occurrenceKey, exception);
     if (!occurrence) {
       return (
-        <main className="app-shell max-w-3xl">
-          <AppHeader />
+        <>
           <section className="empty-state">
             <h1 className="text-xl font-semibold text-stone-800">This occurrence is unavailable</h1>
             <Link href={`/calendar/${id}`} className="btn-primary">Back to the series</Link>
           </section>
-        </main>
+        </>
       );
     }
     return (
-      <main className="app-shell max-w-3xl">
-        <AppHeader />
+      <>
         <header>
           <Link href={`/calendar/${id}?occurrence=${encodeURIComponent(occurrenceKey)}`} className="mb-4 inline-flex text-sm font-semibold text-emerald-700 hover:text-emerald-900">← Occurrence</Link>
           <p className="page-kicker">Adjust one occurrence</p>
@@ -83,13 +79,12 @@ export default async function EditEventPage({
             exceptionVersion: exception ? exception.version : null,
           }}
         />
-      </main>
+      </>
     );
   }
 
   return (
-    <main className="app-shell max-w-3xl">
-      <AppHeader />
+    <>
       <header>
         <Link href={`/calendar/${id}`} className="mb-4 inline-flex text-sm font-semibold text-emerald-700 hover:text-emerald-900">← Event details</Link>
         <p className="page-kicker">Adjust the plan</p>
@@ -102,6 +97,6 @@ export default async function EditEventPage({
         initialDate={todayInTimeZone(timeZone)}
         event={series}
       />
-    </main>
+    </>
   );
 }

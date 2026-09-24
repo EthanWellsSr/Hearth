@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { normalizeAvatarUpload } from "@/lib/avatar-image-server";
@@ -64,6 +64,7 @@ export async function saveProfile(
     await admin.storage.from("avatars").remove([existing.avatar_path]);
   }
 
+  updateTag("avatar-urls");
   revalidatePath("/", "layout");
   if (formData.get("destination") === "profile") redirect("/profile?saved=1");
 

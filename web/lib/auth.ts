@@ -39,6 +39,53 @@ export const requireProfile = cache(async function requireProfile() {
 // if there's no session or no membership.
 export const requireHousehold = cache(async function requireHousehold() {
   const { supabase, user } = await requireUser();
+  const { data: context, error } = await supabase.rpc("get_my_household_context");
+
+  if (error?.code === "PGRST202") {
+    return requireHouseholdLegacy(supabase, user);
+  }
+  if (error) throw error;
+
+  const row = context as HouseholdContextRow | null;
+  if (!row?.setup_completed) {
+    const invite = await pendingInviteCode();
+    redirect(invite ? `/profile/setup?invite=${invite}` : "/profile/setup");
+  }
+  if (!row.membership_id || !row.household_id || !row.membership_role || !row.household_timezone) {
+    redirect(invitePath((await pendingInviteCode()) ?? "") ?? "/onboarding");
+  }
+
+  return {
+    supabase,
+    user,
+    profile: {
+      user_id: row.user_id,
+      display_name: row.display_name,
+      avatar_path: row.avatar_path,
+      setup_completed: row.setup_completed,
+    },
+    membershipId: row.membership_id,
+    membershipRole: row.membership_role,
+    householdId: row.household_id,
+    householdTimeZone: row.household_timezone,
+  };
+});
+
+type HouseholdContextRow = {
+  user_id: string;
+  display_name: string;
+  avatar_path: string | null;
+  setup_completed: boolean;
+  membership_id: string | null;
+  household_id: string | null;
+  membership_role: "owner" | "member" | null;
+  household_timezone: string | null;
+};
+
+async function requireHouseholdLegacy(
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  user: { id: string; email?: string }
+) {
   const profilePromise = requireProfile();
   const membershipPromise = supabase
     .from("memberships")
@@ -68,4 +115,4 @@ export const requireHousehold = cache(async function requireHousehold() {
     householdId: membership.household_id as string,
     householdTimeZone: household.timezone as string,
   };
-});
+}

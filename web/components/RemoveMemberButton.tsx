@@ -1,6 +1,7 @@
 "use client";
 
 import { removeMember } from "@/app/people/actions";
+import { FormSubmitButton } from "./FormSubmitButton";
 
 export function RemoveMemberButton({ membershipId, name }: { membershipId: string; name: string }) {
   return (
@@ -13,9 +14,9 @@ export function RemoveMemberButton({ membershipId, name }: { membershipId: strin
       }}
     >
       <input type="hidden" name="membership_id" value={membershipId} />
-      <button type="submit" className="btn-ghost min-h-9 px-3 text-xs text-red-700 hover:bg-red-50 hover:text-red-800">
+      <FormSubmitButton pendingChildren="Removing…" className="btn-ghost min-h-9 px-3 text-xs text-red-700 hover:bg-red-50 hover:text-red-800">
         Remove
-      </button>
+      </FormSubmitButton>
     </form>
   );
 }

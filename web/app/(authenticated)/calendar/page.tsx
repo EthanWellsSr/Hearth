@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AppHeader } from "@/components/AppHeader";
 import { CalendarMonth } from "@/components/CalendarMonth";
 import { CalendarWeek } from "@/components/CalendarWeek";
 import { UpcomingEvents } from "@/components/UpcomingEvents";
@@ -44,8 +43,8 @@ export default async function CalendarPage({
   const upcoming = upcomingCalendarItems(items, today, timeZone);
 
   return (
-    <main className="app-shell max-w-6xl">
-      <AppHeader />
+    <>
+      <span className="hidden" data-wide-shell />
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="page-kicker">The shape of your days</p>
@@ -96,6 +95,6 @@ export default async function CalendarPage({
           </div>
         </div>
       )}
-    </main>
+    </>
   );
 }

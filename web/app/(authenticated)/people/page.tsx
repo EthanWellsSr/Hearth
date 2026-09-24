@@ -1,4 +1,3 @@
-import { AppHeader } from "@/components/AppHeader";
 import { InviteCodeControls } from "@/components/InviteCodeControls";
 import { MemberAvatar } from "@/components/MemberAvatar";
 import { RemoveMemberButton } from "@/components/RemoveMemberButton";
@@ -60,8 +59,7 @@ export default async function PeoplePage({
     });
 
   return (
-    <main className="app-shell">
-      <AppHeader />
+    <>
       <header>
         <p className="page-kicker">The people at home</p>
         <h1 className="page-title">Household people</h1>
@@ -130,6 +128,6 @@ export default async function PeoplePage({
           <MemberHouseholdManagement />
         )
       )}
-    </main>
+    </>
   );
 }

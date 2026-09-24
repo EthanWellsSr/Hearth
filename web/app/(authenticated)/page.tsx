@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { requireHousehold } from "@/lib/auth";
-import { AppHeader } from "@/components/AppHeader";
 import { MemberAvatar } from "@/components/MemberAvatar";
 import { MeadowSprig } from "@/components/MeadowSprig";
 import { signedAvatarUrls } from "@/lib/avatar-server";
@@ -71,9 +70,7 @@ export default async function Home() {
   const avatarUrls = await signedAvatarUrls((profiles ?? []).map((profile) => profile.avatar_path));
 
   return (
-    <main className="app-shell">
-      <AppHeader />
-
+    <>
       <section className="card botanical-card relative overflow-hidden px-6 py-8 sm:px-9 sm:py-10">
         <div className="relative z-10 max-w-lg">
           <p className="page-kicker">Your household</p>
@@ -150,6 +147,6 @@ export default async function Home() {
         ))}
         </nav>
       </section>
-    </main>
+    </>
   );
 }
