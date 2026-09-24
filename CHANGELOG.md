@@ -38,6 +38,9 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ### Fixed
 
+- The web app manifest now loads behind Vercel Deployment Protection: it is
+  served from `/site.webmanifest` and linked with `crossorigin="use-credentials"`,
+  replacing Next's auto-injected link that failed with CORS errors.
 - Calendar view tabs and month/week paging acknowledge a click immediately with
   a pending state; these same-page navigations never showed the route loading
   state and previously sat unresponsive for about 300ms.

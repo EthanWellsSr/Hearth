@@ -17,7 +17,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Hearth",
   description: "A softer way to care for home, together.",
-  manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "Hearth", statusBarStyle: "default" },
   icons: { icon: "/logo-meadow.png", apple: "/logo-meadow.png" },
 };
@@ -30,6 +29,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
+        {/* Rendered by hand (React hoists it into <head>) so the manifest request
+            carries the Vercel Deployment Protection cookie; Next's `manifest`
+            metadata only does this on preview deployments. */}
+        <link rel="manifest" href="/site.webmanifest" crossOrigin="use-credentials" />
         <MeadowBackdrop />
         {children}
         <footer className="flex h-16 items-center justify-center gap-2 px-5 text-center text-xs text-stone-400">
