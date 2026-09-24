@@ -12,8 +12,7 @@ the active plan changes and as part of every release.
   caching (`staleTimes`), pending states on common actions, no prefetch on
   Calendar add-Event slots, a formatted `/licenses` page, and dropdowns that
   layer above neighboring cards and dismiss on outside click or Escape.
-- `dev` and `master` resolve to the release merge. Tag `v0.4.2` is cut after
-  the harness run passes.
+- `dev`, `master`, and tag `v0.4.2` resolve to the release merge.
 - Migrations `0012`, `0013`, and `0014` are applied and verified live: anon can
   execute no app function (42501), Household-data policies are scoped to
   authenticated, and future public functions no longer grant anon execute.
@@ -27,8 +26,15 @@ the active plan changes and as part of every release.
   width with the real components: every assignee menu and the avatar menu sits
   above later cards and the footer, and outside click, Escape, choosing, and
   opening another menu all close it.
-- Before v0.4.2, production warm Calendar view changes measured 648ms and Home
-  to Calendar 977ms.
+- Production latency acceptance PASSED on 2026-09-24 with
+  `web/scripts/measure-navigation.js`: function region `cle1::pdx1`; ack max
+  19ms; ready median 13ms and p95 458ms across 20 transitions (7 server, 13
+  client cache); server-rendered median 321ms and p95 626ms (Home → Calendar).
+  Before v0.4.2, warm Calendar view changes measured 648ms and Home to Calendar
+  977ms.
+- A first run failed on ack (Calendar view changes 301–348ms with no feedback,
+  fixed with `PendingLink`) and showed one Home → Chores outlier of 11,029ms
+  that did not recur (308ms on the re-run).
 
 ## Reminders split — state of the deferred work (v0.4.3)
 
@@ -68,22 +74,11 @@ the active plan changes and as part of every release.
 
 ## Next
 
-1. Ethan runs `web/scripts/measure-navigation.js` in the DevTools Console while
-   signed in on production. It measures 20 transitions (ack ≤100ms, median
-   ≤500ms, p95 ≤1,000ms) and reports the function region from `x-vercel-id`
-   (expect `pdx1`). On PASS, record the results here and tag `v0.4.2`. If it
-   fails, the next lever is broader optimistic UI. The signed-in smoke check
-   after `0014` passed.
-   First run (2026-09-24): region `cle1::pdx1` confirmed; FAIL on ack (Calendar
-   view changes 301–348ms with no feedback, now fixed with `PendingLink`) and
-   one Home → Chores outlier at 11,029ms. Server-rendered transitions otherwise
-   ran 301–585ms (median 330ms). Re-run after deploy; if Chores stalls again,
-   read its duration in Vercel Logs.
-2. Dev-database cleanup of verification artifacts: the "Weekly standup"/"Standup
+1. Dev-database cleanup of verification artifacts: the "Weekly standup"/"Standup
    v4" split pair and the "Concurrency probe v3" series (awaiting Ethan's go-ahead).
-3. Rotate the Supabase secret key as a precaution (it was printed into a session
+2. Rotate the Supabase secret key as a precaution (it was printed into a session
    log on 2026-09-24) and update it in Vercel and `web/.env.local`.
-4. Begin v0.4.3 Event Reminders & Browser Push.
+3. Begin v0.4.3 Event Reminders & Browser Push.
 
 ## Blockers
 
