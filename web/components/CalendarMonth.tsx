@@ -68,6 +68,7 @@ export function CalendarMonth({
               <div className="mb-1 flex items-center justify-between gap-1">
                 <Link
                   href={`/calendar/new?date=${date}`}
+                  prefetch={false}
                   aria-label={`Add Event on ${date}`}
                   className="calendar-day-number"
                 >
