@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PendingLink } from "./PendingLink";
 import { completeChore } from "@/app/chores/actions";
 import {
   type CalendarItem,
@@ -31,11 +32,11 @@ export function CalendarMonth({
     <section aria-labelledby="month-heading" className="card overflow-hidden bg-white/85">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 px-4 py-4 sm:px-5">
         <div className="flex items-center gap-2">
-          <Link href={`/calendar?month=${today.slice(0, 7)}${viewSuffix}`} className="btn-ghost min-h-9 border border-emerald-100 bg-white px-3 text-xs">
+          <PendingLink href={`/calendar?month=${today.slice(0, 7)}${viewSuffix}`} className="btn-ghost min-h-9 border border-emerald-100 bg-white px-3 text-xs">
             Today
-          </Link>
-          <Link aria-label="Previous month" href={`/calendar?month=${shiftMonth(month, -1)}${viewSuffix}`} className="icon-btn border border-emerald-100 bg-white">←</Link>
-          <Link aria-label="Next month" href={`/calendar?month=${shiftMonth(month, 1)}${viewSuffix}`} className="icon-btn border border-emerald-100 bg-white">→</Link>
+          </PendingLink>
+          <PendingLink aria-label="Previous month" href={`/calendar?month=${shiftMonth(month, -1)}${viewSuffix}`} className="icon-btn border border-emerald-100 bg-white">←</PendingLink>
+          <PendingLink aria-label="Next month" href={`/calendar?month=${shiftMonth(month, 1)}${viewSuffix}`} className="icon-btn border border-emerald-100 bg-white">→</PendingLink>
         </div>
         <h2 id="month-heading" className="text-xl font-semibold tracking-tight text-stone-800">
           {grid.label}

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PendingLink } from "@/components/PendingLink";
 import { CalendarMonth } from "@/components/CalendarMonth";
 import { CalendarWeek } from "@/components/CalendarWeek";
 import { UpcomingEvents } from "@/components/UpcomingEvents";
@@ -65,15 +65,15 @@ export default async function CalendarPage({
       )}
 
       <nav aria-label="Calendar view" className="grid grid-cols-3 rounded-full border border-emerald-100 bg-white/70 p-1">
-        <Link href={`/calendar?month=${month}`} className={`rounded-full px-4 py-2 text-center text-sm font-semibold ${view === "upcoming" ? "bg-emerald-600 text-white" : "text-stone-500"}`}>
+        <PendingLink href={`/calendar?month=${month}`} className={`rounded-full px-4 py-2 text-center text-sm font-semibold ${view === "upcoming" ? "bg-emerald-600 text-white" : "text-stone-500"}`}>
           Upcoming
-        </Link>
-        <Link href={`/calendar?month=${month}&view=month`} className={`rounded-full px-4 py-2 text-center text-sm font-semibold ${view === "month" ? "bg-emerald-600 text-white" : "text-stone-500"}`}>
+        </PendingLink>
+        <PendingLink href={`/calendar?month=${month}&view=month`} className={`rounded-full px-4 py-2 text-center text-sm font-semibold ${view === "month" ? "bg-emerald-600 text-white" : "text-stone-500"}`}>
           Month
-        </Link>
-        <Link href={`/calendar?view=week&week=${week.start}`} className={`rounded-full px-4 py-2 text-center text-sm font-semibold ${view === "week" ? "bg-emerald-600 text-white" : "text-stone-500"}`}>
+        </PendingLink>
+        <PendingLink href={`/calendar?view=week&week=${week.start}`} className={`rounded-full px-4 py-2 text-center text-sm font-semibold ${view === "week" ? "bg-emerald-600 text-white" : "text-stone-500"}`}>
           Week
-        </Link>
+        </PendingLink>
       </nav>
 
       {view === "week" ? (

@@ -38,6 +38,9 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ### Fixed
 
+- Calendar view tabs and month/week paging acknowledge a click immediately with
+  a pending state; these same-page navigations never showed the route loading
+  state and previously sat unresponsive for about 300ms.
 - A failed To-do or Chore reassignment now restores the previous assignee and
   shows an error; the reassign actions report database failures and
   RLS-rejected updates instead of silently succeeding.

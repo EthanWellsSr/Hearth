@@ -74,6 +74,11 @@ the active plan changes and as part of every release.
    (expect `pdx1`). On PASS, record the results here and tag `v0.4.2`. If it
    fails, the next lever is broader optimistic UI. The signed-in smoke check
    after `0014` passed.
+   First run (2026-09-24): region `cle1::pdx1` confirmed; FAIL on ack (Calendar
+   view changes 301–348ms with no feedback, now fixed with `PendingLink`) and
+   one Home → Chores outlier at 11,029ms. Server-rendered transitions otherwise
+   ran 301–585ms (median 330ms). Re-run after deploy; if Chores stalls again,
+   read its duration in Vercel Logs.
 2. Dev-database cleanup of verification artifacts: the "Weekly standup"/"Standup
    v4" split pair and the "Concurrency probe v3" series (awaiting Ethan's go-ahead).
 3. Rotate the Supabase secret key as a precaution (it was printed into a session
