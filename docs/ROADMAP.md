@@ -3,7 +3,31 @@
 Future work is grouped into planned releases. Release names and contents are
 plans; shipped work moves to [`CHANGELOG.md`](../CHANGELOG.md).
 
-## v0.4.3 — Event Reminders & Browser Push
+## v0.4.3 — Public Launch Readiness
+
+**Status:** Planned; findings in
+[`docs/audits/2026-09-24-public-launch-readiness.md`](audits/2026-09-24-public-launch-readiness.md).
+Design gate (`grill-with-docs`) not yet run.
+
+**Goal:** Let people outside the Wells household open Hearth's link, create an
+account, and run their own Household safely, on infrastructure that keeps working
+as Households are added. Ends with the repository public and CI enforced on `master`.
+
+### Scope
+
+- [ ] Production publicly reachable (Vercel Standard Protection) on Hearth's own domain
+- [ ] Custom SMTP (Resend) on a verified domain so confirmation emails reach anyone
+- [ ] `/auth/confirm` route and password reset
+- [ ] CAPTCHA on sign-up/sign-in; invite-code hardening
+- [ ] Explicit Household filters on list queries plus `household_id` indexes
+- [ ] Database-enforced one Household per User
+- [ ] Baseline migration, a staging Supabase project, and CLI-applied migrations
+- [ ] Nightly database backups via scheduled GitHub Action (free tier)
+- [ ] Security headers, error tracking, privacy policy, and account deletion
+- [ ] Repo hygiene (license decision, neutral test fixtures, README), repo made public
+- [ ] CI (`checks`) required on `master` through a `dev` → `master` PR
+
+## v0.4.4 — Event Reminders & Browser Push
 
 **Status:** Planned; design already recorded in
 [`docs/design/v0.4.1-calendar-rhythm.md`](design/v0.4.1-calendar-rhythm.md)
@@ -35,7 +59,7 @@ working tree.
 - [x] Decide recurrence rules, reminder delivery channels, notification
   preferences, and Chore presentation during the pre-code design gate
 
-## v0.4.4 — Event Organization
+## v0.4.5 — Event Organization
 
 **Status:** Planned
 
@@ -49,7 +73,7 @@ working tree.
 - [ ] Decide whether colors belong to individual Events, categories, Members, or a
   combination during the pre-code design gate
 
-## v0.4.5 — Event Collaboration
+## v0.4.6 — Event Collaboration
 
 **Status:** Planned
 

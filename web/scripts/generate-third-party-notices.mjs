@@ -25,6 +25,40 @@ function packageName(lockPackagePath) {
   return lockPackagePath.slice(lockPackagePath.lastIndexOf("node_modules/") + 13);
 }
 
+function isShippedPackage(lockPackagePath, metadata) {
+  return (
+    lockPackagePath.includes("node_modules/") &&
+    metadata.dev !== true &&
+    metadata.link !== true
+  );
+}
+
+// --check compares the committed file's package inventory with the lockfile.
+// It never reads node_modules, because which optional platform packages npm
+// installs (and therefore which license files exist) differs by OS and CPU;
+// the full regeneration runs on the developer's machine with `npm run notices`.
+if (checkOnly) {
+  const expected = Object.entries(lock.packages ?? {})
+    .filter(([lockPackagePath, metadata]) => isShippedPackage(lockPackagePath, metadata))
+    .map(([lockPackagePath, metadata]) => `${packageName(lockPackagePath)}@${metadata.version}`)
+    .sort();
+  const current = existsSync(outputPath) ? readFileSync(outputPath, "utf8") : "";
+  const inventory = current.split("LICENSE AND NOTICE TEXTS")[0];
+  const listed = [...inventory.matchAll(/^(\S+@\S+)\nLicense: /gm)]
+    .map((match) => match[1])
+    .sort();
+  const missing = expected.filter((name) => !listed.includes(name));
+  const extra = listed.filter((name) => !expected.includes(name));
+  if (missing.length > 0 || extra.length > 0 || expected.length !== listed.length) {
+    console.error("Third-party notices are out of date. Run `npm run notices`.");
+    for (const name of missing) console.error(`  missing: ${name}`);
+    for (const name of extra) console.error(`  no longer shipped: ${name}`);
+    process.exit(1);
+  }
+  console.log(`Third-party notices are current (${listed.length} packages).`);
+  process.exit(0);
+}
+
 function repositoryUrl(repository) {
   const value = typeof repository === "string" ? repository : repository?.url;
   return value?.replace(/^git\+/, "") ?? null;
@@ -91,14 +125,7 @@ const packages = [];
 const unresolved = [];
 
 for (const [lockPackagePath, metadata] of Object.entries(lock.packages ?? {})) {
-  if (
-    !lockPackagePath ||
-    !lockPackagePath.includes("node_modules/") ||
-    metadata.dev === true ||
-    metadata.link === true
-  ) {
-    continue;
-  }
+  if (!isShippedPackage(lockPackagePath, metadata)) continue;
 
   const name = packageName(lockPackagePath);
   const directory = path.join(projectRoot, lockPackagePath);
@@ -206,17 +233,8 @@ for (const entry of sortedTexts) {
 
 const output = `${lines.join("\n").trimEnd()}\n`;
 
-if (checkOnly) {
-  const current = existsSync(outputPath) ? readFileSync(outputPath, "utf8") : null;
-  if (current !== output) {
-    console.error("Third-party notices are out of date. Run `npm run notices`.");
-    process.exit(1);
-  }
-  console.log("Third-party notices are current.");
-} else {
-  mkdirSync(path.dirname(outputPath), { recursive: true });
-  writeFileSync(outputPath, output);
-  console.log(
-    `Wrote ${path.relative(projectRoot, outputPath)} for ${packages.length} packages.`,
-  );
-}
+mkdirSync(path.dirname(outputPath), { recursive: true });
+writeFileSync(outputPath, output);
+console.log(
+  `Wrote ${path.relative(projectRoot, outputPath)} for ${packages.length} packages.`,
+);
