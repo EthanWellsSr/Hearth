@@ -1,0 +1,71 @@
+# Runs the pre-release checks on every push to dev/master and on every pull
+# request into master. Mark the "checks" and "notices" jobs as required status
+# checks on master so a red run blocks the merge (and therefore the Vercel
+# production deploy).
+name: CI
+
+on:
+  push:
+    branches: [dev, master]
+  pull_request:
+    branches: [master]
+
+# A newer push to the same branch or PR supersedes the run in progress.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+    env:
+      # The build only needs these to exist. Placeholders keep real Supabase
+      # credentials out of CI; nothing here talks to a database.
+      SUPABASE_URL: https://placeholder.supabase.co
+      SUPABASE_SECRET_KEY: placeholder-secret-key
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Test
+        run: npm test
+      - name: Build
+        run: npm run build -- --webpack
+
+  notices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      # The notices file is generated on macOS arm64, and the generator reads
+      # license files from whichever optional platform packages are installed.
+      # Install that same package set so the check compares like with like.
+      - run: npm ci --os=darwin --cpu=arm64 --ignore-scripts
+      - name: Third-party notices are current
+        run: npm run notices:check

@@ -36,7 +36,7 @@ the active plan changes and as part of every release.
   fixed with `PendingLink`) and showed one Home → Chores outlier of 11,029ms
   that did not recur (308ms on the re-run).
 
-## Reminders split — state of the deferred work (v0.4.3)
+## Reminders split — state of the deferred work (v0.4.4)
 
 - Design is recorded in `docs/design/v0.4.1-calendar-rhythm.md`.
 - Schema `0010` (`event_reminders`, `push_subscriptions`,
@@ -74,13 +74,19 @@ the active plan changes and as part of every release.
 
 ## Next
 
-1. Dev-database cleanup of verification artifacts: the "Weekly standup"/"Standup
-   v4" split pair and the "Concurrency probe v3" series (awaiting Ethan's go-ahead).
-2. Rotate the Supabase secret key as a precaution (it was printed into a session
-   log on 2026-09-24) and update it in Vercel and `web/.env.local`.
-3. Begin v0.4.3 Event Reminders & Browser Push.
+1. v0.4.3 Public Launch Readiness, scoped from
+   `docs/audits/2026-09-24-public-launch-readiness.md`. Decided: Ethan buys a
+   domain (for Resend SMTP and Hearth's URL); backups via a free scheduled GitHub
+   Action, not Supabase Pro. Next: Ethan runs `/grill-with-docs` for the design
+   gate before implementation.
+2. CI is written (`.github/workflows/ci.yml`, jobs `checks` and `notices`) but
+   uncommitted. After the repo goes public: PR `dev` → `master`, then require
+   both jobs on `master` with bypass disabled. Branch protection is unavailable
+   while the repo is private on GitHub Free.
+3. v0.4.4 Event Reminders & Browser Push is deferred until Ethan chooses to
+   start it.
 
 ## Blockers
 
-- v0.4.3 requires Ethan for VAPID keys/secrets, Supabase Cron configuration, and
+- v0.4.4 requires Ethan for VAPID keys/secrets, Supabase Cron configuration, and
   installed-iPhone push testing.
