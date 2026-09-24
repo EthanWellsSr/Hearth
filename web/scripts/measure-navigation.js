@@ -2,7 +2,8 @@
 //
 // Paste into the DevTools Console while signed in on the production site. It
 // clicks through 20 real in-app transitions and reports, per transition:
-//   ack   - time until the UI visibly responds (URL change or loading state)
+//   ack   - time until the UI visibly responds (URL change, loading state, or
+//           a pending link)
 //   ready - time until the destination is rendered with its data
 //   from  - "server" when the page was fetched, "cache" when the client router
 //           reused a recently visited page (staleTimes)
@@ -34,8 +35,9 @@
     return [...document.querySelectorAll("main a")].find((a) => a.textContent.trim() === text);
   }
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-  const frame = () => new Promise((r) => requestAnimationFrame(() => r()));
+  const frame = () => new Promise((r) => setTimeout(r, 5));
   const loading = () => document.querySelector('[aria-label="Loading page"]');
+  const linkPending = () => document.querySelector("[data-link-pending]");
   const here = () => location.pathname + location.search;
 
   async function measure(link) {
@@ -48,8 +50,8 @@
     for (;;) {
       await frame();
       const now = performance.now() - start;
-      if (ack === null && (here() !== before || loading())) ack = now;
-      if (here() === targetPath && !loading()) break;
+      if (ack === null && (here() !== before || loading() || linkPending())) ack = now;
+      if (here() === targetPath && !loading() && !linkPending()) break;
       if (now > TIMEOUT_MS) throw new Error(`Timed out waiting for ${targetPath}`);
     }
     const ready = performance.now() - start;

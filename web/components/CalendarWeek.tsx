@@ -1,5 +1,6 @@
 import { Temporal } from "@js-temporal/polyfill";
 import Link from "next/link";
+import { PendingLink } from "./PendingLink";
 import { completeChore } from "@/app/chores/actions";
 import {
   calendarItemDateRange,
@@ -104,9 +105,9 @@ export function CalendarWeek({
     <section aria-labelledby="week-heading" className="card overflow-hidden bg-white/90">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-100 px-4 py-4 sm:px-5">
         <div className="flex items-center gap-2">
-          <Link href={`/calendar?view=week&week=${today}`} className="btn-ghost min-h-9 border border-emerald-100 bg-white px-3 text-xs">Today</Link>
-          <Link aria-label="Previous week" href={`/calendar?view=week&week=${shiftWeek(start, -1)}`} className="icon-btn border border-emerald-100 bg-white">←</Link>
-          <Link aria-label="Next week" href={`/calendar?view=week&week=${shiftWeek(start, 1)}`} className="icon-btn border border-emerald-100 bg-white">→</Link>
+          <PendingLink href={`/calendar?view=week&week=${today}`} className="btn-ghost min-h-9 border border-emerald-100 bg-white px-3 text-xs">Today</PendingLink>
+          <PendingLink aria-label="Previous week" href={`/calendar?view=week&week=${shiftWeek(start, -1)}`} className="icon-btn border border-emerald-100 bg-white">←</PendingLink>
+          <PendingLink aria-label="Next week" href={`/calendar?view=week&week=${shiftWeek(start, 1)}`} className="icon-btn border border-emerald-100 bg-white">→</PendingLink>
         </div>
         <h2 id="week-heading" className="text-lg font-semibold tracking-tight text-stone-800">
           {dayLabel(dates[0])} – {dayLabel(dates[6])}

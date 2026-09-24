@@ -77,6 +77,13 @@
     z-index: 1;
   }
 
+  /* Immediate acknowledgement for same-page navigations (PendingLink). */
+  a:has(> [data-link-pending]) {
+    cursor: progress;
+    box-shadow: inset 0 0 0 2px rgb(16 185 129 / 0.45);
+    animation: pulse 1s ease-in-out infinite;
+  }
+
   /* Dropdowns near the bottom of the page must open over the footer. */
   body > main {
     z-index: 2;
