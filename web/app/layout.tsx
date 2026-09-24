@@ -38,7 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <span aria-hidden="true">·</span>
           <a
             className="underline decoration-stone-300 underline-offset-4 transition hover:text-stone-600"
-            href="/legal/THIRD_PARTY_NOTICES.txt"
+            href="/licenses"
           >
             Licenses
           </a>

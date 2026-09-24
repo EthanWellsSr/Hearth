@@ -95,8 +95,9 @@ the active plan changes and as part of every release.
    v4" split pair and the "Concurrency probe v3" series (awaiting Ethan's go-ahead).
 2. Ethan applies migration `0012` in Supabase, confirms the Vercel Functions
    region shows `pdx1`, and tests whether production feels fast enough; then run
-   the production latency acceptance sample. If still sluggish, next lever is
-   client router caching (`staleTimes`) and broader optimistic UI.
+   the production latency acceptance sample. Client router caching
+   (`staleTimes`) and the formatted `/licenses` page were added on 2026-09-24 as
+   part of v0.4.2; if still sluggish, the next lever is broader optimistic UI.
 
 ## Blockers
 
