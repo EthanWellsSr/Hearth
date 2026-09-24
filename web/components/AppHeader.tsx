@@ -1,14 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "@/app/login/actions";
-import { requireProfile } from "@/lib/auth";
-import { signedAvatarUrl } from "@/lib/avatar-server";
 import { MemberAvatar } from "./MemberAvatar";
 
-export async function AppHeader() {
-  const { profile } = await requireProfile();
-  const avatarUrl = await signedAvatarUrl(profile.avatar_path);
+type HeaderProfile = {
+  display_name: string;
+  avatar_path: string | null;
+};
 
+export function AppHeader({
+  profile,
+  avatarUrl,
+}: {
+  profile: HeaderProfile;
+  avatarUrl: string;
+}) {
   return (
     <header className="card relative z-40 flex items-center justify-between overflow-visible rounded-full px-3 py-2.5 sm:px-4">
       <Link

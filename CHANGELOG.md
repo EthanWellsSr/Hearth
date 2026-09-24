@@ -9,6 +9,20 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+### Added
+
+- Added a persistent authenticated application shell and immediate route loading
+  state so navigation retains the header and acknowledges a selection while
+  page-specific data loads.
+- Added migration `0012` with RLS-active Household-context and Calendar-window
+  functions, reducing those read paths to one database round trip each.
+- Added pending states to common list, Chore, Event, and Household actions.
+
+### Changed
+
+- Configured Vercel Functions for Portland (`pdx1`) near the Supabase primary and
+  cached private Avatar signed URLs below their one-hour validity.
+
 ### Fixed
 
 - Reduced authenticated navigation latency by deduplicating request-scoped User
@@ -67,7 +81,7 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ### Deferred
 
-- Event reminders and browser push moved to their own release (v0.4.2) because
+- Event reminders and browser push moved to their own release (now v0.4.3) because
   they require deployment secrets, Supabase Cron, and real-device testing. Unwired
   opt-in and service-worker scaffolding remains in the working tree.
 

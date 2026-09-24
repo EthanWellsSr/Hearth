@@ -1,12 +1,12 @@
 import { requireHousehold } from "@/lib/auth";
 import { todayInTimeZone } from "@/lib/calendar";
-import { AppHeader } from "@/components/AppHeader";
 import { AssigneePicker, type AssigneeOption } from "@/components/AssigneePicker";
 import { MemberAvatar } from "@/components/MemberAvatar";
+import { FormSubmitButton } from "@/components/FormSubmitButton";
 import { TinyLeaf } from "@/components/MeadowSprig";
 import { signedAvatarUrls } from "@/lib/avatar-server";
 import { DEFAULT_AVATAR_URL } from "@/lib/profile";
-import { addChore, completeChore, deleteChore } from "./actions";
+import { addChore, completeChore, deleteChore } from "@/app/chores/actions";
 
 const WEEKDAYS = [
   "Sunday",
@@ -67,9 +67,7 @@ export default async function ChoresPage() {
   const memberById = new Map(memberList.map((member) => [member.membershipId, member]));
 
   return (
-    <main className="app-shell">
-      <AppHeader />
-
+    <>
       <header>
         <p className="page-kicker">The rhythm of home</p>
         <h1 className="page-title">Chores</h1>
@@ -110,9 +108,9 @@ export default async function ChoresPage() {
         </label>
 
         <div className="soft-divider sm:col-span-2" />
-        <button type="submit" className="btn-primary sm:col-span-2 sm:justify-self-end">
+        <FormSubmitButton pendingChildren="Adding…" className="btn-primary sm:col-span-2 sm:justify-self-end">
           Add this chore
-        </button>
+        </FormSubmitButton>
       </form>
 
       {chores && chores.length > 0 ? (
@@ -124,11 +122,11 @@ export default async function ChoresPage() {
               <li key={c.id} className="card group flex items-start gap-3 p-3.5 transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300/70 hover:shadow-md sm:p-4">
                 <form action={completeChore} className="flex">
                   <input type="hidden" name="id" value={c.id} />
-                  <button type="submit" className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 transition hover:border-emerald-500 hover:bg-emerald-100" aria-label={`Complete ${c.title}`}>
+                  <FormSubmitButton pendingChildren="…" className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 transition hover:border-emerald-500 hover:bg-emerald-100" aria-label={`Complete ${c.title}`}>
                     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-4 w-4">
                       <path d="m7 12.5 3.2 3.2L17.5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                  </button>
+                  </FormSubmitButton>
                 </form>
 
                 <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -165,11 +163,11 @@ export default async function ChoresPage() {
 
                 <form action={deleteChore} className="flex">
                   <input type="hidden" name="id" value={c.id} />
-                  <button type="submit" aria-label="Delete" className="icon-btn">
+                  <FormSubmitButton pendingChildren="…" aria-label="Delete" className="icon-btn">
                     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-4 w-4">
                       <path d="m8 8 8 8m0-8-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                     </svg>
-                  </button>
+                  </FormSubmitButton>
                 </form>
               </li>
             );
@@ -183,6 +181,6 @@ export default async function ChoresPage() {
           <p>No chores yet. Add the first rhythm for your home above.</p>
         </div>
       )}
-    </main>
+    </>
   );
 }

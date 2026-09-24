@@ -1,5 +1,6 @@
 import { deleteTodo, toggleTodo } from "@/app/actions";
 import { AssigneePicker, type AssigneeOption } from "./AssigneePicker";
+import { FormSubmitButton } from "./FormSubmitButton";
 import { MemberAvatar } from "./MemberAvatar";
 import { TinyLeaf } from "./MeadowSprig";
 
@@ -38,13 +39,13 @@ export function TodoList({
             <form action={toggleTodo} className="flex">
               <input type="hidden" name="id" value={item.id} />
               <input type="hidden" name="done" value={String(item.done)} />
-              <button
-                type="submit"
+              <FormSubmitButton
                 aria-label={item.done ? "Mark not done" : "Mark done"}
+                pendingChildren="…"
                 className={`flex h-8 w-8 items-center justify-center rounded-full border text-xs font-bold transition ${item.done ? "border-emerald-600 bg-emerald-600 text-white" : "border-emerald-200 bg-emerald-50/60 text-transparent hover:border-emerald-500"}`}
               >
                 ✓
-              </button>
+              </FormSubmitButton>
             </form>
 
             <div className="min-w-0 flex-1">
@@ -70,11 +71,11 @@ export function TodoList({
 
             <form action={deleteTodo} className="flex">
               <input type="hidden" name="id" value={item.id} />
-              <button type="submit" aria-label="Delete" className="icon-btn opacity-70 group-hover:opacity-100">
+              <FormSubmitButton aria-label="Delete" pendingChildren="…" className="icon-btn opacity-70 group-hover:opacity-100">
                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-4 w-4">
                   <path d="m8 8 8 8m0-8-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                 </svg>
-              </button>
+              </FormSubmitButton>
             </form>
           </li>
         );
@@ -82,4 +83,3 @@ export function TodoList({
     </ul>
   );
 }
-

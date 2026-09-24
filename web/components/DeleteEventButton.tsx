@@ -1,6 +1,7 @@
 "use client";
 
 import { deleteEvent } from "@/app/calendar/actions";
+import { FormSubmitButton } from "./FormSubmitButton";
 
 export function DeleteEventButton({ id, title }: { id: string; title: string }) {
   return (
@@ -13,10 +14,12 @@ export function DeleteEventButton({ id, title }: { id: string; title: string }) 
       }}
     >
       <input type="hidden" name="id" value={id} />
-      <button type="submit" className="btn-ghost text-red-700 hover:bg-red-50 hover:text-red-800">
+      <FormSubmitButton
+        pendingChildren="Deleting…"
+        className="btn-ghost text-red-700 hover:bg-red-50 hover:text-red-800"
+      >
         Delete Event
-      </button>
+      </FormSubmitButton>
     </form>
   );
 }
-

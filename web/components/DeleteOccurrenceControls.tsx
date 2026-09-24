@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { deleteOccurrence } from "@/app/calendar/actions";
+import { FormSubmitButton } from "./FormSubmitButton";
 
 const LABELS: Record<string, string> = {
   occurrence: "just this occurrence",
@@ -51,9 +52,9 @@ export function DeleteOccurrenceControls({
           <option value="series">the entire series</option>
         </select>
       </label>
-      <button type="submit" className="btn-ghost text-red-700 hover:bg-red-50 hover:text-red-800">
+      <FormSubmitButton pendingChildren="Deleting…" className="btn-ghost text-red-700 hover:bg-red-50 hover:text-red-800">
         Delete
-      </button>
+      </FormSubmitButton>
     </form>
   );
 }

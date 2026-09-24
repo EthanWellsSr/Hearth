@@ -1,8 +1,8 @@
 import { requireHousehold } from "@/lib/auth";
-import { AppHeader } from "@/components/AppHeader";
 import { addTodo } from "@/app/actions";
 import { AssigneePicker, type AssigneeOption } from "@/components/AssigneePicker";
 import { TodoList } from "@/components/TodoList";
+import { FormSubmitButton } from "@/components/FormSubmitButton";
 import { signedAvatarUrls } from "@/lib/avatar-server";
 import { DEFAULT_AVATAR_URL } from "@/lib/profile";
 
@@ -37,9 +37,7 @@ export default async function TodosPage() {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <main className="app-shell">
-      <AppHeader />
-
+    <>
       <header>
         <p className="page-kicker">A clearer mind</p>
         <h1 className="page-title">To-dos</h1>
@@ -55,9 +53,9 @@ export default async function TodosPage() {
           <span className="subtle-label">Assignee</span>
           <AssigneePicker members={memberList} />
         </label>
-        <button type="submit" className="btn-primary sm:mb-0.5">
+        <FormSubmitButton pendingChildren="Adding…" className="btn-primary sm:mb-0.5">
           Add to list
-        </button>
+        </FormSubmitButton>
       </form>
 
       <TodoList
@@ -69,6 +67,6 @@ export default async function TodosPage() {
         }))}
         members={memberList}
       />
-    </main>
+    </>
   );
 }

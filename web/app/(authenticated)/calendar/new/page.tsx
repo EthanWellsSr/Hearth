@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { AppHeader } from "@/components/AppHeader";
 import { EventForm } from "@/components/EventForm";
 import { requireHousehold } from "@/lib/auth";
 import { todayInTimeZone } from "@/lib/calendar";
-import { createEvent } from "../actions";
+import { createEvent } from "@/app/calendar/actions";
 
 export default async function NewEventPage({
   searchParams,
@@ -20,8 +19,7 @@ export default async function NewEventPage({
     : undefined;
 
   return (
-    <main className="app-shell max-w-3xl">
-      <AppHeader />
+    <>
       <header>
         <Link href="/calendar" className="mb-4 inline-flex text-sm font-semibold text-emerald-700 hover:text-emerald-900">← Calendar</Link>
         <p className="page-kicker">Something to look forward to</p>
@@ -29,6 +27,6 @@ export default async function NewEventPage({
         <p className="page-description">Times are entered in your Household timezone: {timeZone}.</p>
       </header>
       <EventForm action={createEvent} timeZone={timeZone} initialDate={initialDate} initialTime={initialTime} />
-    </main>
+    </>
   );
 }

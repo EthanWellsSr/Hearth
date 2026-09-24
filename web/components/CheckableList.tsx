@@ -1,3 +1,6 @@
+import { FormSubmitButton } from "./FormSubmitButton";
+import { TinyLeaf } from "./MeadowSprig";
+
 // Shared list view for to-dos and groceries (and future lists like Chores).
 // Each caller normalizes its rows to { id, label, checked } and supplies its own
 // toggle/delete server actions — the view is shared, the domain logic stays per-feature.
@@ -37,9 +40,9 @@ export function CheckableList({
           <form action={toggleAction} className="flex">
             <input type="hidden" name="id" value={item.id} />
             <input type="hidden" name={checkedField} value={String(item.checked)} />
-            <button
-              type="submit"
+            <FormSubmitButton
               aria-label={item.checked ? "Mark not done" : "Mark done"}
+              pendingChildren="…"
               className={
                 "flex h-8 w-8 items-center justify-center rounded-full border text-xs font-bold transition " +
                 (item.checked
@@ -48,7 +51,7 @@ export function CheckableList({
               }
             >
               ✓
-            </button>
+            </FormSubmitButton>
           </form>
 
           <span
@@ -64,19 +67,18 @@ export function CheckableList({
 
           <form action={deleteAction} className="flex">
             <input type="hidden" name="id" value={item.id} />
-            <button
-              type="submit"
+            <FormSubmitButton
               aria-label="Delete"
+              pendingChildren="…"
               className="icon-btn opacity-70 transition-opacity group-hover:opacity-100"
             >
               <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-4 w-4">
                 <path d="m8 8 8 8m0-8-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
               </svg>
-            </button>
+            </FormSubmitButton>
           </form>
         </li>
       ))}
     </ul>
   );
 }
-import { TinyLeaf } from "./MeadowSprig";

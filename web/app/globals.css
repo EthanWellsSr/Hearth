@@ -101,6 +101,10 @@
     @apply relative mx-auto flex min-h-[calc(100vh-64px)] w-full max-w-3xl flex-col gap-7 px-5 py-6 sm:px-8 sm:py-8;
   }
 
+  .app-shell:has([data-wide-shell]) {
+    @apply max-w-6xl;
+  }
+
   .auth-shell {
     @apply relative mx-auto grid min-h-[calc(100vh-64px)] w-full max-w-5xl place-items-center px-5 py-10;
   }

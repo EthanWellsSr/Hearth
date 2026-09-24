@@ -40,7 +40,7 @@ vi.mock("./supabase-server", () => ({
 
 import { requireHousehold, requireProfile } from "./auth";
 
-function supabaseFixture() {
+function supabaseFixture({ rpcMissing = false }: { rpcMissing?: boolean } = {}) {
   const events: string[] = [];
   const getClaims = vi.fn(async () => ({
     data: { claims: { sub: "user-1", email: "ethan@example.com" } },
@@ -78,12 +78,30 @@ function supabaseFixture() {
     };
     return query;
   });
+  const rpc = vi.fn(async () =>
+    rpcMissing
+      ? { data: null, error: { code: "PGRST202" } }
+      : {
+          data: {
+            user_id: "user-1",
+            display_name: "Ethan",
+            avatar_path: null,
+            setup_completed: true,
+            membership_id: "membership-1",
+            household_id: "household-1",
+            membership_role: "owner",
+            household_timezone: "America/Chicago",
+          },
+          error: null,
+        }
+  );
 
   return {
-    client: { auth: { getClaims }, from },
+    client: { auth: { getClaims }, from, rpc },
     events,
     from,
     getClaims,
+    rpc,
   };
 }
 
@@ -93,7 +111,7 @@ describe("request auth context", () => {
     vi.clearAllMocks();
   });
 
-  it("deduplicates User and User Profile loading across page and header", async () => {
+  it("deduplicates User loading across Household and Profile callers", async () => {
     const fixture = supabaseFixture();
     mocks.createSupabaseServerClient.mockResolvedValue(fixture.client);
 
@@ -101,20 +119,22 @@ describe("request auth context", () => {
 
     expect(mocks.createSupabaseServerClient).toHaveBeenCalledTimes(1);
     expect(fixture.getClaims).toHaveBeenCalledTimes(1);
+    expect(fixture.rpc).toHaveBeenCalledTimes(1);
     expect(fixture.from.mock.calls.filter(([table]) => table === "user_profiles")).toHaveLength(1);
   });
 
-  it("deduplicates Household context loading within one request", async () => {
+  it("loads and deduplicates Household context through one RPC", async () => {
     const fixture = supabaseFixture();
     mocks.createSupabaseServerClient.mockResolvedValue(fixture.client);
 
     await Promise.all([requireHousehold(), requireHousehold()]);
 
-    expect(fixture.from.mock.calls.filter(([table]) => table === "memberships")).toHaveLength(1);
+    expect(fixture.rpc).toHaveBeenCalledTimes(1);
+    expect(fixture.from).not.toHaveBeenCalled();
   });
 
-  it("loads the User Profile and Membership concurrently", async () => {
-    const fixture = supabaseFixture();
+  it("keeps the legacy Profile and Membership fallback concurrent", async () => {
+    const fixture = supabaseFixture({ rpcMissing: true });
     mocks.createSupabaseServerClient.mockResolvedValue(fixture.client);
 
     await requireHousehold();

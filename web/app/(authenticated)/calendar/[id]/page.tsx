@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AppHeader } from "@/components/AppHeader";
 import { DeleteEventButton } from "@/components/DeleteEventButton";
 import { DeleteOccurrenceControls } from "@/components/DeleteOccurrenceControls";
 import { MemberAvatar } from "@/components/MemberAvatar";
@@ -32,14 +31,13 @@ export default async function EventDetailsPage({
     .maybeSingle();
   if (!row) {
     return (
-      <main className="app-shell max-w-3xl">
-        <AppHeader />
+      <>
         <section className="empty-state">
           <h1 className="text-xl font-semibold text-stone-800">This Event is unavailable</h1>
           <p>It may have been deleted, or it belongs to another Household.</p>
           <Link href="/calendar" className="btn-primary">Return to Calendar</Link>
         </section>
-      </main>
+      </>
     );
   }
 
@@ -91,8 +89,7 @@ export default async function EventDetailsPage({
   }
 
   return (
-    <main className="app-shell max-w-3xl">
-      <AppHeader />
+    <>
       <header>
         <Link href="/calendar" className="mb-4 inline-flex text-sm font-semibold text-emerald-700 hover:text-emerald-900">← Calendar</Link>
         <p className="page-kicker">{occurrenceKey ? "One occurrence" : "Event details"}</p>
@@ -160,6 +157,6 @@ export default async function EventDetailsPage({
           </div>
         )}
       </article>
-    </main>
+    </>
   );
 }

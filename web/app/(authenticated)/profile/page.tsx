@@ -1,4 +1,3 @@
-import { AppHeader } from "@/components/AppHeader";
 import { ProfileEditor } from "@/components/ProfileEditor";
 import { requireHousehold } from "@/lib/auth";
 import { signedAvatarUrl } from "@/lib/avatar-server";
@@ -13,8 +12,7 @@ export default async function ProfilePage({
   const avatarUrl = await signedAvatarUrl(profile.avatar_path);
 
   return (
-    <main className="app-shell max-w-2xl">
-      <AppHeader />
+    <>
       <header>
         <p className="page-kicker">Your place at home</p>
         <h1 className="page-title">My profile</h1>
@@ -24,6 +22,6 @@ export default async function ProfilePage({
         <p className="status-message bg-emerald-100/80 text-emerald-800">Your profile is saved.</p>
       )}
       <ProfileEditor initialName={profile.display_name} initialAvatarUrl={avatarUrl} />
-    </main>
+    </>
   );
 }
