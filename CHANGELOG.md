@@ -9,8 +9,14 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-09-24
+
 ### Added
 
+- Added `web/scripts/measure-navigation.js`, a browser-console harness that
+  measures 20 in-app transitions against the v0.4.2 latency targets.
+- Added tests for assignee rollback, dropdown dismissal, and pending submit
+  buttons.
 - Added a persistent authenticated application shell and immediate route loading
   state so navigation retains the header and acknowledges a selection while
   page-specific data loads.
@@ -32,12 +38,20 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ### Fixed
 
+- A failed To-do or Chore reassignment now restores the previous assignee and
+  shows an error; the reassign actions report database failures and
+  RLS-rejected updates instead of silently succeeding.
+- Assignee and avatar dropdowns now open above neighboring cards and the footer,
+  and close on an outside click, Escape, or opening another dropdown.
 - Reduced authenticated navigation latency by deduplicating request-scoped User
   and User Profile loading, validating sessions with locally verifiable JWT
   claims, loading Memberships alongside User Profiles, and reusing the Household
   timezone returned with Membership context.
 - Removed redundant Household-timezone queries from Calendar and Chore screens
   and mutations, and parallelized the independent Chore-list queries.
+- Added migration `0014`, which revokes anonymous execute on every remaining app
+  function, scopes the five role-less Household-data policies to authenticated
+  users, and stops future public functions from granting anonymous execute.
 
 ## [0.4.1] - 2026-09-19
 
@@ -181,7 +195,8 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 - Added the initial responsive botanical interface and home navigation hub.
 - Added recurrence tests and the application version footer.
 
-[Unreleased]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/EthanWellsSr/Hearth/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/EthanWellsSr/Hearth/compare/v0.3.1...v0.3.2
