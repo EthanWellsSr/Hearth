@@ -17,11 +17,15 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 - Added migration `0012` with RLS-active Household-context and Calendar-window
   functions, reducing those read paths to one database round trip each.
 - Added pending states to common list, Chore, Event, and Household actions.
+- Added a formatted Licenses page listing each package and its license text,
+  replacing the raw notices file link in the footer.
 
 ### Changed
 
 - Configured Vercel Functions for Portland (`pdx1`) near the Supabase primary and
   cached private Avatar signed URLs below their one-hour validity.
+- Enabled client router caching (`staleTimes`: 30s dynamic, 180s static) so
+  recently visited pages reappear instantly; Server Actions still revalidate.
 
 ### Fixed
 
