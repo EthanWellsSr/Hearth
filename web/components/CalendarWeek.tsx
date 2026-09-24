@@ -152,6 +152,7 @@ export function CalendarWeek({
                     key={hour}
                     aria-label={`Add Event on ${date} at ${timeParam(hour)}`}
                     href={`/calendar/new?date=${date}&time=${timeParam(hour)}`}
+                    prefetch={false}
                     className="calendar-week-slot"
                     style={{ top: hour * HOUR_HEIGHT, height: HOUR_HEIGHT }}
                   />

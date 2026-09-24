@@ -98,6 +98,9 @@ the active plan changes and as part of every release.
    the production latency acceptance sample. Client router caching
    (`staleTimes`) and the formatted `/licenses` page were added on 2026-09-24 as
    part of v0.4.2; if still sluggish, the next lever is broader optimistic UI.
+   Migration `0013` (revokes anon EXECUTE on the 0012 functions) is applied and
+   verified live (anon receives 42501). Ethan still confirms the function region
+   via the `x-vercel-id` header (Deployment Protection blocks sessions).
 
 ## Blockers
 
