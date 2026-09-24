@@ -30,7 +30,13 @@ export async function reassignTodo(formData: FormData) {
     householdId,
     assigneeId
   );
-  await supabase.from("todos").update({ assignee_id: safeAssigneeId }).eq("id", id);
+  const { data, error } = await supabase
+    .from("todos")
+    .update({ assignee_id: safeAssigneeId })
+    .eq("id", id)
+    .select("id");
+  // RLS turns an unauthorized update into zero rows rather than an error.
+  if (error || !data?.length) throw new Error("The To-do assignee could not be saved.");
   revalidatePath("/todos");
 }
 

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "@/app/login/actions";
+import { DismissibleDetails } from "./DismissibleDetails";
 import { MemberAvatar } from "./MemberAvatar";
 
 type HeaderProfile = {
@@ -26,7 +27,7 @@ export function AppHeader({
         </span>
         <span className="text-lg font-semibold tracking-[-0.035em]">Hearth</span>
       </Link>
-      <details className="avatar-menu relative">
+      <DismissibleDetails className="avatar-menu relative">
         <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full py-0.5 pl-2 text-sm font-semibold text-stone-600 outline-none transition hover:bg-emerald-50 focus-visible:ring-4 focus-visible:ring-emerald-100">
           <span className="hidden max-w-36 truncate sm:block">{profile.display_name}</span>
           <MemberAvatar src={avatarUrl} name={profile.display_name} size={38} />
@@ -45,7 +46,7 @@ export function AppHeader({
             </button>
           </form>
         </nav>
-      </details>
+      </DismissibleDetails>
     </header>
   );
 }

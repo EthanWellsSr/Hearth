@@ -77,6 +77,11 @@
     z-index: 1;
   }
 
+  /* Dropdowns near the bottom of the page must open over the footer. */
+  body > main {
+    z-index: 2;
+  }
+
   ::selection {
     color: var(--ink);
     background: rgba(231, 187, 86, 0.34);
@@ -120,6 +125,15 @@
   .botanical-card,
   .form-panel {
     @apply relative overflow-hidden;
+  }
+
+  /* backdrop-blur gives each card its own stacking context, so a dropdown's
+     z-index only counts inside its card. Lift the whole card while one is open
+     (still below the header's z-40) and let the menu spill past its edge. */
+  :is(.card, .form-panel, .empty-state):has(details[open]) {
+    position: relative;
+    z-index: 30;
+    overflow: visible;
   }
 
   .botanical-card::before,

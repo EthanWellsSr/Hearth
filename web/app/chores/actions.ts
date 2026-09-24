@@ -47,10 +47,13 @@ export async function reassignChore(formData: FormData) {
   const assigneeId = String(formData.get("assignee_id") ?? "");
   const { supabase, householdId } = await requireHousehold();
   const safeAssigneeId = await householdAssigneeId(supabase, householdId, assigneeId);
-  await supabase
+  const { data, error } = await supabase
     .from("chores")
     .update({ assignee_id: safeAssigneeId })
-    .eq("id", id);
+    .eq("id", id)
+    .select("id");
+  // RLS turns an unauthorized update into zero rows rather than an error.
+  if (error || !data?.length) throw new Error("The Chore assignee could not be saved.");
   revalidatePath("/chores");
   revalidatePath("/calendar");
 }
