@@ -25,7 +25,7 @@ as Households are added. Ends with the repository public and CI enforced on `mas
 - [ ] Nightly database backups via scheduled GitHub Action (free tier)
 - [ ] Security headers, error tracking, privacy policy, and account deletion
 - [ ] Repo hygiene (license decision, neutral test fixtures, README), repo made public
-- [ ] CI (`checks`, `notices`) required on `master` through a `dev` → `master` PR
+- [ ] CI (`checks`) required on `master` through a `dev` → `master` PR
 
 ## v0.4.4 — Event Reminders & Browser Push
 

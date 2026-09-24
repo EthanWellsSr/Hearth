@@ -79,7 +79,7 @@ the active plan changes and as part of every release.
    domain (for Resend SMTP and Hearth's URL); backups via a free scheduled GitHub
    Action, not Supabase Pro. Next: Ethan runs `/grill-with-docs` for the design
    gate before implementation.
-2. CI is written (`.github/workflows/ci.yml`, jobs `checks` and `notices`) but
+2. CI is written (`.github/workflows/ci.yml`, job `checks`) but
    uncommitted. After the repo goes public: PR `dev` → `master`, then require
    both jobs on `master` with bypass disabled. Branch protection is unavailable
    while the repo is private on GitHub Free.

@@ -164,5 +164,5 @@ or degradation that grows with users · **Medium** = should fix before inviting 
 3. **Ethan + code:** B2 (Resend SMTP on the new domain), M2 (Turnstile).
 4. **Infra:** H3 (baseline migration, staging project, CLI migrations), H2 (backups).
 5. M4 and M6 before inviting anyone outside the family.
-6. Make the repo public → PR `dev` → `master` → require the `checks` and `notices`
-   CI jobs with bypass disabled.
+6. Make the repo public → PR `dev` → `master` → require the `checks` CI job
+   with bypass disabled.
