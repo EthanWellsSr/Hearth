@@ -12,7 +12,8 @@ the active plan changes and as part of every release.
   caching (`staleTimes`), pending states on common actions, no prefetch on
   Calendar add-Event slots, a formatted `/licenses` page, and dropdowns that
   layer above neighboring cards and dismiss on outside click or Escape.
-- `dev`, `master`, and tag `v0.4.2` resolve to the release merge.
+- Tag `v0.4.2` is the release merge; `dev` and `master` have since added the CI
+  workflow and the v0.4.3 plan.
 - Migrations `0012`, `0013`, and `0014` are applied and verified live: anon can
   execute no app function (42501), Household-data policies are scoped to
   authenticated, and future public functions no longer grant anon execute.
@@ -79,10 +80,10 @@ the active plan changes and as part of every release.
    domain (for Resend SMTP and Hearth's URL); backups via a free scheduled GitHub
    Action, not Supabase Pro. Next: Ethan runs `/grill-with-docs` for the design
    gate before implementation.
-2. CI is written (`.github/workflows/ci.yml`, job `checks`) but
-   uncommitted. After the repo goes public: PR `dev` → `master`, then require
-   both jobs on `master` with bypass disabled. Branch protection is unavailable
-   while the repo is private on GitHub Free.
+2. CI (`.github/workflows/ci.yml`, job `checks`) is committed and merged to
+   `master` via PR #1; runs pass on `dev` and `master`. After the repo goes
+   public: require `checks` on `master` with bypass disabled. Branch protection
+   is unavailable while the repo is private on GitHub Free.
 3. v0.4.4 Event Reminders & Browser Push is deferred until Ethan chooses to
    start it.
 
