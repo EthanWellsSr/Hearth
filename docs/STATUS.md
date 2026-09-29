@@ -109,8 +109,21 @@ the active plan changes and as part of every release.
    schemas. Local `.env.local` and Vercel Preview now point at staging
    (2026-09-29); production values are backed up in `web/.env.prod.local` and
    stay Production-only in Vercel (`NEXT_PUBLIC_*` re-created as Config).
-   Remaining for step 1: confirm the CI `migrations` job and the first staging
-   Preview on the next push.
+   Committed as `15a07a2` and pushed to `dev`; CI `checks` and `migrations`
+   both passed (fresh database rebuilt from baseline + seed), and the Preview
+   deployed. Ethan signed in to the Preview as `alex@example.test`
+   and saw staging data: **delivery step 1 is done.** Next: delivery step 2,
+   which opens with the scale test (design section "Scale test"). Scale seed
+   (`supabase/seeds/scale.sql`, staging only; CI seed is now demo-only) and
+   harness (`scripts/scale/`) built; baseline run FAILED (RLS scanned all 100,000
+   rows per list read, ~7.5 s under load). Step 2 built and verified on staging
+   (uncommitted, not yet on production): migrations `20260929120000_tenant_scale`
+   and `20260929130000_profile_policy_scale`, explicit `household_id` filters,
+   guard test `lib/tenant-filters.test.ts`. Scale test now PASSES: 50 and 100
+   Users, 0 errors, ~3 ms database time per page (results in the design doc).
+   Second Household refused, including a concurrent insert race. Next: Ethan
+   reviews and commits; push to `dev` (CI), then `db push` to production; the
+   end-to-end `k6` run (Ethan) and delivery step 3 (backups).
    Then: assemble the baseline, archive `0001`–`0014`, push to
    staging, compare against production, repair production's migration history.
 2. CI (`.github/workflows/ci.yml`, job `checks`) is committed and merged to

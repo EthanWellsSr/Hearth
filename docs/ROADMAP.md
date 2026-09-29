@@ -15,12 +15,13 @@ are added, before anyone outside the Wells Household can sign up.
 
 ### Scope
 
-- [ ] Supabase CLI, baseline migration, staging project, CLI-applied migrations
-- [ ] CI job that rebuilds a database from the repository's migrations
-- [ ] Explicit `household_id` filters on every Household-scoped query, with a guard test
-- [ ] `(household_id, created_at)` indexes on `todos` and `grocery_items`
-- [ ] Database-enforced one Household per User
+- [x] Supabase CLI, baseline migration, staging project, CLI-applied migrations
+- [x] CI job that rebuilds a database from the repository's migrations
+- [x] Explicit `household_id` filters on every Household-scoped query, with a guard test
+- [x] `(household_id, created_at)` indexes on `todos` and `grocery_items`
+- [x] Database-enforced one Household per User
 - [ ] Nightly encrypted backups from a private repository, with a tested restore
+- [ ] Scale test on staging: 1,000 Households, 50 active Users, before and after the indexes
 - [ ] Security headers (CSP report-only) and Sentry error tracking
 - [ ] Repo hygiene: MIT license, README, neutral test fixtures, noreply commit email
 

@@ -66,6 +66,7 @@ export default async function InvitationPage({
   const code = normalizeInviteCode(rawCode);
   if (!code) return <InvalidInvitation message={query.error} />;
 
+  // tenant-scope: resolves an Invite Code to its Household before the User joins.
   const { data: household } = await admin
     .from("households")
     .select("id, name")
@@ -105,6 +106,7 @@ export default async function InvitationPage({
       .select("setup_completed")
       .eq("user_id", user.id)
       .maybeSingle(),
+    // tenant-scope: the caller's own Membership, looked up before the Household is known.
     supabase
       .from("memberships")
       .select("household_id")

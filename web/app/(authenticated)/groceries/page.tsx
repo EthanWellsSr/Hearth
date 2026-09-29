@@ -9,10 +9,11 @@ import {
 } from "@/app/groceries/actions";
 
 export default async function GroceriesPage() {
-  const { supabase } = await requireHousehold();
+  const { supabase, householdId } = await requireHousehold();
   const { data: groceries } = await supabase
     .from("grocery_items")
     .select()
+    .eq("household_id", householdId)
     .order("bought", { ascending: true }) // unbought (false) before bought (true)
     .order("created_at", { ascending: true }); // oldest → newest within each group
 

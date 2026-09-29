@@ -23,6 +23,7 @@ export default async function ProfileSetupPage({
     .maybeSingle();
 
   if (profile?.setup_completed) {
+    // tenant-scope: the caller's own Membership, looked up before the Household is known.
     const { data: membership } = await supabase
       .from("memberships")
       .select("id")

@@ -1,6 +1,5 @@
--- Staging and CI seed: one fictional Household to click through, plus a bulk set
--- of empty-Member Households whose To-dos and Grocery Items give the planner
--- enough rows to prove the (household_id, created_at) indexes are used.
+-- Staging and CI seed: one fictional Household to click through. The scale data
+-- for load tests and index evidence lives in seeds/scale.sql (staging only).
 -- Never production data. Dates are relative to now() so the Calendar and Chores
 -- always have something current.
 --
@@ -92,23 +91,3 @@ insert into public.grocery_items (household_id, name, bought) values
   ('b1000000-0000-4000-8000-000000000001', 'Eggs', false),
   ('b1000000-0000-4000-8000-000000000001', 'Coffee', false),
   ('b1000000-0000-4000-8000-000000000001', 'Bananas', true);
-
--- 4. Bulk: 1,000 Households with 100 To-dos and 100 Grocery Items each
--- (100,000 rows per table), spread over the past year.
-insert into public.households (name, timezone)
-select 'Bulk ' || g, 'America/Chicago'
-from generate_series(1, 1000) as g;
-
-insert into public.todos (household_id, text, done, created_at)
-select h.id, 'Bulk to-do ' || g, g % 4 = 0, now() - (g * interval '3 days 17 minutes')
-from public.households h
-cross join generate_series(1, 100) as g
-where h.name like 'Bulk %';
-
-insert into public.grocery_items (household_id, name, bought, created_at)
-select h.id, 'Bulk item ' || g, g % 3 = 0, now() - (g * interval '3 days 11 minutes')
-from public.households h
-cross join generate_series(1, 100) as g
-where h.name like 'Bulk %';
-
-analyze public.households, public.todos, public.grocery_items;

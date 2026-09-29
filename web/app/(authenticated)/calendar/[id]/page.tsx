@@ -23,11 +23,12 @@ export default async function EventDetailsPage({
   searchParams: Promise<{ error?: string; occurrence?: string }>;
 }) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
-  const { supabase, householdTimeZone } = await requireHousehold();
+  const { supabase, householdId, householdTimeZone } = await requireHousehold();
   const { data: row } = await supabase
     .from("events")
     .select("*")
     .eq("id", id)
+    .eq("household_id", householdId)
     .maybeSingle();
   if (!row) {
     return (
@@ -53,6 +54,7 @@ export default async function EventDetailsPage({
     const { data: exceptionRow } = await supabase
       .from("event_occurrence_exceptions")
       .select("*")
+      .eq("household_id", householdId)
       .eq("series_id", id)
       .eq("original_occurrence_key", occurrenceKey)
       .maybeSingle();
@@ -70,6 +72,7 @@ export default async function EventDetailsPage({
       .from("memberships")
       .select("user_id")
       .eq("id", series.createdByMembershipId)
+      .eq("household_id", householdId)
       .maybeSingle();
     if (membership) {
       const { data: profile } = await supabase

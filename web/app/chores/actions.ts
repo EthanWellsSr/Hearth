@@ -51,6 +51,7 @@ export async function reassignChore(formData: FormData) {
     .from("chores")
     .update({ assignee_id: safeAssigneeId })
     .eq("id", id)
+    .eq("household_id", householdId)
     .select("id");
   // RLS turns an unauthorized update into zero rows rather than an error.
   if (error || !data?.length) throw new Error("The Chore assignee could not be saved.");
@@ -75,11 +76,12 @@ async function householdAssigneeId(
 
 export async function completeChore(formData: FormData) {
   const id = String(formData.get("id"));
-  const { supabase, householdTimeZone } = await requireHousehold();
+  const { supabase, householdId, householdTimeZone } = await requireHousehold();
   const { data: chore } = await supabase
     .from("chores")
     .select()
     .eq("id", id)
+    .eq("household_id", householdId)
     .maybeSingle();
   if (!chore) return;
 
@@ -94,6 +96,7 @@ export async function completeChore(formData: FormData) {
     .from("chores")
     .update({ next_due })
     .eq("id", id)
+    .eq("household_id", householdId)
     .eq("next_due", chore.next_due);
   revalidatePath("/chores");
   revalidatePath("/calendar");
@@ -101,8 +104,8 @@ export async function completeChore(formData: FormData) {
 
 export async function deleteChore(formData: FormData) {
   const id = String(formData.get("id"));
-  const { supabase } = await requireHousehold();
-  await supabase.from("chores").delete().eq("id", id);
+  const { supabase, householdId } = await requireHousehold();
+  await supabase.from("chores").delete().eq("id", id).eq("household_id", householdId);
   revalidatePath("/chores");
   revalidatePath("/calendar");
 }

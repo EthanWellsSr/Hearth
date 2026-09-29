@@ -9,7 +9,7 @@ import { DEFAULT_AVATAR_URL } from "@/lib/profile";
 export default async function TodosPage() {
   const { supabase, householdId } = await requireHousehold();
   const [{ data: todos }, { data: memberships }] = await Promise.all([
-    supabase.from("todos").select("id, text, done, assignee_id").order("created_at", { ascending: true }),
+    supabase.from("todos").select("id, text, done, assignee_id").eq("household_id", householdId).order("created_at", { ascending: true }),
     supabase.from("memberships").select("id, user_id").eq("household_id", householdId),
   ]);
   const memberRows = (memberships ?? []) as Array<{ id: string; user_id: string }>;

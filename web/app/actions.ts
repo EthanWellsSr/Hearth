@@ -34,6 +34,7 @@ export async function reassignTodo(formData: FormData) {
     .from("todos")
     .update({ assignee_id: safeAssigneeId })
     .eq("id", id)
+    .eq("household_id", householdId)
     .select("id");
   // RLS turns an unauthorized update into zero rows rather than an error.
   if (error || !data?.length) throw new Error("The To-do assignee could not be saved.");
@@ -58,14 +59,14 @@ async function householdAssigneeId(
 export async function toggleTodo(formData: FormData) {
   const id = String(formData.get("id"));
   const done = formData.get("done") === "true";
-  const { supabase } = await requireHousehold();
-  await supabase.from("todos").update({ done: !done }).eq("id", id);
+  const { supabase, householdId } = await requireHousehold();
+  await supabase.from("todos").update({ done: !done }).eq("id", id).eq("household_id", householdId);
   revalidatePath("/todos");
 }
 
 export async function deleteTodo(formData: FormData) {
   const id = String(formData.get("id"));
-  const { supabase } = await requireHousehold();
-  await supabase.from("todos").delete().eq("id", id);
+  const { supabase, householdId } = await requireHousehold();
+  await supabase.from("todos").delete().eq("id", id).eq("household_id", householdId);
   revalidatePath("/todos");
 }
