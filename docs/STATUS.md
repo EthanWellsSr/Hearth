@@ -37,7 +37,7 @@ the active plan changes and as part of every release.
   fixed with `PendingLink`) and showed one Home → Chores outlier of 11,029ms
   that did not recur (308ms on the re-run).
 
-## Reminders split — state of the deferred work (v0.4.4)
+## Reminders split — state of the deferred work (v0.4.5)
 
 - Design is recorded in `docs/design/v0.4.1-calendar-rhythm.md`.
 - Schema `0010` (`event_reminders`, `push_subscriptions`,
@@ -75,19 +75,55 @@ the active plan changes and as part of every release.
 
 ## Next
 
-1. v0.4.3 Public Launch Readiness, scoped from
-   `docs/audits/2026-09-24-public-launch-readiness.md`. Decided: Ethan buys a
-   domain (for Resend SMTP and Hearth's URL); backups via a free scheduled GitHub
-   Action, not Supabase Pro. Next: Ethan runs `/grill-with-docs` for the design
-   gate before implementation.
+1. v0.4.3 Production Foundations: design gate run 2026-09-27 and recorded in
+   `docs/design/v0.4.3-production-foundations.md`. The audit's scope was split;
+   sign-up for outside Users moved to v0.4.4 Public Sign-up
+   (`docs/design/v0.4.4-public-sign-up.md`, gate partial), and Reminders to v0.4.5.
+   Ethan confirmed the design 2026-09-27; implementation is on delivery step 1.
+   Done (uncommitted): Supabase CLI as a devDependency, `supabase/config.toml`,
+   `scripts/db-dump-schema.sh` (Docker-free dump + platform snapshot), CI job
+   `migrations`. CLI logged in and linked to production (2026-09-29); app-schema
+   dump in `supabase/prod-schema.sql` (12 tables, 27 functions, 13 policies) via
+   `db dump --linked --dry-run`, no password needed. The CLI's temporary login
+   role cannot read `cron`, so the platform snapshot
+   (`supabase/prod-schema.platform.txt`: 1 cron job, `avatars` bucket, 4 storage
+   policies) was taken in the SQL editor. Production's `supabase_migrations`
+   history is empty (`0001`–`0014` were applied by hand). Staging project
+   `hearth-staging` (`lrksljvljdgkbgtklila`, us-west-2, PG 17.6) created
+   2026-09-29; the CLI is now linked to staging. Baseline assembled in
+   `supabase/migrations/20260929000000_baseline.sql` (revokes anon's default
+   function EXECUTE first, omits platform `rls_auto_enable()`, hand-carries cron,
+   bucket, and storage policies); `0001`–`0014` moved to `supabase/archive/`.
+   Pushed to staging 2026-09-29 and compared with production: cron job, bucket,
+   and storage policies match; the only schema differences were the omitted
+   `rls_auto_enable()` and authenticated EXECUTE on the two invite-code
+   generators (default privileges again). The baseline now revokes those
+   explicitly. Staging was reset and re-compared: identical to production except
+   `rls_auto_enable()`, and staging's history records the baseline. Production's history
+   now records the baseline as applied (`migration repair --project-ref`, no
+   password needed); a dry-run push to production reports up to date. Seed
+   `supabase/seed.sql` (Maple Street Household, Members Alex and Sam, sample
+   Chores/Events/To-dos/Grocery Items, plus 1,000 bulk Households with 100,000
+   To-dos and 100,000 Grocery Items) applied to staging and verified by row
+   count. The CLI login role can `set role postgres` to read data and platform
+   schemas. Local `.env.local` and Vercel Preview now point at staging
+   (2026-09-29); production values are backed up in `web/.env.prod.local` and
+   stay Production-only in Vercel (`NEXT_PUBLIC_*` re-created as Config).
+   Remaining for step 1: confirm the CI `migrations` job and the first staging
+   Preview on the next push.
+   Then: assemble the baseline, archive `0001`–`0014`, push to
+   staging, compare against production, repair production's migration history.
 2. CI (`.github/workflows/ci.yml`, job `checks`) is committed and merged to
-   `master` via PR #1; runs pass on `dev` and `master`. After the repo goes
-   public: require `checks` on `master` with bypass disabled. Branch protection
-   is unavailable while the repo is private on GitHub Free.
-3. v0.4.4 Event Reminders & Browser Push is deferred until Ethan chooses to
+   `master` via PR #1; runs pass on `dev` and `master`. At the end of v0.4.4, once
+   the repo is public: require `checks` on `master` with bypass disabled. Branch
+   protection is unavailable while the repo is private on GitHub Free.
+3. v0.4.5 Event Reminders & Browser Push is deferred until Ethan chooses to
    start it.
 
 ## Blockers
 
-- v0.4.4 requires Ethan for VAPID keys/secrets, Supabase Cron configuration, and
+- v0.4.3 needs Ethan to create the staging Supabase project, a private backup
+  repository, and a Sentry account.
+- v0.4.4 needs Ethan's domain (name not yet chosen).
+- v0.4.5 requires Ethan for VAPID keys/secrets, Supabase Cron configuration, and
   installed-iPhone push testing.

@@ -1,5 +1,5 @@
 # Runs the pre-release checks on every push to dev/master and on every pull
-# request into master. Mark the "checks" job as a required status check on
+# request into master. Mark the "checks" and "migrations" jobs as required checks on
 # master so a red run blocks the merge (and therefore the Vercel production
 # deploy).
 name: CI
@@ -54,4 +54,42 @@ jobs:
         run: npm run notices:check
       - name: Build
         run: npm run build -- --webpack
+
+  # Proves the database can be rebuilt from the repository alone: a throwaway
+  # local Supabase applies every migration and the seed from scratch, so a
+  # broken migration fails here instead of on staging or production.
+  migrations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      # Auth and Storage stay up: the seed writes auth.users and the baseline
+      # creates the avatars bucket and its policies.
+      - name: Apply migrations and seed to a fresh database
+        run: >-
+          npx supabase start
+          -x realtime,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+      - name: Platform objects exist
+        env:
+          DB_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -Atc "
+            do \$\$ begin
+              if not exists (select 1 from cron.job where jobname = 'purge-done-todos-by-household-timezone')
+                then raise exception 'pg_cron job missing'; end if;
+              if not exists (select 1 from storage.buckets where id = 'avatars')
+                then raise exception 'avatars bucket missing'; end if;
+            end \$\$;"
+      - name: Stop Supabase
+        if: always()
+        run: npx supabase stop --no-backup
 

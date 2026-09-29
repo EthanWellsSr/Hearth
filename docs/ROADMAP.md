@@ -3,31 +3,47 @@
 Future work is grouped into planned releases. Release names and contents are
 plans; shipped work moves to [`CHANGELOG.md`](../CHANGELOG.md).
 
-## v0.4.3 — Public Launch Readiness
+## v0.4.3 — Production Foundations
 
-**Status:** Planned; findings in
-[`docs/audits/2026-09-24-public-launch-readiness.md`](audits/2026-09-24-public-launch-readiness.md).
-Design gate (`grill-with-docs`) not yet run.
+**Status:** Design gate run 2026-09-27; design in
+[`docs/design/v0.4.3-production-foundations.md`](design/v0.4.3-production-foundations.md),
+confirmed 2026-09-27; delivery step 1 in progress. Split from the
+[launch-readiness audit](audits/2026-09-24-public-launch-readiness.md).
 
-**Goal:** Let people outside the Wells household open Hearth's link, create an
-account, and run their own Household safely, on infrastructure that keeps working
-as Households are added. Ends with the repository public and CI enforced on `master`.
+**Goal:** Make the database reproducible, recoverable, and efficient as Households
+are added, before anyone outside the Wells Household can sign up.
+
+### Scope
+
+- [ ] Supabase CLI, baseline migration, staging project, CLI-applied migrations
+- [ ] CI job that rebuilds a database from the repository's migrations
+- [ ] Explicit `household_id` filters on every Household-scoped query, with a guard test
+- [ ] `(household_id, created_at)` indexes on `todos` and `grocery_items`
+- [ ] Database-enforced one Household per User
+- [ ] Nightly encrypted backups from a private repository, with a tested restore
+- [ ] Security headers (CSP report-only) and Sentry error tracking
+- [ ] Repo hygiene: MIT license, README, neutral test fixtures, noreply commit email
+
+## v0.4.4 — Public Sign-up
+
+**Status:** Design gate partial; decisions in
+[`docs/design/v0.4.4-public-sign-up.md`](design/v0.4.4-public-sign-up.md). Needs
+Ethan's domain.
+
+**Goal:** Let people outside the Wells Household open Hearth's link, create an
+account, and run their own Household safely. Ends with the repository public and CI
+required on `master`.
 
 ### Scope
 
 - [ ] Production publicly reachable (Vercel Standard Protection) on Hearth's own domain
-- [ ] Custom SMTP (Resend) on a verified domain so confirmation emails reach anyone
+- [ ] Custom SMTP (Resend) on a verified domain
 - [ ] `/auth/confirm` route and password reset
-- [ ] CAPTCHA on sign-up/sign-in; invite-code hardening
-- [ ] Explicit Household filters on list queries plus `household_id` indexes
-- [ ] Database-enforced one Household per User
-- [ ] Baseline migration, a staging Supabase project, and CLI-applied migrations
-- [ ] Nightly database backups via scheduled GitHub Action (free tier)
-- [ ] Security headers, error tracking, privacy policy, and account deletion
-- [ ] Repo hygiene (license decision, neutral test fixtures, README), repo made public
-- [ ] CI (`checks`) required on `master` through a `dev` → `master` PR
+- [ ] Cloudflare Turnstile on sign-up, sign-in, and password reset
+- [ ] Privacy policy, terms, and account deletion
+- [ ] Repository made public; `checks` required on `master` with bypass disabled
 
-## v0.4.4 — Event Reminders & Browser Push
+## v0.4.5 — Event Reminders & Browser Push
 
 **Status:** Planned; design already recorded in
 [`docs/design/v0.4.1-calendar-rhythm.md`](design/v0.4.1-calendar-rhythm.md)
@@ -59,7 +75,7 @@ working tree.
 - [x] Decide recurrence rules, reminder delivery channels, notification
   preferences, and Chore presentation during the pre-code design gate
 
-## v0.4.5 — Event Organization
+## v0.4.6 — Event Organization
 
 **Status:** Planned
 
@@ -73,7 +89,7 @@ working tree.
 - [ ] Decide whether colors belong to individual Events, categories, Members, or a
   combination during the pre-code design gate
 
-## v0.4.6 — Event Collaboration
+## v0.4.7 — Event Collaboration
 
 **Status:** Planned
 
