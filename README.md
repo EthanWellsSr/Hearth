@@ -1,9 +1,8 @@
 # Hearth
 
-Hearth is a responsive household web app for coordinating a shared Calendar,
-Chores, To-dos, and a Grocery List. It is a learning project built for one real
-Household. The deployed app is limited to its existing Members; this repository
-is intended for people who want to inspect the product and its implementation.
+Hearth is a responsive household web app I built for my household and use daily
+to coordinate our Calendar, Chores, To-dos, and Grocery List. Building it is also
+a learning project for me. The deployed app is limited to its existing Members.
 
 ## What works today
 
