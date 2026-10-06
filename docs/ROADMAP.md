@@ -5,13 +5,15 @@ plans; shipped work moves to [`CHANGELOG.md`](../CHANGELOG.md).
 
 ## v0.4.3 — Production Foundations
 
-**Status:** Design gate run 2026-09-27; design in
-[`docs/design/v0.4.3-production-foundations.md`](design/v0.4.3-production-foundations.md),
-confirmed 2026-09-27; delivery step 1 in progress. Split from the
+**Status:** Database foundation and scale work complete on `dev`; release and
+publication review remain. Production and staging Auth sign-up are disabled;
+the app sign-up path is removed on `dev` pending deployment. The
+[design](design/v0.4.3-production-foundations.md) was confirmed 2026-09-27 and
+narrowed 2026-10-06; backup work now follows repository publication.
+Split from the
 [launch-readiness audit](audits/2026-09-24-public-launch-readiness.md).
 
-**Goal:** Make the database reproducible, recoverable, and efficient as Households
-are added, before anyone outside the Wells Household can sign up.
+**Goal:** Make the database schema reproducible and Household queries efficient.
 
 ### Scope
 
@@ -20,20 +22,38 @@ are added, before anyone outside the Wells Household can sign up.
 - [x] Explicit `household_id` filters on every Household-scoped query, with a guard test
 - [x] `(household_id, created_at)` indexes on `todos` and `grocery_items`
 - [x] Database-enforced one Household per User
-- [ ] Nightly encrypted backups from a private repository, with a tested restore
-- [ ] Scale test on staging: 1,000 Households, 50 active Users, before and after the indexes
-- [ ] Security headers (CSP report-only) and Sentry error tracking
-- [ ] Repo hygiene: MIT license, README, neutral test fixtures, noreply commit email
+- [x] Staging database scale test: 1,000 Households, 50 active Users, before and
+  after the query and policy changes
+
+The Preview `k6` test, security headers, Sentry, and repository cleanup are not
+gates for this release. Repository publication, production-data backup, and
+public sign-up are separate decisions.
+
+## Public project showcase — priority one
+
+**Status:** Scope agreed 2026-10-06; [design](design/public-showcase.md).
+Clean and publish the repository with an accurate README and screenshots made
+with fictional data. Review tracked files and Git history before changing
+visibility. A short recorded walkthrough can follow publication. The deployed app remains limited to Ethan
+and his wife. A live guest Demo is deferred unless it becomes useful.
+
+## Production-data backup — after repository publication
+
+**Status:** Deferred until the public repository is ready. Database migrations
+rebuild schema and fictional sample data; they do not recover production records.
+
+- [ ] Nightly encrypted production database exports from a separate private
+  GitHub repository, with retention, failure monitoring, and a tested restore
+- [ ] Decide whether Avatar objects need a separate Storage backup
 
 ## v0.4.4 — Public Sign-up
 
-**Status:** Design gate partial; decisions in
-[`docs/design/v0.4.4-public-sign-up.md`](design/v0.4.4-public-sign-up.md). Needs
-Ethan's domain.
+**Status:** Deferred while Hearth is developed for Ethan and his wife. The
+[partial design](design/v0.4.4-public-sign-up.md) does not govern the current
+public-visibility goal. Release numbering can be revisited before implementation.
 
 **Goal:** Let people outside the Wells Household open Hearth's link, create an
-account, and run their own Household safely. Ends with the repository public and CI
-required on `master`.
+account, and run their own Household. Repository visibility is a separate decision.
 
 ### Scope
 
@@ -42,7 +62,6 @@ required on `master`.
 - [ ] `/auth/confirm` route and password reset
 - [ ] Cloudflare Turnstile on sign-up, sign-in, and password reset
 - [ ] Privacy policy, terms, and account deletion
-- [ ] Repository made public; `checks` required on `master` with bypass disabled
 
 ## v0.4.5 — Event Reminders & Browser Push
 

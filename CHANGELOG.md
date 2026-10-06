@@ -9,6 +9,11 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+### Changed
+
+- Disabled new Supabase Auth sign-ups in production and staging while retaining
+  existing Member sign-in, and removed the app's sign-up action and login button.
+
 ## [0.4.2] - 2026-09-24
 
 ### Added

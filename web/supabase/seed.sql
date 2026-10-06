@@ -3,8 +3,9 @@
 -- Never production data. Dates are relative to now() so the Calendar and Chores
 -- always have something current.
 --
--- Sign in to staging or a local stack as alex@example.test or sam@example.test,
--- password hearth-staging-demo. Test-only accounts on fictional data.
+-- Local and CI sign-in: alex@example.test or sam@example.test, password
+-- hearth-staging-demo. This fixed test password is public. If the seed is
+-- applied to remote staging, rotate both Auth passwords before sharing access.
 
 -- 1. Users. Supabase Auth needs both the user and its email identity row.
 insert into auth.users (

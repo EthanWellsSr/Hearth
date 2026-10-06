@@ -3,6 +3,18 @@
 Short handoff for the current release and immediate work. Update this file when
 the active plan changes and as part of every release.
 
+## Active priority — public repository
+
+1. Finish the public review of tracked files and Git history. The setup
+   documentation and fictional screenshots are ready; the staging test account
+   passwords have been rotated. Record the remaining commit-email exposure and
+   licensing choice before publication. A recorded walkthrough can follow.
+2. Review the `dev` diff, complete release checks, and publish the repository
+   after Ethan approves the exact Git and GitHub changes. Production Auth already
+   blocks new Users; the app's sign-up UI change is still local.
+3. Set up and test an encrypted production-data backup after the repository is
+   public. The migration baseline cannot restore Household records.
+
 ## Current release
 
 - **v0.4.2 — Responsive Application Architecture**, released 2026-09-24.
@@ -21,6 +33,10 @@ the active plan changes and as part of every release.
 
 ## Verified this cycle
 
+- Publication-preparation checks on 2026-10-06: `npm run lint` passed with one
+  warning in an unrelated untracked scale-test draft; all 75 tests passed;
+  `npm run build -- --webpack` and `npm run notices:check` passed. Fictional
+  screenshots were inspected at desktop and phone widths.
 - `npm run lint`, `npm test` (71), `npm run build -- --webpack`, and
   `npm run notices:check` pass.
 - Dropdown layering and dismissal verified in-browser at desktop and 375px phone
@@ -79,8 +95,9 @@ the active plan changes and as part of every release.
    `docs/design/v0.4.3-production-foundations.md`. The audit's scope was split;
    sign-up for outside Users moved to v0.4.4 Public Sign-up
    (`docs/design/v0.4.4-public-sign-up.md`, gate partial), and Reminders to v0.4.5.
-   Ethan confirmed the design 2026-09-27; implementation is on delivery step 1.
-   Done (uncommitted): Supabase CLI as a devDependency, `supabase/config.toml`,
+   Ethan confirmed the design 2026-09-27 and refined its scope 2026-10-06.
+   Delivery steps 1 and 2 are complete; backup work is now post-publication.
+   Step 1 added the Supabase CLI as a devDependency, `supabase/config.toml`,
    `scripts/db-dump-schema.sh` (Docker-free dump + platform snapshot), CI job
    `migrations`. CLI logged in and linked to production (2026-09-29); app-schema
    dump in `supabase/prod-schema.sql` (12 tables, 27 functions, 13 policies) via
@@ -88,7 +105,7 @@ the active plan changes and as part of every release.
    role cannot read `cron`, so the platform snapshot
    (`supabase/prod-schema.platform.txt`: 1 cron job, `avatars` bucket, 4 storage
    policies) was taken in the SQL editor. Production's `supabase_migrations`
-   history is empty (`0001`–`0014` were applied by hand). Staging project
+   history had been empty (`0001`–`0014` were applied by hand). Staging project
    `hearth-staging` (`lrksljvljdgkbgtklila`, us-west-2, PG 17.6) created
    2026-09-29; the CLI is now linked to staging. Baseline assembled in
    `supabase/migrations/20260929000000_baseline.sql` (revokes anon's default
@@ -102,41 +119,57 @@ the active plan changes and as part of every release.
    `rls_auto_enable()`, and staging's history records the baseline. Production's history
    now records the baseline as applied (`migration repair --project-ref`, no
    password needed); a dry-run push to production reports up to date. Seed
-   `supabase/seed.sql` (Maple Street Household, Members Alex and Sam, sample
-   Chores/Events/To-dos/Grocery Items, plus 1,000 bulk Households with 100,000
-   To-dos and 100,000 Grocery Items) applied to staging and verified by row
-   count. The CLI login role can `set role postgres` to read data and platform
+   `supabase/seed.sql` (Maple Street Household, Members Alex and Sam, and sample
+   Chores/Events/To-dos/Grocery Items) applied to staging and verified by row
+   count. The bulk seed is separate in `supabase/seeds/scale.sql`. The CLI login
+   role can `set role postgres` to read data and platform
    schemas. Local `.env.local` and Vercel Preview now point at staging
    (2026-09-29); production values are backed up in `web/.env.prod.local` and
    stay Production-only in Vercel (`NEXT_PUBLIC_*` re-created as Config).
    Committed as `15a07a2` and pushed to `dev`; CI `checks` and `migrations`
    both passed (fresh database rebuilt from baseline + seed), and the Preview
    deployed. Ethan signed in to the Preview as `alex@example.test`
-   and saw staging data: **delivery step 1 is done.** Next: delivery step 2,
-   which opens with the scale test (design section "Scale test"). Scale seed
+   and saw staging data: **delivery step 1 is done.** Delivery step 2 began with
+   the scale test (design section "Scale test"). Scale seed
    (`supabase/seeds/scale.sql`, staging only; CI seed is now demo-only) and
    harness (`scripts/scale/`) built; baseline run FAILED (RLS scanned all 100,000
-   rows per list read, ~7.5 s under load). Step 2 built and verified on staging
-   (uncommitted, not yet on production): migrations `20260929120000_tenant_scale`
+   rows per list read, ~7.5 s under load). Step 2 committed (`08ffa79`, CI green) and
+   applied to production 2026-09-29 by Ethan via `db push --project-ref`;
+   verified on production (all Household policies use `my_household_ids()`, no
+   per-row `is_member` policies remain, three indexes and
+   `memberships_user_id_key` present, helpers not executable by anon): migrations `20260929120000_tenant_scale`
    and `20260929130000_profile_policy_scale`, explicit `household_id` filters,
    guard test `lib/tenant-filters.test.ts`. Scale test now PASSES: 50 and 100
    Users, 0 errors, ~3 ms database time per page (results in the design doc).
-   Second Household refused, including a concurrent insert race. Next: Ethan
-   reviews and commits; push to `dev` (CI), then `db push` to production; the
-   end-to-end `k6` run (Ethan) and delivery step 3 (backups).
-   Then: assemble the baseline, archive `0001`–`0014`, push to
-   staging, compare against production, repair production's migration history.
+   Second Household refused, including a concurrent insert race. App code with the
+   explicit filters reaches production when `dev` merges to `master`. The
+   end-to-end Preview `k6` run is optional; draft scripts exist untracked at
+   `web/scripts/scale/e2e.{js,sh}`. The migration baseline rebuilds schema and sample data, not
+   production Household records. Production and staging Supabase Auth sign-up
+   were disabled 2026-10-06 after confirming production has two existing,
+   confirmed Auth Users with Memberships. Local Auth configuration now also
+   disables sign-up. The sign-up action and button are removed in the `dev` working
+   tree; production app UI changes await deployment. Public sign-up is deferred.
+   Public repository cleanup, README, and screenshots using fictional data are
+   priority one; see
+   `docs/design/public-showcase.md`. A live dummy-guest Demo is deferred.
 2. CI (`.github/workflows/ci.yml`, job `checks`) is committed and merged to
-   `master` via PR #1; runs pass on `dev` and `master`. At the end of v0.4.4, once
-   the repo is public: require `checks` on `master` with bypass disabled. Branch
-   protection is unavailable while the repo is private on GitHub Free.
+   `master` via PR #1; runs pass on `dev` and `master`. Revisit required checks
+   on `master` when repository visibility changes; they are not configured yet.
 3. v0.4.5 Event Reminders & Browser Push is deferred until Ethan chooses to
    start it.
 
 ## Blockers
 
-- v0.4.3 needs Ethan to create the staging Supabase project, a private backup
-  repository, and a Sentry account.
-- v0.4.4 needs Ethan's domain (name not yet chosen).
+- Backup setup follows repository publication. Until a restore is tested,
+  production Household records are not recoverable from the migrations.
+- Production Auth blocks new accounts, but the deployed login page may still
+  show its stale sign-up button until the `dev` UI change reaches production.
+- Repository publication needs final review of the exact changes and Ethan's
+  decision about licensing and exposed commit email; see the
+  [publication review](audits/2026-10-06-repository-publication.md). The staging
+  test account passwords have been rotated; a staging reset must rotate them
+  again.
+- Deferred public sign-up needs Ethan's domain (name not yet chosen).
 - v0.4.5 requires Ethan for VAPID keys/secrets, Supabase Cron configuration, and
   installed-iPhone push testing.

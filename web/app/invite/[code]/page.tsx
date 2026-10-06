@@ -86,7 +86,7 @@ export default async function InvitationPage({
           <p className="page-kicker">A place is waiting</p>
           <h1 className="page-title">You’re invited to the {household.name} Household</h1>
           <p className="page-description">
-            Open Hearth in this browser, then sign in or create a new sign-in. You do not need to install anything.
+            Open Hearth in this browser, then sign in with an existing account. You do not need to install anything.
           </p>
         </div>
         <div className="rounded-2xl border border-emerald-100 bg-white/70 px-4 py-4 text-center">
