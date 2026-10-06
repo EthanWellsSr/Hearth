@@ -9,6 +9,19 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-10-06
+
+### Added
+
+- Added Supabase CLI configuration, a reproducible production-schema baseline,
+  fictional seed data, and CI that rebuilds a fresh database from migrations.
+- Added tenant-filtered Household queries, supporting indexes, and a database
+  constraint that limits each User to one Household.
+- Added staging scale coverage for 1,000 Households and 50 active Users, with a
+  100-User stretch run and recorded before-and-after results.
+- Added a public-facing README, local setup instructions, and fictional product
+  screenshots.
+
 ### Changed
 
 - Disabled new Supabase Auth sign-ups in production and staging while retaining
@@ -206,7 +219,8 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 - Added the initial responsive botanical interface and home navigation hub.
 - Added recurrence tests and the application version footer.
 
-[Unreleased]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.3...HEAD
+[0.4.3]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/EthanWellsSr/Hearth/compare/v0.3.2...v0.4.0

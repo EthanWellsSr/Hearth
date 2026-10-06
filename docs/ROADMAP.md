@@ -3,65 +3,37 @@
 Future work is grouped into planned releases. Release names and contents are
 plans; shipped work moves to [`CHANGELOG.md`](../CHANGELOG.md).
 
-## v0.4.3 — Production Foundations
-
-**Status:** Database foundation and scale work complete on `dev`; release and
-publication review remain. Production and staging Auth sign-up are disabled;
-the app sign-up path is removed on `dev` pending deployment. The
-[design](design/v0.4.3-production-foundations.md) was confirmed 2026-09-27 and
-narrowed 2026-10-06; backup work now follows repository publication.
-Split from the
-[launch-readiness audit](audits/2026-09-24-public-launch-readiness.md).
-
-**Goal:** Make the database schema reproducible and Household queries efficient.
-
-### Scope
-
-- [x] Supabase CLI, baseline migration, staging project, CLI-applied migrations
-- [x] CI job that rebuilds a database from the repository's migrations
-- [x] Explicit `household_id` filters on every Household-scoped query, with a guard test
-- [x] `(household_id, created_at)` indexes on `todos` and `grocery_items`
-- [x] Database-enforced one Household per User
-- [x] Staging database scale test: 1,000 Households, 50 active Users, before and
-  after the query and policy changes
-
-The Preview `k6` test, security headers, Sentry, and repository cleanup are not
-gates for this release. Repository publication, production-data backup, and
-public sign-up are separate decisions.
-
 ## Public project showcase — priority one
 
 **Status:** Scope agreed 2026-10-06; [design](design/public-showcase.md).
 Clean and publish the repository with an accurate README and screenshots made
 with fictional data. Review tracked files and Git history before changing
-visibility. A short recorded walkthrough can follow publication. The deployed app remains limited to Ethan
-and his wife. A live guest Demo is deferred unless it becomes useful.
+visibility. A short recorded walkthrough can follow publication. The deployed
+app remains limited to Ethan and his wife. A live guest Demo is deferred unless
+it becomes useful.
 
-## Production-data backup — after repository publication
+## v0.4.4 — Production Backup
 
-**Status:** Deferred until the public repository is ready. Database migrations
-rebuild schema and fictional sample data; they do not recover production records.
+**Status:** Planned after repository publication. Opening sign-up remains
+deferred while Hearth is for Ethan and his wife. See the
+[backup design](design/v0.4.4-production-backup.md).
 
-- [ ] Nightly encrypted production database exports from a separate private
-  GitHub repository, with retention, failure monitoring, and a tested restore
-- [ ] Decide whether Avatar objects need a separate Storage backup
-
-## v0.4.4 — Public Sign-up
-
-**Status:** Deferred while Hearth is developed for Ethan and his wife. The
-[partial design](design/v0.4.4-public-sign-up.md) does not govern the current
-public-visibility goal. Release numbering can be revisited before implementation.
-
-**Goal:** Let people outside the Wells Household open Hearth's link, create an
-account, and run their own Household. Repository visibility is a separate decision.
+**Goal:** Recover production Household records without upgrading Supabase from
+the Free plan.
 
 ### Scope
 
-- [ ] Production publicly reachable (Vercel Standard Protection) on Hearth's own domain
-- [ ] Custom SMTP (Resend) on a verified domain
-- [ ] `/auth/confirm` route and password reset
-- [ ] Cloudflare Turnstile on sign-up, sign-in, and password reset
-- [ ] Privacy policy, terms, and account deletion
+- [ ] Run nightly encrypted database exports from a separate private GitHub
+  repository and retain them within the GitHub Free storage allowance.
+- [ ] Keep the decryption key outside GitHub and monitor failed or missed runs.
+- [ ] Restore a backup into an isolated non-production database and verify it.
+- [ ] Decide whether private Avatar objects need a separate Storage backup.
+
+## Public Sign-up — deferred
+
+**Status:** No release assigned. Hearth remains usable only by Ethan and his
+wife. The [partial design](design/v0.4.4-public-sign-up.md) is retained for a
+future decision; it does not govern repository visibility.
 
 ## v0.4.5 — Event Reminders & Browser Push
 
@@ -216,5 +188,4 @@ been assigned to a release:
 
 ## Unscheduled platform work
 
-- CI that runs automated checks on every push
 - Multi-Household support and an active-Household switcher
