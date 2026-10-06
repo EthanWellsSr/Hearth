@@ -1,107 +1,102 @@
 # Hearth
 
-A shared web app where the members of one household coordinate their to-dos,
-grocery list, chores, and more — in one place.
+Hearth is a responsive household web app I built for my household and use daily
+to coordinate our Calendar, Chores, To-dos, and Grocery List. Building it is also
+a learning project for me. The deployed app is limited to its existing Members.
 
-**Live:** https://hearth-omega-umber.vercel.app
+## What works today
 
-## Features
+| Area | Current behavior |
+| --- | --- |
+| Calendar | Upcoming, month, and week views; all-day and timed Events; Recurring Events with occurrence changes; due Chores; Household timezone |
+| Chores | Every-N-days or weekly schedules, completion, next due date, and Member assignment |
+| To-dos | Create, assign, complete, delete, and automatic cleanup of completed items |
+| Grocery List | Add, mark bought, remove, and clear bought items |
+| Household people | User Profiles and private Avatars, Memberships, Invite Codes, owner controls, and timezone settings |
 
-- **To-dos** — one-off tasks; add, assign by Member name and Avatar, check off,
-  and delete; completed ones auto-purge nightly.
-- **Grocery List** — add, check off (bought), delete, and "clear bought"; bought
-  items sink to the bottom.
-- **Chores** — recurring tasks (every N days, or weekly on a weekday); `next_due`
-  advances on completion; optional assignment by Member name and Avatar.
-- **Calendar** — shared all-day and timed Events, including multi-day Events, with
-  month and upcoming views in the Household timezone.
-- **Auth + Households** — email/password login; all data is scoped to a Household
-  and enforced by Postgres row-level security (see `docs/adr/0006`).
-- **User Profiles + Household people** — display names, private Avatars, reusable
-  Invitation Links with readable backup codes, and owner-controlled Member removal.
-- Installable as a PWA (Add to Home Screen).
+Hearth is installable as a progressive web app. Meal planning, Notes, Messages,
+Expenses, and Event Reminders are planned work; see the [roadmap](docs/ROADMAP.md).
 
-## Stack
+## Access
 
-- **Next.js** (App Router) + **TypeScript** — app lives in [`web/`](web/)
-- **Supabase** (Postgres, Auth, RLS, `pg_cron`)
-- **Tailwind CSS v4** for styling
-- **Sharp** for server-side Avatar validation and normalization
-- **Vitest** for unit tests
-- **Vercel** for hosting
+The [deployed app](https://hearth-omega-umber.vercel.app) shows a sign-in page.
+New account creation is disabled in Supabase Auth. Repository access does not
+grant access to the private Household. The screenshots below use a fictional
+Household in staging; they contain no production Household data.
 
-## Project layout
+## Screenshots
 
-```
-CHANGELOG.md          # curated history for each shipped version
-CONTEXT.md            # canonical Hearth domain language
-docs/adr/             # architecture decision records (why, not just what)
-docs/design/          # confirmed feature designs
-docs/ROADMAP.md       # planned releases and dependencies
-docs/STATUS.md        # current release and immediate handoff
-web/                  # the Next.js app
-  app/                # routes (including /calendar) + server actions
-  components/         # shared UI (AppHeader, CheckableList, PlantMark)
-  lib/                # Supabase, auth, Calendar, recurrence, and Avatar normalization
-  public/legal/       # deployed third-party license notices
-  supabase/migrations # SQL migrations (run by hand in the Supabase SQL editor)
-```
+![Fictional Hearth Home showing its four main spaces](docs/showcase/home.png)
 
-## Local development
+![Household Calendar with recurring Events and due Chores](docs/showcase/calendar.png)
+
+| To-dos | Grocery List |
+| --- | --- |
+| ![To-dos assigned to fictional Members](docs/showcase/todos.png) | ![Shared Grocery List with bought items](docs/showcase/groceries.png) |
+
+| Chores | Phone layout |
+| --- | --- |
+| ![Recurring Chores with due dates and Member assignment](docs/showcase/chores.png) | ![Hearth Home at phone width](docs/showcase/home-phone.png) |
+
+## How it is built
+
+The [Next.js App Router application](web/) uses TypeScript and Tailwind CSS.
+Supabase provides Postgres, Auth, and private Avatar storage; Vercel hosts the
+web app. A User belongs to a Household through a Membership. The Household is
+the data boundary: application queries filter by `household_id`, and Postgres
+row-level security independently enforces access.
+
+For a typical edit, the screen submits to a Next.js Server Action. The action
+loads the signed-in User and Household, writes through a user-scoped Supabase
+client, and revalidates the affected page. Calendar recurrence rules and
+occurrence changes live in the [Calendar library](web/lib/calendar.ts) and
+ordered [SQL migrations](web/supabase/migrations/).
+
+The [domain vocabulary](CONTEXT.md), [design records](docs/design/), and
+[architecture decisions](docs/adr/) explain the model and trade-offs. The
+[status](docs/STATUS.md) separates shipped work from active work.
+
+## Run locally
+
+Requirements: Node.js 24, Docker, and a local Supabase stack.
 
 ```bash
 cd web
-npm install
-npm run dev        # http://localhost:3000
-npm test           # run the unit tests
+npm ci
+npx supabase start
+npx supabase status
 ```
 
-For phone testing on the same Wi-Fi network, run
-`npm run dev -- --hostname 0.0.0.0` and open the Mac's LAN address on the phone.
-Hearth automatically permits the development machine's current IPv4 addresses.
+The Supabase CLI applies the migrations and fictional [seed](web/supabase/seed.sql)
+to the local stack. Create `web/.env.local` with the local API URL, publishable
+key, and server-only service-role key reported by `npx supabase status`:
 
-Create `web/.env.local` (gitignored) with:
-
-```
-SUPABASE_URL=...
-SUPABASE_SECRET_KEY=...            # server-only admin key (bypasses RLS)
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...  # publishable key; user-scoped client
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<local anon key>
+SUPABASE_URL=http://127.0.0.1:54321
+SUPABASE_SECRET_KEY=<local service-role key>
 ```
 
-## Database
+Then run `npm run dev` from `web/` and open <http://localhost:3000>.
+Sign in to the local app as `alex@example.test` or `sam@example.test` with the
+seed's local test password, `hearth-staging-demo`. Keep `.env.local` out of Git.
+For verification, run `npm run lint`, `npm test`, `npm run build -- --webpack`,
+and `npm run notices:check` from `web/`.
 
-Supabase Postgres. Schema changes live as SQL files in
-[`web/supabase/migrations/`](web/supabase/migrations/) and are applied by hand in
-the Supabase SQL editor (in filename order). RLS is enforced on every table.
+## Project layout
 
-## Deployment
+```text
+web/app/                 routes and Server Actions
+web/components/          shared UI
+web/lib/                 auth, Calendar, recurrence, and data helpers
+web/supabase/migrations/ ordered database changes
+web/supabase/seed.sql     fictional local and CI data
+docs/adr/                architecture decisions
+docs/design/             feature designs
+```
 
-Hosted on Vercel (Hobby):
-
-- **Root Directory:** `web`
-- **Production branch:** `master` — pushes deploy to production automatically
-- **Preview:** every push to another branch (e.g. `dev`) gets its own preview URL
-- The four env vars above are set in Vercel for Production and Preview
-
-## Branches & versioning
-
-- `dev` — day-to-day work; merge into `master` to release
-- Releases use semver package versions and annotated Git tags. Update the package
-  version on `dev`, commit the release and documentation, merge `dev` into
-  `master`, then tag the merge commit:
-
-  ```bash
-  npm version patch --no-git-tag-version
-  npm run notices
-  cd ..
-  git add -A
-  git commit -m "release vX.Y.Z"
-  git switch master
-  git merge --no-ff dev -m "merge dev for vX.Y.Z"
-  git tag -a vX.Y.Z -m "vX.Y.Z"
-  git push Hearth master --follow-tags
-  ```
-
-  The app footer shows the current version, read from `web/package.json`. Shipped
-  release contents are recorded in [`CHANGELOG.md`](CHANGELOG.md).
+`dev` is the working branch. `master` is the production branch. CI checks the
+application and rebuilds a fresh database from migrations and the seed; schema
+changes go through staging before production. [CHANGELOG.md](CHANGELOG.md)
+records shipped releases.

@@ -1,0 +1,12 @@
+# Supabase
+.branches
+.temp
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local
+
+# Local production schema snapshots; migrations are the published source of truth.
+prod-schema.sql
+prod-schema.platform.txt

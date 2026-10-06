@@ -87,6 +87,7 @@ async function requireHouseholdLegacy(
   user: { id: string; email?: string }
 ) {
   const profilePromise = requireProfile();
+  // tenant-scope: the caller's own Membership, looked up before the Household is known.
   const membershipPromise = supabase
     .from("memberships")
     .select("id, household_id, role, household:households(timezone)")

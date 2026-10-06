@@ -14,20 +14,20 @@ export async function addGroceryItem(formData: FormData) {
 export async function toggleGroceryItem(formData: FormData) {
   const id = String(formData.get("id"));
   const bought = formData.get("bought") === "true";
-  const { supabase } = await requireHousehold();
-  await supabase.from("grocery_items").update({ bought: !bought }).eq("id", id);
+  const { supabase, householdId } = await requireHousehold();
+  await supabase.from("grocery_items").update({ bought: !bought }).eq("id", id).eq("household_id", householdId);
   revalidatePath("/groceries");
 }
 
 export async function deleteGroceryItem(formData: FormData) {
   const id = String(formData.get("id"));
-  const { supabase } = await requireHousehold();
-  await supabase.from("grocery_items").delete().eq("id", id);
+  const { supabase, householdId } = await requireHousehold();
+  await supabase.from("grocery_items").delete().eq("id", id).eq("household_id", householdId);
   revalidatePath("/groceries");
 }
 
 export async function clearBought() {
-  const { supabase } = await requireHousehold();
-  await supabase.from("grocery_items").delete().eq("bought", true);
+  const { supabase, householdId } = await requireHousehold();
+  await supabase.from("grocery_items").delete().eq("household_id", householdId).eq("bought", true);
   revalidatePath("/groceries");
 }

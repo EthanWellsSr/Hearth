@@ -168,6 +168,7 @@ export async function updateEvent(
     .from("events")
     .update(parsed.payload)
     .eq("id", id)
+    .eq("household_id", parsed.householdId)
     .eq("version", version)
     .select("id")
     .maybeSingle();
@@ -187,8 +188,8 @@ export async function updateEvent(
 export async function deleteEvent(formData: FormData) {
   const id = value(formData, "id");
   if (!id) return;
-  const { supabase } = await requireHousehold();
-  const { error } = await supabase.from("events").delete().eq("id", id);
+  const { supabase, householdId } = await requireHousehold();
+  const { error } = await supabase.from("events").delete().eq("id", id).eq("household_id", householdId);
   if (error) redirect(`/calendar/${id}?error=${encodeURIComponent("That Event could not be deleted.")}`);
   revalidatePath("/calendar");
   redirect("/calendar?deleted=1");
@@ -251,11 +252,12 @@ export async function saveOccurrence(
     return { error: "This occurrence could not be identified." };
   }
 
-  const { supabase } = await requireHousehold();
+  const { supabase, householdId } = await requireHousehold();
   const { data: row } = await supabase
     .from("events")
     .select("*")
     .eq("id", seriesId)
+    .eq("household_id", householdId)
     .maybeSingle();
   const series = row ? calendarEventFromRow(row as EventRow) : null;
   if (!series?.recurrenceFrequency || !series.recurrenceTimeZone) {
@@ -316,11 +318,11 @@ export async function deleteOccurrence(formData: FormData) {
   const exceptionVersionRaw = value(formData, "exception_version");
   const exceptionVersion = exceptionVersionRaw ? Number(exceptionVersionRaw) : null;
   if (!seriesId) return;
-  const { supabase } = await requireHousehold();
+  const { supabase, householdId } = await requireHousehold();
   const back = `/calendar/${seriesId}?occurrence=${encodeURIComponent(occurrenceKey)}`;
 
   if (scope === "series") {
-    const { error } = await supabase.from("events").delete().eq("id", seriesId);
+    const { error } = await supabase.from("events").delete().eq("id", seriesId).eq("household_id", householdId);
     if (error) redirect(`${back}&error=${encodeURIComponent("That series could not be deleted.")}`);
     revalidatePath("/calendar");
     redirect("/calendar?deleted=1");

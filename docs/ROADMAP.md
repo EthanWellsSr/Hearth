@@ -3,31 +3,67 @@
 Future work is grouped into planned releases. Release names and contents are
 plans; shipped work moves to [`CHANGELOG.md`](../CHANGELOG.md).
 
-## v0.4.3 — Public Launch Readiness
+## v0.4.3 — Production Foundations
 
-**Status:** Planned; findings in
-[`docs/audits/2026-09-24-public-launch-readiness.md`](audits/2026-09-24-public-launch-readiness.md).
-Design gate (`grill-with-docs`) not yet run.
+**Status:** Database foundation and scale work complete on `dev`; release and
+publication review remain. Production and staging Auth sign-up are disabled;
+the app sign-up path is removed on `dev` pending deployment. The
+[design](design/v0.4.3-production-foundations.md) was confirmed 2026-09-27 and
+narrowed 2026-10-06; backup work now follows repository publication.
+Split from the
+[launch-readiness audit](audits/2026-09-24-public-launch-readiness.md).
 
-**Goal:** Let people outside the Wells household open Hearth's link, create an
-account, and run their own Household safely, on infrastructure that keeps working
-as Households are added. Ends with the repository public and CI enforced on `master`.
+**Goal:** Make the database schema reproducible and Household queries efficient.
+
+### Scope
+
+- [x] Supabase CLI, baseline migration, staging project, CLI-applied migrations
+- [x] CI job that rebuilds a database from the repository's migrations
+- [x] Explicit `household_id` filters on every Household-scoped query, with a guard test
+- [x] `(household_id, created_at)` indexes on `todos` and `grocery_items`
+- [x] Database-enforced one Household per User
+- [x] Staging database scale test: 1,000 Households, 50 active Users, before and
+  after the query and policy changes
+
+The Preview `k6` test, security headers, Sentry, and repository cleanup are not
+gates for this release. Repository publication, production-data backup, and
+public sign-up are separate decisions.
+
+## Public project showcase — priority one
+
+**Status:** Scope agreed 2026-10-06; [design](design/public-showcase.md).
+Clean and publish the repository with an accurate README and screenshots made
+with fictional data. Review tracked files and Git history before changing
+visibility. A short recorded walkthrough can follow publication. The deployed app remains limited to Ethan
+and his wife. A live guest Demo is deferred unless it becomes useful.
+
+## Production-data backup — after repository publication
+
+**Status:** Deferred until the public repository is ready. Database migrations
+rebuild schema and fictional sample data; they do not recover production records.
+
+- [ ] Nightly encrypted production database exports from a separate private
+  GitHub repository, with retention, failure monitoring, and a tested restore
+- [ ] Decide whether Avatar objects need a separate Storage backup
+
+## v0.4.4 — Public Sign-up
+
+**Status:** Deferred while Hearth is developed for Ethan and his wife. The
+[partial design](design/v0.4.4-public-sign-up.md) does not govern the current
+public-visibility goal. Release numbering can be revisited before implementation.
+
+**Goal:** Let people outside the Wells Household open Hearth's link, create an
+account, and run their own Household. Repository visibility is a separate decision.
 
 ### Scope
 
 - [ ] Production publicly reachable (Vercel Standard Protection) on Hearth's own domain
-- [ ] Custom SMTP (Resend) on a verified domain so confirmation emails reach anyone
+- [ ] Custom SMTP (Resend) on a verified domain
 - [ ] `/auth/confirm` route and password reset
-- [ ] CAPTCHA on sign-up/sign-in; invite-code hardening
-- [ ] Explicit Household filters on list queries plus `household_id` indexes
-- [ ] Database-enforced one Household per User
-- [ ] Baseline migration, a staging Supabase project, and CLI-applied migrations
-- [ ] Nightly database backups via scheduled GitHub Action (free tier)
-- [ ] Security headers, error tracking, privacy policy, and account deletion
-- [ ] Repo hygiene (license decision, neutral test fixtures, README), repo made public
-- [ ] CI (`checks`) required on `master` through a `dev` → `master` PR
+- [ ] Cloudflare Turnstile on sign-up, sign-in, and password reset
+- [ ] Privacy policy, terms, and account deletion
 
-## v0.4.4 — Event Reminders & Browser Push
+## v0.4.5 — Event Reminders & Browser Push
 
 **Status:** Planned; design already recorded in
 [`docs/design/v0.4.1-calendar-rhythm.md`](design/v0.4.1-calendar-rhythm.md)
@@ -59,7 +95,7 @@ working tree.
 - [x] Decide recurrence rules, reminder delivery channels, notification
   preferences, and Chore presentation during the pre-code design gate
 
-## v0.4.5 — Event Organization
+## v0.4.6 — Event Organization
 
 **Status:** Planned
 
@@ -73,7 +109,7 @@ working tree.
 - [ ] Decide whether colors belong to individual Events, categories, Members, or a
   combination during the pre-code design gate
 
-## v0.4.6 — Event Collaboration
+## v0.4.7 — Event Collaboration
 
 **Status:** Planned
 

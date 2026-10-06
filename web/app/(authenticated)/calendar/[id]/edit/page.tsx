@@ -18,11 +18,12 @@ export default async function EditEventPage({
   searchParams: Promise<{ occurrence?: string }>;
 }) {
   const [{ id }, query] = await Promise.all([params, searchParams]);
-  const { supabase, householdTimeZone } = await requireHousehold();
+  const { supabase, householdId, householdTimeZone } = await requireHousehold();
   const { data: row } = await supabase
     .from("events")
     .select("*")
     .eq("id", id)
+    .eq("household_id", householdId)
     .maybeSingle();
   if (!row) {
     return (
@@ -44,6 +45,7 @@ export default async function EditEventPage({
     const { data: exceptionRow } = await supabase
       .from("event_occurrence_exceptions")
       .select("*")
+      .eq("household_id", householdId)
       .eq("series_id", id)
       .eq("original_occurrence_key", occurrenceKey)
       .maybeSingle();

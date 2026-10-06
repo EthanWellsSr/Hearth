@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { signIn, signUp } from "./actions";
+import { signIn } from "./actions";
 import { MeadowSprig } from "@/components/MeadowSprig";
 import { normalizeInviteCode } from "@/lib/invite";
 import { pendingInviteCode } from "@/lib/pending-invite";
@@ -45,7 +45,7 @@ export default async function LoginPage({
             </h1>
             <p className="text-sm leading-6 text-stone-500">
               {invite
-                ? "Sign in or create a new sign-in to continue your Household invitation."
+                ? "Sign in to continue your Household invitation."
                 : "Sign in to your shared household space."}
             </p>
           </div>
@@ -73,9 +73,6 @@ export default async function LoginPage({
             </label>
             <button className="btn-primary mt-1 w-full" formAction={signIn}>
               Enter Hearth
-            </button>
-            <button className="btn-ghost w-full" formAction={signUp}>
-              Create a new sign-in
             </button>
           </form>
         </div>

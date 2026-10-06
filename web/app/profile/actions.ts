@@ -68,6 +68,7 @@ export async function saveProfile(
   revalidatePath("/", "layout");
   if (formData.get("destination") === "profile") redirect("/profile?saved=1");
 
+  // tenant-scope: the caller's own Membership, looked up before the Household is known.
   const { data: membership } = await supabase
     .from("memberships")
     .select("id")
