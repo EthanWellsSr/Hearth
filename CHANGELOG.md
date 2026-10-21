@@ -9,6 +9,14 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-10-21
+
+### Added
+
+- Added a nightly production backup: a GitHub Actions job in the private
+  `Hearth-Backup` repository exports production data to `backup.sql` and commits
+  it, keeping each night's copy in Git history.
+
 ## [0.4.3] - 2026-10-06
 
 ### Added

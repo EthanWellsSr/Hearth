@@ -10,28 +10,6 @@ fictional screenshots present; [design](design/public-showcase.md). A short
 recorded walkthrough is optional follow-up. The deployed app remains limited to
 Ethan and his wife. A live guest Demo remains deferred.
 
-## v0.4.4 — Production Backup
-
-**Status:** In progress; private repository and gated workflow published on
-2026-10-21 in `EthanWellsSr/Hearth-Backup` (`576f495`). Configuration and recovery
-verification remain; no production backup has run. Opening sign-up stays deferred.
-See the [backup design](design/v0.4.4-production-backup.md) and
-[implementation handoff](../backup-creation.md).
-
-**Goal:** Recover production Household records without upgrading Supabase from
-the Free plan.
-
-### Scope
-
-- [x] Create the private backup repository and publish the export/encryption workflow.
-- [x] Validate workflow syntax and verify execution is skipped before enablement.
-- [ ] Configure the public encryption recipient and production connection secrets.
-- [ ] Run nightly encrypted database exports from a separate private GitHub
-  repository and retain them within the GitHub Free storage allowance.
-- [ ] Keep the decryption key outside GitHub and monitor failed or missed runs.
-- [ ] Restore a backup into an isolated non-production database and verify it.
-- [ ] Decide whether private Avatar objects need a separate Storage backup.
-
 ## Public Sign-up — deferred
 
 **Status:** No release assigned. Hearth remains usable only by Ethan and his
