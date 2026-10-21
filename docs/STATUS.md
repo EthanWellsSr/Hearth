@@ -3,19 +3,19 @@
 Short handoff for the current release and immediate work. Update this file when
 the active plan changes and as part of every release.
 
-## Active priority — documentation and database understanding
+## Active priority — finish backup configuration outside this cloud session
 
-- Repository visibility is public, confirmed through GitHub on 2026-10-20.
-  The README and fictional screenshots are present; a recorded walkthrough and
-  live guest Demo remain deferred.
-- Ethan wants a database walkthrough before deciding how to proceed with backups:
-  explain the schema, relationships, Auth, RLS, migrations, staging, production,
-  and what v0.4.3 changed. Explain backup frequency and encryption separately.
-- v0.4.4 Production Backup remains proposed. Do not begin implementation until
-  Ethan understands the options and confirms the completed design.
-- Production and staging Auth sign-up were recorded as disabled on 2026-10-06.
-  The sign-up action and UI removal are merged to `master`; production deployment
-  status has not been reverified this session.
+- Hearth is public; the private `EthanWellsSr/Hearth-Backup` repository now exists.
+  Ethan created it and authorized workflow setup after the database discussion.
+- Backup repository commit `576f495` publishes the workflow, export/encryption
+  script, setup README, and ignore rules. v0.4.4 is in progress, not released.
+- Execution is gated by `BACKUP_ENABLED == 'true'`; an unset variable keeps it
+  disabled. No production export, key generation, or restore has been performed.
+- This connection can push files and dispatch workflows, but setting an Actions
+  variable returned HTTP 403. Secret management has not been verified. Continue
+  configuration through Ethan's GitHub settings or another authorized instance.
+- Production and staging Auth sign-up were recorded as disabled on 2026-10-06;
+  production deployment and live database state were not reverified this session.
 
 ## Current release
 
@@ -32,6 +32,13 @@ the active plan changes and as part of every release.
 
 ## Verified this cycle
 
+- Backup setup, 2026-10-21: repository privacy verified; workflow passes
+  `actionlint`, shell syntax, and synthetic success/failure-path checks. GitHub
+  [run 39628307846](https://github.com/EthanWellsSr/Hearth-Backup/actions/runs/39628307846)
+  completed as skipped, confirming the execution gate. No backup job steps ran.
+- Actual database export, encryption/decryption, artifact storage size, and restore
+  remain untested. Earlier app checks below are historical, not fresh runs.
+
 - GitHub PR #2: six checks passed, including application and migration CI.
 - Local release preparation on 2026-10-06: 75 tests, webpack build, and notices
   check passed. Lint passed with one warning from a local untracked scale-test
@@ -42,18 +49,22 @@ the active plan changes and as part of every release.
 
 ## Next
 
-1. Review the documentation updates with Ethan, then provide the database
-   walkthrough when he is ready to proceed.
-2. Revisit [the v0.4.4 backup proposal](design/v0.4.4-production-backup.md)
-   after that discussion. Resolve whether the proposed nightly encrypted export
-   approach is appropriate, then connection credentials, retention, failure
-   alerts, restore cadence, and Avatar coverage before implementation.
+1. Ethan generates the private `age` key on his trusted computer outside agent
+   access and preserves a protected recovery copy. Configure only its public
+   recipient in GitHub, plus the production connection secrets.
+2. Follow [the handoff](../backup-creation.md): verify server/client compatibility
+   and access, configure notifications, enable the workflow, run the first export,
+   and prove a restore into an isolated target. Measure retention/storage, choose
+   missed-run monitoring and restore cadence, and decide Avatar coverage.
 3. Event Reminders & Browser Push remain planned as v0.4.5; implementation waits
    for Ethan to start that work and provide VAPID/Cron setup.
 
 ## Blockers
 
-- Backup design decisions remain open pending the database walkthrough.
+- Backup execution awaits public-recipient and connection configuration. The
+  current connection cannot set Actions variables; the private key must remain
+  outside agent access. Retention, monitoring, Avatar coverage, and restore
+  acceptance remain open.
 - The [publication review](audits/2026-10-06-repository-publication.md) remains
   a historical record of commit-email exposure and the licensing note; public
   visibility does not establish that a reuse license was granted.

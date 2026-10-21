@@ -14,13 +14,16 @@ and implementation request, not evidence of an operational backup.
   the database structure reproducible. They do not preserve production records.
 - Hearth's public repository is `EthanWellsSr/Hearth`. Never store production
   exports, database passwords, or private encryption keys in it.
-- Ethan authorized creation of a separate private repository named
-  `EthanWellsSr/Hearth-Backup` if available and setup of its GitHub Actions.
-- The previous instance attempted repository creation with `gh repo create`.
-  GitHub returned `Resource not accessible by integration (createRepository)`.
-  The repository was not created by that attempt; availability was not proven.
-- No production export, key generation, secret setup, or restore was performed.
-  No backup workflow was published or enabled.
+- Ethan created `EthanWellsSr/Hearth-Backup`; its private visibility and this
+  connection's write access were verified. Repository creation is no longer blocked.
+- Commit `576f495` publishes `.github/workflows/backup.yml`, `scripts/backup.sh`,
+  `.gitignore`, and README on that repository's `main` branch.
+- No production export, private-key generation, connection-secret setup, or
+  restore has occurred. The workflow is published but backup execution is gated.
+- Setting `BACKUP_ENABLED` through the current connection returned HTTP 403
+  (`Resource not accessible by integration`). Its absence keeps the job disabled.
+  Secret-management permission was not tested. Ethan's GitHub settings or another
+  authorized instance must handle the remaining configuration.
 
 ## Agreed approach
 
@@ -73,13 +76,12 @@ Windows requires equivalent filesystem ACL protection and a suitable local path.
 
 ## Setup instructions for the implementing instance
 
-1. Check repository availability and current GitHub permissions. Create
-   `EthanWellsSr/Hearth-Backup` explicitly as **private**, or use it only after
-   confirming ownership, purpose, and visibility. Verify privacy before adding
-   production connection credentials. Do not change Hearth's visibility.
-2. Add a backup workflow, export/encryption script, `.gitignore`, and README
-   describing setup, coverage, failure handling, and restore instructions.
-   Publish only these implementation files to the private backup repository.
+1. Open the existing private `EthanWellsSr/Hearth-Backup` repository; do not
+   recreate it. Verify privacy before adding credentials. Do not change Hearth's
+   visibility.
+2. Review the published workflow, script, and README at commit `576f495` and
+   check for later changes before editing. Repository/workflow setup is complete;
+   continue with configuration and validation, not publication of the old draft.
 3. Configure repository variable `AGE_RECIPIENT` with Ethan's public key only.
 4. Configure the database connection through Actions secrets, not source:
    `PGHOST`, `PGPORT`, `PGUSER`, and `PGPASSWORD`; database name is `postgres`.
@@ -103,7 +105,7 @@ Windows requires equivalent filesystem ACL protection and a suitable local path.
    nonempty ciphertext after success; remove partial files and runner copies.
    Never upload diagnostic files that might contain credentials or private data.
 9. Measure encrypted export size and available artifact storage. The old design
-   targets 30 days if affordable; the local draft uses 7 days provisionally.
+   targets 30 days if affordable; the published workflow uses 7 days provisionally.
    Neither value is a measured or finalized retention decision. Account for
    manual runs as well as scheduled runs and document expiry behavior.
 10. Configure visible failure notifications and a way to notice missed successful
@@ -116,7 +118,7 @@ Windows requires equivalent filesystem ACL protection and a suitable local path.
 
 ## Coverage and limitations to resolve
 
-The local draft uses one consistent custom-format `pg_dump` covering `public`,
+The published script uses one consistent custom-format `pg_dump` covering `public`,
 `auth`, and `supabase_migrations`, with owner and privilege restoration omitted.
 Treat this as a draft approach to review, not a proven Supabase recovery recipe.
 Confirm that it includes all necessary records and does not omit future custom
@@ -158,22 +160,33 @@ Record and verify:
 - The exact successful restore procedure, elapsed recovery time, backup size,
   retention, failure/missed-run monitoring, and the next restore-drill date.
 
-## Existing local draft and validation
+## Published workflow and validation
 
-The previous instance left optional starter files at `/workspace/Hearth-Backup/`:
-`.github/workflows/backup.yml`, `scripts/backup.sh`, `.gitignore`, and `README.md`.
-Those files may not exist in another instance. They are not committed or published
-and this handoff does not depend on them being available.
+The source of truth is now the private backup repository, not the optional local
+starter directory. Commit `576f495` schedules 08:23 UTC daily, gates execution
+with `BACKUP_ENABLED`, uses a digest-pinned PostgreSQL 17 container and `age`, and
+uploads encrypted artifacts with provisional 7-day retention. GitHub action
+versions are pinned; dependency updates require review.
 
-The draft schedules 08:23 UTC daily, gates runs with `BACKUP_ENABLED`, uses a
-PostgreSQL 17 container and `age`, and uploads encrypted artifacts with provisional
-7-day retention. Shell syntax was checked, and the missing-configuration check
-was exercised. No database connection, encryption round trip, actual Actions run,
-or restore was tested. The container image still needs digest pinning and the
-workflow needs validation before publication.
+Validation completed on 2026-10-21:
 
-At handoff, five earlier documentation edits remain uncommitted on Hearth's `dev`:
-`CHANGELOG.md`, `docs/ROADMAP.md`, `docs/STATUS.md`,
-`docs/design/public-showcase.md`, and `docs/design/v0.4.4-production-backup.md`.
-Preserve them. Creating this handoff does not authorize committing or pushing
-changes to Hearth; follow Ethan's explicit Git instructions.
+- Workflow passed `actionlint`; export script passed shell syntax checking.
+- Synthetic tools exercised missing configuration, rejected transaction-pooler
+  port, failed-dump cleanup, and the successful pipeline. These do not prove real
+  encryption or database connectivity.
+- Manually dispatched GitHub run
+  [39628307846](https://github.com/EthanWellsSr/Hearth-Backup/actions/runs/39628307846)
+  completed with the backup job skipped and no steps run, as expected while gated.
+- Private repository visibility was verified after publication.
+
+Remaining work requires Ethan's local key generation and configuration through
+GitHub settings or another authorized instance. No real private key may enter
+agent-accessible storage. Database credentials, live version/access verification,
+first export, actual encryption/decryption, measured retention, failure and
+missed-run monitoring, Avatar coverage, and an isolated restore drill remain.
+The existing workflow is infrastructure setup, not a completed v0.4.4 release.
+
+The earlier five Hearth documentation changes were pushed to `dev` as `0d768ca`;
+the initial handoff was pushed as `fc1bf4e`. They are no longer pending local
+edits. This handoff update does not authorize new commits or pushes to Hearth;
+follow Ethan's explicit Git instructions.
