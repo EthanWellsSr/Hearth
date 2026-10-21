@@ -3,31 +3,12 @@
 Future work is grouped into planned releases. Release names and contents are
 plans; shipped work moves to [`CHANGELOG.md`](../CHANGELOG.md).
 
-## Public project showcase — priority one
+## Public project showcase
 
-**Status:** Scope agreed 2026-10-06; [design](design/public-showcase.md).
-Clean and publish the repository with an accurate README and screenshots made
-with fictional data. Review tracked files and Git history before changing
-visibility. A short recorded walkthrough can follow publication. The deployed
-app remains limited to Ethan and his wife. A live guest Demo is deferred unless
-it becomes useful.
-
-## v0.4.4 — Production Backup
-
-**Status:** Planned after repository publication. Opening sign-up remains
-deferred while Hearth is for Ethan and his wife. See the
-[backup design](design/v0.4.4-production-backup.md).
-
-**Goal:** Recover production Household records without upgrading Supabase from
-the Free plan.
-
-### Scope
-
-- [ ] Run nightly encrypted database exports from a separate private GitHub
-  repository and retain them within the GitHub Free storage allowance.
-- [ ] Keep the decryption key outside GitHub and monitor failed or missed runs.
-- [ ] Restore a backup into an isolated non-production database and verify it.
-- [ ] Decide whether private Avatar objects need a separate Storage backup.
+**Status:** Repository confirmed public on 2026-10-20, with the README and
+fictional screenshots present; [design](design/public-showcase.md). A short
+recorded walkthrough is optional follow-up. The deployed app remains limited to
+Ethan and his wife. A live guest Demo remains deferred.
 
 ## Public Sign-up — deferred
 
@@ -35,7 +16,21 @@ the Free plan.
 wife. The [partial design](design/v0.4.4-public-sign-up.md) is retained for a
 future decision; it does not govern repository visibility.
 
-## v0.4.5 — Event Reminders & Browser Push
+## v0.4.5 — To-do Editing & Ordering
+
+**Status:** Planned
+
+**Goal:** Let Members correct To-dos and arrange them in the order they want.
+
+### Proposed scope
+
+- [ ] Let Members edit an existing To-do instead of deleting and re-creating it
+- [ ] Let Members reorder To-dos and persist the order for the Household
+- [ ] Decide which To-do fields are editable, whether personal and shared To-dos
+  share one order, and how reordering works on touch devices during the pre-code
+  design gate
+
+## v0.4.6 — Event Reminders & Browser Push
 
 **Status:** Planned; design already recorded in
 [`docs/design/v0.4.1-calendar-rhythm.md`](design/v0.4.1-calendar-rhythm.md)
@@ -48,8 +43,7 @@ shipped in v0.4.1; reminders were split into their own release because they
 require deployment secrets, Supabase Cron, and real-device testing that the rest
 of the calendar work did not. The reminder/push schema (migration `0010`:
 `event_reminders`, `push_subscriptions`, `event_reminder_deliveries`) is already
-applied as groundwork, and unwired opt-in/service-worker scaffolding exists in the
-working tree.
+applied as groundwork.
 
 ### Proposed scope
 
@@ -67,7 +61,7 @@ working tree.
 - [x] Decide recurrence rules, reminder delivery channels, notification
   preferences, and Chore presentation during the pre-code design gate
 
-## v0.4.6 — Event Organization
+## v0.4.7 — Event Organization
 
 **Status:** Planned
 
@@ -81,7 +75,7 @@ working tree.
 - [ ] Decide whether colors belong to individual Events, categories, Members, or a
   combination during the pre-code design gate
 
-## v0.4.7 — Event Collaboration
+## v0.4.8 — Event Collaboration
 
 **Status:** Planned
 

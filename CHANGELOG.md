@@ -9,6 +9,14 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-10-21
+
+### Added
+
+- Added a nightly production backup: a GitHub Actions job in the private
+  `Hearth-Backup` repository exports production data to `backup.sql` and commits
+  it, keeping each night's copy in Git history.
+
 ## [0.4.3] - 2026-10-06
 
 ### Added
@@ -126,9 +134,8 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ### Deferred
 
-- Event reminders and browser push moved to their own release (now v0.4.3) because
-  they require deployment secrets, Supabase Cron, and real-device testing. Unwired
-  opt-in and service-worker scaffolding remains in the working tree.
+- Event reminders and browser push moved to their own release (now v0.4.6) because
+  they require deployment secrets, Supabase Cron, and real-device testing.
 
 ## [0.4.0] - 2026-09-18
 
