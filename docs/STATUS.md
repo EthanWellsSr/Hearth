@@ -16,8 +16,9 @@ the active plan changes and as part of every release.
 ## Verified this cycle
 
 - Backup, 2026-10-21: a manual run committed `backup.sql` (38 KB) containing both
-  Auth Users, the Household, its Memberships, and app records. No restore has
-  been rehearsed.
+  Auth Users, the Household, its Memberships, and app records. The Restore test
+  workflow loaded it into a throwaway Supabase with matching counts and no
+  broken links.
 - GitHub PR #2: six checks passed, including application and migration CI.
 - Local release preparation on 2026-10-06: 75 tests, webpack build, and notices
   check passed. Lint passed for the merged repository.
@@ -27,10 +28,8 @@ the active plan changes and as part of every release.
 
 ## Next
 
-1. Rehearse a restore: apply migrations to a throwaway database and load
-   `backup.sql`.
-2. v0.4.5 To-do Editing & Ordering is next on the roadmap.
-3. Event Reminders & Browser Push remain planned as v0.4.6; implementation waits
+1. v0.4.5 To-do Editing & Ordering is next on the roadmap.
+2. Event Reminders & Browser Push remain planned as v0.4.6; implementation waits
    for Ethan to start that work and provide VAPID/Cron setup.
 
 ## Blockers
