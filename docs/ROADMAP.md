@@ -38,7 +38,21 @@ the Free plan.
 wife. The [partial design](design/v0.4.4-public-sign-up.md) is retained for a
 future decision; it does not govern repository visibility.
 
-## v0.4.5 — Event Reminders & Browser Push
+## v0.4.5 — To-do Editing & Ordering
+
+**Status:** Planned
+
+**Goal:** Let Members correct To-dos and arrange them in the order they want.
+
+### Proposed scope
+
+- [ ] Let Members edit an existing To-do instead of deleting and re-creating it
+- [ ] Let Members reorder To-dos and persist the order for the Household
+- [ ] Decide which To-do fields are editable, whether personal and shared To-dos
+  share one order, and how reordering works on touch devices during the pre-code
+  design gate
+
+## v0.4.6 — Event Reminders & Browser Push
 
 **Status:** Planned; design already recorded in
 [`docs/design/v0.4.1-calendar-rhythm.md`](design/v0.4.1-calendar-rhythm.md)
@@ -70,7 +84,7 @@ included in the publication set and is absent from the current checkout.
 - [x] Decide recurrence rules, reminder delivery channels, notification
   preferences, and Chore presentation during the pre-code design gate
 
-## v0.4.6 — Event Organization
+## v0.4.7 — Event Organization
 
 **Status:** Planned
 
@@ -84,7 +98,7 @@ included in the publication set and is absent from the current checkout.
 - [ ] Decide whether colors belong to individual Events, categories, Members, or a
   combination during the pre-code design gate
 
-## v0.4.7 — Event Collaboration
+## v0.4.8 — Event Collaboration
 
 **Status:** Planned
 

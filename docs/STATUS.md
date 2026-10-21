@@ -56,7 +56,7 @@ the active plan changes and as part of every release.
    and access, configure notifications, enable the workflow, run the first export,
    and prove a restore into an isolated target. Measure retention/storage, choose
    missed-run monitoring and restore cadence, and decide Avatar coverage.
-3. Event Reminders & Browser Push remain planned as v0.4.5; implementation waits
+3. Event Reminders & Browser Push remain planned as v0.4.6; implementation waits
    for Ethan to start that work and provide VAPID/Cron setup.
 
 ## Blockers

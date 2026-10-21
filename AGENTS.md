@@ -33,6 +33,8 @@ Before every release:
   and blockers.
 - Review `CONTEXT.md` and update it only when the release changes Hearth's domain
   language.
+- Update the Hearth entry in the `EthanWellsSr/EthanWellsSr` profile README to
+  reflect the current project as Hearth develops.
 - Run `npm run notices` from `web/` and include the regenerated
   `web/public/legal/THIRD_PARTY_NOTICES.txt`.
 

@@ -126,7 +126,7 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ### Deferred
 
-- Event reminders and browser push moved to their own release (now v0.4.5) because
+- Event reminders and browser push moved to their own release (now v0.4.6) because
   they require deployment secrets, Supabase Cron, and real-device testing. At
   that time, unwired opt-in and service-worker scaffolding remained in the local
   working tree; it was later excluded from the publication set.
