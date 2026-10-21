@@ -1,8 +1,9 @@
 # Public project showcase
 
-**Status:** Priority one, 2026-10-06. Implementation and publication are separate
-steps; repository visibility has not changed. Production-data backup follows
-publication.
+**Status:** Repository confirmed public through GitHub on 2026-10-20; README
+and fictional screenshots are present. The publication date and historical
+review decisions are not inferred from current visibility. A recorded walkthrough
+remains optional; the live guest Demo remains deferred.
 
 ## Goal
 

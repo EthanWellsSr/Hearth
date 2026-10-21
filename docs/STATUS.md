@@ -3,16 +3,19 @@
 Short handoff for the current release and immediate work. Update this file when
 the active plan changes and as part of every release.
 
-## Active priority — public repository
+## Active priority — documentation and database understanding
 
-- The README and fictional screenshots are ready. The repo is still private while
-  Ethan reviews the historical commit-email exposure and decides whether to add
-  a license. Do not change visibility until he approves.
-- Production and staging Supabase Auth block new sign-ups. The sign-up action and
-  UI removal are merged to `master`; production deployment status should be
-  confirmed separately.
-- Database backup follows repository publication and is now planned for v0.4.4.
-  Migrations and fictional seed data cannot recover production Household records.
+- Repository visibility is public, confirmed through GitHub on 2026-10-20.
+  The README and fictional screenshots are present; a recorded walkthrough and
+  live guest Demo remain deferred.
+- Ethan wants a database walkthrough before deciding how to proceed with backups:
+  explain the schema, relationships, Auth, RLS, migrations, staging, production,
+  and what v0.4.3 changed. Explain backup frequency and encryption separately.
+- v0.4.4 Production Backup remains proposed. Do not begin implementation until
+  Ethan understands the options and confirms the completed design.
+- Production and staging Auth sign-up were recorded as disabled on 2026-10-06.
+  The sign-up action and UI removal are merged to `master`; production deployment
+  status has not been reverified this session.
 
 ## Current release
 
@@ -39,21 +42,21 @@ the active plan changes and as part of every release.
 
 ## Next
 
-1. Complete the public repository review and change visibility only after Ethan
-   approves the known email exposure and licensing choice. The live guest Demo
-   remains deferred.
-2. After publication, start v0.4.4 Production Backup using
-   [`docs/design/v0.4.4-production-backup.md`](design/v0.4.4-production-backup.md).
-   Resolve connection credentials, retention, failure alerts, restore cadence,
-   and whether Avatar objects need separate coverage before implementation.
+1. Review the documentation updates with Ethan, then provide the database
+   walkthrough when he is ready to proceed.
+2. Revisit [the v0.4.4 backup proposal](design/v0.4.4-production-backup.md)
+   after that discussion. Resolve whether the proposed nightly encrypted export
+   approach is appropriate, then connection credentials, retention, failure
+   alerts, restore cadence, and Avatar coverage before implementation.
 3. Event Reminders & Browser Push remain planned as v0.4.5; implementation waits
    for Ethan to start that work and provide VAPID/Cron setup.
 
 ## Blockers
 
-- Repository visibility still needs Ethan's explicit approval. See the
-  [publication review](audits/2026-10-06-repository-publication.md) for the
-  historical email exposure and license note.
+- Backup design decisions remain open pending the database walkthrough.
+- The [publication review](audits/2026-10-06-repository-publication.md) remains
+  a historical record of commit-email exposure and the licensing note; public
+  visibility does not establish that a reuse license was granted.
 - Until a restore is tested, production Household records are not recoverable
   from the migration baseline.
 - Public sign-up has no release assignment; Ethan's domain is not selected.

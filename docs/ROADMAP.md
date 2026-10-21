@@ -3,20 +3,20 @@
 Future work is grouped into planned releases. Release names and contents are
 plans; shipped work moves to [`CHANGELOG.md`](../CHANGELOG.md).
 
-## Public project showcase — priority one
+## Public project showcase
 
-**Status:** Scope agreed 2026-10-06; [design](design/public-showcase.md).
-Clean and publish the repository with an accurate README and screenshots made
-with fictional data. Review tracked files and Git history before changing
-visibility. A short recorded walkthrough can follow publication. The deployed
-app remains limited to Ethan and his wife. A live guest Demo is deferred unless
-it becomes useful.
+**Status:** Repository confirmed public on 2026-10-20, with the README and
+fictional screenshots present; [design](design/public-showcase.md). A short
+recorded walkthrough is optional follow-up. The deployed app remains limited to
+Ethan and his wife. A live guest Demo remains deferred.
 
 ## v0.4.4 — Production Backup
 
-**Status:** Planned after repository publication. Opening sign-up remains
-deferred while Hearth is for Ethan and his wife. See the
-[backup design](design/v0.4.4-production-backup.md).
+**Status:** Proposed; database walkthrough and design decisions come first.
+Ethan wants to understand the existing database work and the reasons for backup
+frequency and encryption before choosing an approach. The scope below remains a
+proposal, not an approved implementation plan. Opening sign-up remains deferred.
+See the [backup design](design/v0.4.4-production-backup.md).
 
 **Goal:** Recover production Household records without upgrading Supabase from
 the Free plan.
@@ -48,8 +48,8 @@ shipped in v0.4.1; reminders were split into their own release because they
 require deployment secrets, Supabase Cron, and real-device testing that the rest
 of the calendar work did not. The reminder/push schema (migration `0010`:
 `event_reminders`, `push_subscriptions`, `event_reminder_deliveries`) is already
-applied as groundwork, and unwired opt-in/service-worker scaffolding exists in the
-working tree.
+applied as groundwork. Earlier local opt-in/service-worker scaffolding was not
+included in the publication set and is absent from the current checkout.
 
 ### Proposed scope
 
