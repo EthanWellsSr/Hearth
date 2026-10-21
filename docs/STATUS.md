@@ -7,7 +7,8 @@ the active plan changes and as part of every release.
 
 - **v0.4.4 — Production Backup**, released 2026-10-21. A nightly job in the
   private `EthanWellsSr/Hearth-Backup` repository commits production data to
-  `backup.sql`; see the [design](design/v0.4.4-production-backup.md).
+  `backup.sql`; see the [design](design/v0.4.4-production-backup.md). PR #3
+  merged to `master` as `1c2b6fe`.
 - **v0.4.3 — Production Foundations**, released 2026-10-06: migration baseline,
   CI rebuild, Household query scale fixes, sign-up lock, and public showcase.
 - Keep explicit `household_id` filters in every Household-scoped query; the guard
@@ -19,7 +20,8 @@ the active plan changes and as part of every release.
   Auth Users, the Household, its Memberships, and app records. The Restore test
   workflow loaded it into a throwaway Supabase with matching counts and no
   broken links.
-- GitHub PR #2: six checks passed, including application and migration CI.
+- GitHub PR #3: all checks passed. PR #2 (v0.4.3): six checks passed,
+  including application and migration CI.
 - Local release preparation on 2026-10-06: 75 tests, webpack build, and notices
   check passed. Lint passed for the merged repository.
 - Fictional showcase screenshots were inspected at desktop and phone widths.
