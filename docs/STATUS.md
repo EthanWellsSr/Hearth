@@ -41,8 +41,7 @@ the active plan changes and as part of every release.
 
 - GitHub PR #2: six checks passed, including application and migration CI.
 - Local release preparation on 2026-10-06: 75 tests, webpack build, and notices
-  check passed. Lint passed with one warning from a local untracked scale-test
-  draft. The warning is not in the merged repository.
+  check passed. Lint passed for the merged repository.
 - Fictional showcase screenshots were inspected at desktop and phone widths.
 - Production Auth sign-up is disabled; two existing confirmed Users with
   Memberships were verified before the lock was applied.

@@ -65,8 +65,7 @@ shipped in v0.4.1; reminders were split into their own release because they
 require deployment secrets, Supabase Cron, and real-device testing that the rest
 of the calendar work did not. The reminder/push schema (migration `0010`:
 `event_reminders`, `push_subscriptions`, `event_reminder_deliveries`) is already
-applied as groundwork. Earlier local opt-in/service-worker scaffolding was not
-included in the publication set and is absent from the current checkout.
+applied as groundwork.
 
 ### Proposed scope
 
