@@ -60,7 +60,8 @@ Recurrence is what makes it a Chore.
 _Avoid_: task, duty, job
 
 **To-do**:
-A one-off task with no recurrence. May be personal or shared.
+A one-off task with no recurrence in the Household’s single ordered list.
+May have an Assignee and an optional due date; all Members can edit it.
 _Avoid_: task, item, reminder
 
 **Grocery List**:

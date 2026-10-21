@@ -53,6 +53,14 @@ Before every release:
 - Run `npm test` after behavior or recurrence changes.
 - Run `npm run build` before handing off a completed feature when practical.
 - Verify user-facing UI changes in a browser at desktop and phone widths.
+- For every implementation, verify the affected behavior against staging before
+  handoff. When database changes are included, inspect the staging schema, apply
+  the ordered migrations, and verify the resulting behavior, data integrity, and
+  Household access boundaries. Record the results in `docs/STATUS.md`.
+- Staging verification, applying implementation migrations to staging, and
+  creating and cleaning up fictional staging test data are pre-authorized by
+  Ethan; do not ask for separate approval. Confirm the target is staging and
+  preserve existing staging data. This does not authorize production changes.
 - Report checks that were not run or could not complete.
 
 ## Architecture guardrails

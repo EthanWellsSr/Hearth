@@ -9,6 +9,14 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+### Added
+
+- Edit any Household To-do's text, optional due date, and Assignee in one form.
+- Persist one Household order with pointer drag handles and move-up/down buttons.
+- Show completed To-dos below unfinished ones and append new To-dos to the
+  unfinished list. Show save failures without discarding entered values.
+
+
 ## [0.4.4] - 2026-10-21
 
 ### Added

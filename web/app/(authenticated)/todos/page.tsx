@@ -1,17 +1,17 @@
 import { requireHousehold } from "@/lib/auth";
-import { addTodo } from "@/app/actions";
-import { AssigneePicker, type AssigneeOption } from "@/components/AssigneePicker";
+import { type AssigneeOption } from "@/components/AssigneePicker";
 import { TodoList } from "@/components/TodoList";
-import { FormSubmitButton } from "@/components/FormSubmitButton";
+import { TodoAddForm } from "@/components/TodoAddForm";
 import { signedAvatarUrls } from "@/lib/avatar-server";
 import { DEFAULT_AVATAR_URL } from "@/lib/profile";
 
 export default async function TodosPage() {
   const { supabase, householdId } = await requireHousehold();
-  const [{ data: todos }, { data: memberships }] = await Promise.all([
-    supabase.from("todos").select("id, text, done, assignee_id").eq("household_id", householdId).order("created_at", { ascending: true }),
+  const [{ data: todos, error: todosError }, { data: memberships }] = await Promise.all([
+    supabase.from("todos").select("id, text, done, assignee_id, due_date").eq("household_id", householdId).order("done").order("sort_order").order("id"),
     supabase.from("memberships").select("id, user_id").eq("household_id", householdId),
   ]);
+  if (todosError) throw new Error("The To-do list could not be loaded.");
   const memberRows = (memberships ?? []) as Array<{ id: string; user_id: string }>;
   const { data: profiles } = memberRows.length
     ? await supabase
@@ -44,19 +44,7 @@ export default async function TodosPage() {
         <p className="page-description">Set something down here, then enjoy the calm of knowing it has a place.</p>
       </header>
 
-      <form action={addTodo} className="card botanical-card grid gap-4 overflow-visible p-4 sm:grid-cols-[1fr_16rem_auto] sm:items-end sm:p-5">
-        <label>
-          <span className="subtle-label">What needs doing?</span>
-          <input name="text" placeholder="What needs doing?" aria-label="New To-do" className="field w-full" required />
-        </label>
-        <label>
-          <span className="subtle-label">Assignee</span>
-          <AssigneePicker members={memberList} />
-        </label>
-        <FormSubmitButton pendingChildren="Adding…" className="btn-primary sm:mb-0.5">
-          Add to list
-        </FormSubmitButton>
-      </form>
+      <TodoAddForm members={memberList} />
 
       <TodoList
         items={(todos ?? []).map((todo) => ({
@@ -64,6 +52,7 @@ export default async function TodosPage() {
           text: todo.text,
           done: todo.done,
           assigneeId: todo.assignee_id,
+          dueDate: todo.due_date,
         }))}
         members={memberList}
       />
