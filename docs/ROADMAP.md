@@ -16,21 +16,6 @@ Ethan and his wife. A live guest Demo remains deferred.
 wife. The [partial design](design/v0.4.4-public-sign-up.md) is retained for a
 future decision; it does not govern repository visibility.
 
-## v0.4.5 — To-do Editing & Ordering
-
-**Status:** Implemented and database-verified in staging; unreleased, pending preview review.
-See the [confirmed design](design/v0.4.5-todo-editing-ordering.md).
-
-**Goal:** Let Members correct To-dos and arrange them in the order they want.
-
-### Proposed scope
-
-- [x] Let Members edit an existing To-do instead of deleting and re-creating it
-- [x] Let Members reorder To-dos and persist the order for the Household
-- [x] Decide which To-do fields are editable, whether personal and shared To-dos
-  share one order, and how reordering works on touch devices during the pre-code
-  design gate
-
 ## v0.4.6 — Event Reminders & Browser Push
 
 **Status:** Planned; design already recorded in

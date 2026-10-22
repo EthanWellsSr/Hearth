@@ -23,8 +23,20 @@ the Grocery List, meal planning, Notes, Messages, and Expenses.
 
 ## Release documentation
 
+For every implementation, complete a documentation sweep before handoff without
+waiting for Ethan to request it or approve it separately. Keep `README.md`,
+`CONTEXT.md`, `docs/STATUS.md`, `docs/ROADMAP.md`, `CHANGELOG.md`, and affected
+design/ADR documents consistent with the implemented and verified behavior.
+Preserve historical records and state any verification or rollout limitations.
+
+When Ethan considers a version done, perform the release checklist below as part
+of that sweep. Record completion separately from production deployment; do not
+claim a deployment happened without evidence. Commit/push and production changes
+still follow their own authorization rules.
+
 Before every release:
 
+- Update `web/package.json` and `web/package-lock.json` to the completed version.
 - Move the completed entries in `CHANGELOG.md` from `Unreleased` into a dated
   version section.
 - Remove the shipped release from `docs/ROADMAP.md` and verify the remaining
