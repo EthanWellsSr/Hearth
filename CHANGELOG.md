@@ -11,6 +11,10 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ### Changed
 
+- Plan v0.4.6 Google Calendar Integration with shared read-only imports,
+  per-Member visibility toggles, and automatic synchronization. Move Event
+  Reminders, Event Organization, and Event Collaboration to v0.4.7–v0.4.9.
+
 - Use square completion boxes for To-dos, with an empty unfinished state and a
   checkmark when completed.
 
@@ -156,7 +160,7 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ### Deferred
 
-- Event reminders and browser push moved to their own release (now v0.4.6) because
+- Event reminders and browser push moved to their own release (now v0.4.7) because
   they require deployment secrets, Supabase Cron, and real-device testing.
 
 ## [0.4.0] - 2026-09-18

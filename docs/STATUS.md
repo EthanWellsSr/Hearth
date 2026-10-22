@@ -24,7 +24,9 @@ the active plan changes and as part of every release.
 - Source review confirms the change only affects the completion control's shape
   and unfinished glyph. Existing submission, labels, disabled state, and sizes remain.
 - Local lint, build, notices generation, and browser checks could not run because
-  the execution environment's network proxy was unavailable; GitHub CI is pending.
+  the execution environment's network proxy was unavailable. GitHub CI checks
+  and migration jobs passed for checkbox commit `2925e6d`; live browser verification
+  of the square-box follow-up remains unperformed.
 - No database, dependency, or version changes.
 
 ## Verification and limitations
@@ -74,11 +76,28 @@ the active plan changes and as part of every release.
   apply agreed staging/production database updates, sweep repository docs, then
   commit, push, and create/update the PR without separate step approvals.
 
+## Roadmap documentation update — 2026-10-22
+
+- Recorded the confirmed Google Calendar scope as planned v0.4.6 and shifted
+  subsequent 0.4.x releases by one. Swept all repository Markdown documents;
+  updated README, vocabulary, changelog, roadmap, status, and affected designs.
+- Checked changed relative links and release references; no broken targets found.
+- Documentation only; application/package version remains v0.4.5.
+
 ## Next
 
-1. **v0.4.6 — Event Reminders & Browser Push** is the next feature release.
-   Implementation awaits Ethan starting that work and providing VAPID/Cron setup.
-2. Discuss Google Calendar integration scope with Ethan before assigning a release.
+1. **v0.4.6 — Google Calendar Integration** is the next feature release.
+   Ethan confirmed the product scope on 2026-10-22; see the
+   [design](design/v0.4.6-google-calendar-integration.md). Each User connects
+   selected Google calendars for shared, read-only viewing. Each Member controls
+   visibility; the Hearth toggle includes Hearth Events and due Chores.
+   Automatic synchronization, Sync now, and last-sync times are included.
+   Implementation has not started; technical and operational details remain to
+   resolve before code.
+2. **v0.4.7 — Event Reminders & Browser Push** follows Google Calendar integration;
+   VAPID/Cron setup and real-device testing remain future work.
+3. Event Organization moves to v0.4.8 and Event Collaboration to v0.4.9.
+   The v0.5.0-and-later milestones retain their version numbers and follow these.
 
 ## Blockers
 

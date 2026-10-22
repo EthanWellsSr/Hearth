@@ -17,8 +17,11 @@ staging; see [status](docs/STATUS.md) for production rollout state.
 | Grocery List | Add, mark bought, remove, and clear bought items |
 | Household people | User Profiles and private Avatars, Memberships, Invite Codes, owner controls, and timezone settings |
 
-Hearth is installable as a progressive web app. Meal planning, Notes, Messages,
-Expenses, and Event Reminders are planned work; see the [roadmap](docs/ROADMAP.md).
+Hearth is installable as a progressive web app. **Next: v0.4.6 — Google Calendar
+Integration**, bringing selected Google calendars into the shared Calendar as
+read-only Events, with per-Member calendar toggles and automatic synchronization.
+Meal planning, Notes, Messages, Expenses, and Event Reminders are also planned
+work; see the [roadmap](docs/ROADMAP.md).
 
 ## Access
 
