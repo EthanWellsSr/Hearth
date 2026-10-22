@@ -9,6 +9,11 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+### Changed
+
+- Use square completion boxes for To-dos, with an empty unfinished state and a
+  checkmark when completed.
+
 ## [0.4.5] - 2026-10-21
 
 ### Added

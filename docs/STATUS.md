@@ -12,9 +12,20 @@ the active plan changes and as part of every release.
   [design](design/v0.4.5-todo-editing-ordering.md).
 - Implementation `8ced536` is on `dev`; GitHub CI passed. The matching database
   migration is applied to staging and production. PR #5 merged to `master` on
-  2026-10-22 as `ce0d6b8`; deployment of that merge has not been verified here.
+  2026-10-22 as `ce0d6b8`; Ethan confirmed checking the deployed To-do feature on 2026-10-22.
 - Keep explicit `household_id` filters in every Household-scoped query; the guard
   test catches omissions.
+
+## To-do checkbox follow-up — 2026-10-22
+
+- Ethan requested square completion boxes after checking the deployed To-do feature.
+- Changed the To-do completion button from a circle to a square, leaving unfinished
+  boxes empty and retaining the checkmark for completed To-dos.
+- Source review confirms the change only affects the completion control's shape
+  and unfinished glyph. Existing submission, labels, disabled state, and sizes remain.
+- Local lint, build, notices generation, and browser checks could not run because
+  the execution environment's network proxy was unavailable; GitHub CI is pending.
+- No database, dependency, or version changes.
 
 ## Verification and limitations
 
@@ -67,8 +78,7 @@ the active plan changes and as part of every release.
 
 1. **v0.4.6 — Event Reminders & Browser Push** is the next feature release.
    Implementation awaits Ethan starting that work and providing VAPID/Cron setup.
-2. Verify the deployed v0.4.5 app after PR #5’s merge. Its database migration
-   is already applied and verified in production.
+2. Discuss Google Calendar integration scope with Ethan before assigning a release.
 
 ## Blockers
 
