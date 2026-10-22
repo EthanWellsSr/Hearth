@@ -9,6 +9,12 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+### Added
+
+- Vendor all 38 Matt Pocock skills with supporting files, source attribution,
+  and MIT license under `skills/`; point the release workflow to local
+  `grill-with-docs` and its companion skills.
+
 ### Changed
 
 - Plan v0.4.6 Google Calendar Integration with shared read-only imports,

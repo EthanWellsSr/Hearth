@@ -94,6 +94,20 @@ the active plan changes and as part of every release.
 - Application behavior is unchanged. Local execution remains blocked by the
   unavailable network proxy; verification is delegated to GitHub CI.
 
+## Local skills — 2026-10-22
+
+- Vendored all 38 Matt Pocock skills and their support files from
+  `mattpocock/skills` at `5beb35b040e3de97e54fa9e386d7e42d15c295c2`, preserving upstream categories.
+  See the [catalog and source record](../skills/README.md) and
+  [MIT license](../skills/LICENSE).
+- Root agent instructions now point to the local release-design skills and retain
+  `CONTEXT.md` as Hearth's glossary. The Google Calendar design links to the
+  local skill; its full pre-code interview remains unperformed.
+- This imports files only; no plugin, hooks, tracker labels, or scripts were
+  installed or executed. Upstream setup has not been run.
+- Verified imported-file coverage and exact source content; application and
+  package versions are unchanged.
+
 ## Next
 
 1. **v0.4.6 — Google Calendar Integration** is the next feature release.
