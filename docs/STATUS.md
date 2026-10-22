@@ -84,6 +84,16 @@ the active plan changes and as part of every release.
 - Checked changed relative links and release references; no broken targets found.
 - Documentation only; application/package version remains v0.4.5.
 
+## To-do retry test follow-up — 2026-10-22
+
+- CI on the roadmap commit exposed a timing race in the edit-retry test: an
+  error can render while the transition still disables form fields, so synthetic
+  submission at that point omits the edited text from FormData.
+- The test now waits until Save is enabled and clicks it before checking the
+  retry payload. The existing edited-text assertion remains unchanged.
+- Application behavior is unchanged. Local execution remains blocked by the
+  unavailable network proxy; verification is delegated to GitHub CI.
+
 ## Next
 
 1. **v0.4.6 — Google Calendar Integration** is the next feature release.
