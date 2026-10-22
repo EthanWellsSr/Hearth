@@ -23,8 +23,20 @@ the Grocery List, meal planning, Notes, Messages, and Expenses.
 
 ## Release documentation
 
+For every implementation, complete a documentation sweep before handoff without
+waiting for Ethan to request it or approve it separately. Keep `README.md`,
+`CONTEXT.md`, `docs/STATUS.md`, `docs/ROADMAP.md`, `CHANGELOG.md`, and affected
+design/ADR documents consistent with the implemented and verified behavior.
+Preserve historical records and state any verification or rollout limitations.
+
+When Ethan considers a version done, perform the release checklist below as part
+of that sweep. Record completion separately from production deployment; do not
+claim a deployment happened without evidence. Commit/push and production changes
+still follow their own authorization rules.
+
 Before every release:
 
+- Update `web/package.json` and `web/package-lock.json` to the completed version.
 - Move the completed entries in `CHANGELOG.md` from `Unreleased` into a dated
   version section.
 - Remove the shipped release from `docs/ROADMAP.md` and verify the remaining
@@ -53,6 +65,14 @@ Before every release:
 - Run `npm test` after behavior or recurrence changes.
 - Run `npm run build` before handing off a completed feature when practical.
 - Verify user-facing UI changes in a browser at desktop and phone widths.
+- For every implementation, verify the affected behavior against staging before
+  handoff. When database changes are included, inspect the staging schema, apply
+  the ordered migrations, and verify the resulting behavior, data integrity, and
+  Household access boundaries. Record the results in `docs/STATUS.md`.
+- Staging verification, applying implementation migrations to staging, and
+  creating and cleaning up fictional staging test data are pre-authorized by
+  Ethan; do not ask for separate approval. Confirm the target is staging and
+  preserve existing staging data. This does not authorize production changes.
 - Report checks that were not run or could not complete.
 
 ## Architecture guardrails

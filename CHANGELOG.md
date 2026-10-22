@@ -9,6 +9,23 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-10-21
+
+### Added
+
+- Edit any Household To-do's text, optional due date, and Assignee in one form.
+- Persist one Household order with pointer drag handles and move-up/down buttons.
+- Show completed To-dos below unfinished ones and append new To-dos to the
+  unfinished list. Show save failures without discarding entered values.
+
+### Verification
+
+- Passed 94 tests, lint, TypeScript, production build, and desktop/phone browser
+  checks, including emulated touch dragging.
+- Applied the migration to staging and verified edits and ordering as two
+  Members, Household access boundaries, and preservation of all 99,446 existing
+  To-dos. Completion is recorded on `dev`; production rollout is separate.
+
 ## [0.4.4] - 2026-10-21
 
 ### Added
@@ -226,7 +243,9 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 - Added the initial responsive botanical interface and home navigation hub.
 - Added recurrence tests and the application version footer.
 
-[Unreleased]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.3...HEAD
+[Unreleased]: https://github.com/EthanWellsSr/Hearth/compare/8ced536b49b26be28f9f45153843398ba3a9fdc7...dev
+[0.4.5]: https://github.com/EthanWellsSr/Hearth/compare/25ec97889076776cf53cc5e551680ef455a1fbf1...8ced536b49b26be28f9f45153843398ba3a9fdc7
+[0.4.4]: https://github.com/EthanWellsSr/Hearth/blob/master/docs/design/v0.4.4-production-backup.md
 [0.4.3]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/EthanWellsSr/Hearth/compare/v0.4.0...v0.4.1

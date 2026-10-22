@@ -4,13 +4,16 @@ Hearth is a responsive household web app I built for my household and use daily
 to coordinate our Calendar, Chores, To-dos, and Grocery List. Building it is also
 a learning project for me. The deployed app is limited to its existing Members.
 
+**Current completed version: v0.4.5 — To-do Editing & Ordering.** Verified on
+staging; see [status](docs/STATUS.md) for production rollout state.
+
 ## What works today
 
 | Area | Current behavior |
 | --- | --- |
 | Calendar | Upcoming, month, and week views; all-day and timed Events; Recurring Events with occurrence changes; due Chores; Household timezone |
 | Chores | Every-N-days or weekly schedules, completion, next due date, and Member assignment |
-| To-dos | Create, assign, complete, delete, and automatic cleanup of completed items |
+| To-dos | Create and edit text, optional due date, and Assignee; shared saved order with drag handles and move buttons; complete, delete, and automatic cleanup |
 | Grocery List | Add, mark bought, remove, and clear bought items |
 | Household people | User Profiles and private Avatars, Memberships, Invite Codes, owner controls, and timezone settings |
 
