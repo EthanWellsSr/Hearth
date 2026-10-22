@@ -11,8 +11,8 @@ the active plan changes and as part of every release.
   last and new To-dos append to the unfinished list. See the
   [design](design/v0.4.5-todo-editing-ordering.md).
 - Implementation `8ced536` is on `dev`; GitHub CI passed. The matching database
-  migration is applied to staging and production. The production application
-  still has v0.4.4; PR #5 has not been merged or deployed in this work.
+  migration is applied to staging and production. PR #5 merged to `master` on
+  2026-10-22 as `ce0d6b8`; deployment of that merge has not been verified here.
 - Keep explicit `household_id` filters in every Household-scoped query; the guard
   test catches omissions.
 
@@ -67,8 +67,8 @@ the active plan changes and as part of every release.
 
 1. **v0.4.6 — Event Reminders & Browser Push** is the next feature release.
    Implementation awaits Ethan starting that work and providing VAPID/Cron setup.
-2. Finish v0.4.5 rollout by merging PR #5 to `master` and verifying the deployed
-   app. Its database migration is already applied and verified in production.
+2. Verify the deployed v0.4.5 app after PR #5’s merge. Its database migration
+   is already applied and verified in production.
 
 ## Blockers
 
