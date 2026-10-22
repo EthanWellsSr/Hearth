@@ -11,8 +11,8 @@ the active plan changes and as part of every release.
   last and new To-dos append to the unfinished list. See the
   [design](design/v0.4.5-todo-editing-ordering.md).
 - Implementation `8ced536` is on `dev`; GitHub CI passed. The matching database
-  migration is applied to staging. Production still has v0.4.4; no production
-  migration, merge to `master`, or deployment was performed in this work.
+  migration is applied to staging and production. PR #5 merged to `master` on
+  2026-10-22 as `ce0d6b8`; deployment of that merge has not been verified here.
 - Keep explicit `household_id` filters in every Household-scoped query; the guard
   test catches omissions.
 
@@ -47,12 +47,28 @@ the active plan changes and as part of every release.
   on `invite_join_attempts`, and
   [leaked-password protection](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).
 
+- Production migration applied on 2026-10-22 to `Hearth`
+  (`gclfsxkmtjdxmawwlhba`) with Ethan's explicit authorization. All five existing
+  To-dos retained identical original-field fingerprints and creation order;
+  no missing positions, due dates unset, ordering index present, and RLS active.
+  Reordering uses caller permissions; authenticated execution is allowed and
+  anonymous execution denied. With Ethan’s separate approval, production
+  migration history was aligned from tool-generated version `20261022001237`
+  to repository/staging version `20261021222858`; the recorded entry was verified
+  and the original data fingerprint still matches. No production test data was
+  created.
+
+- `AGENTS.md` now defines Ethan's end-to-end release workflow: design with
+  `grill-with-docs`, record decisions, implement on `dev`, verify affected flows,
+  apply agreed staging/production database updates, sweep repository docs, then
+  commit, push, and create/update the PR without separate step approvals.
+
 ## Next
 
 1. **v0.4.6 — Event Reminders & Browser Push** is the next feature release.
    Implementation awaits Ethan starting that work and providing VAPID/Cron setup.
-2. Production rollout of the completed v0.4.5 is a separate step: apply its
-   migration to production, merge to `master`, and verify the deployed app.
+2. Verify the deployed v0.4.5 app after PR #5’s merge. Its database migration
+   is already applied and verified in production.
 
 ## Blockers
 

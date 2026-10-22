@@ -1,106 +1,131 @@
-# Hearth — repository instructions for Codex
+# Hearth — how to work with Ethan
 
-Hearth is a shared household web app for calendar coordination, Chores, To-dos,
-the Grocery List, meal planning, Notes, Messages, and Expenses.
-
-## Sources of truth
-
-- `CONTEXT.md` defines the exact product vocabulary. Use those terms.
-- `docs/ROADMAP.md` organizes future work by planned release.
-- `docs/STATUS.md` records the current release, active work, next actions, and
-  blockers. Keep it synchronized as the active plan changes.
-- `docs/adr/` records architectural decisions and their reasoning.
-
-## Workflow
-
-- Work on `dev` unless Ethan explicitly directs otherwise.
-- Never commit or push unless Ethan explicitly requests it.
-- Commits use a single-line message summarizing their contents. Do not use
-  multi-line bodies or bulleted commit descriptions.
-- Preserve unrelated working-tree changes. Inspect the current diff before
-  editing and before reporting completion.
-- Run commands from `web/` unless a command is repository-wide.
-
-## Release documentation
-
-For every implementation, complete a documentation sweep before handoff without
-waiting for Ethan to request it or approve it separately. Keep `README.md`,
-`CONTEXT.md`, `docs/STATUS.md`, `docs/ROADMAP.md`, `CHANGELOG.md`, and affected
-design/ADR documents consistent with the implemented and verified behavior.
-Preserve historical records and state any verification or rollout limitations.
-
-When Ethan considers a version done, perform the release checklist below as part
-of that sweep. Record completion separately from production deployment; do not
-claim a deployment happened without evidence. Commit/push and production changes
-still follow their own authorization rules.
-
-Before every release:
-
-- Update `web/package.json` and `web/package-lock.json` to the completed version.
-- Move the completed entries in `CHANGELOG.md` from `Unreleased` into a dated
-  version section.
-- Remove the shipped release from `docs/ROADMAP.md` and verify the remaining
-  release order, dependencies, and scope.
-- Update `docs/STATUS.md` with the released version, current work, next actions,
-  and blockers.
-- Review `CONTEXT.md` and update it only when the release changes Hearth's domain
-  language.
-- Update the Hearth entry in the `EthanWellsSr/EthanWellsSr` profile README to
-  reflect the current project as Hearth develops.
-- Run `npm run notices` from `web/` and include the regenerated
-  `web/public/legal/THIRD_PARTY_NOTICES.txt`.
-
-## Feature design gate
-
-- Before code for `v0.4.0` or any later feature release, invoke
-  `grill-with-docs` and record the agreed goal, user flows, data model,
-  boundaries, and acceptance criteria in `docs/design/`.
-- Implementation begins only after Ethan confirms that the design tree is fully
-  resolved. Update `CONTEXT.md` inline when domain language changes and add an ADR
-  only for a hard-to-reverse decision with a real trade-off.
-
-## Required verification
-
-- Run `npm run lint` after code changes.
-- Run `npm test` after behavior or recurrence changes.
-- Run `npm run build` before handing off a completed feature when practical.
-- Verify user-facing UI changes in a browser at desktop and phone widths.
-- For every implementation, verify the affected behavior against staging before
-  handoff. When database changes are included, inspect the staging schema, apply
-  the ordered migrations, and verify the resulting behavior, data integrity, and
-  Household access boundaries. Record the results in `docs/STATUS.md`.
-- Staging verification, applying implementation migrations to staging, and
-  creating and cleaning up fictional staging test data are pre-authorized by
-  Ethan; do not ask for separate approval. Confirm the target is staging and
-  preserve existing staging data. This does not authorize production changes.
-- Report checks that were not run or could not complete.
-
-## Architecture guardrails
-
-- Hearth is a responsive PWA built with Next.js, TypeScript, Tailwind CSS, and
-  Supabase.
-- A Household is the tenancy boundary. Every data row belongs to one Household.
-- Per-user application requests use the user-scoped Supabase client so RLS remains
-  active. The secret-key client is server-only and reserved for validated admin or
-  system work.
-- Schema changes are recorded as ordered SQL migrations under
-  `web/supabase/migrations/`.
-- Do not change authentication, tenancy, recurrence behavior, or database shape as
-  collateral work for a visual task.
+Hearth is a responsive Household web app built with Next.js, TypeScript,
+Tailwind CSS, and Supabase. Follow Ethan's agreed product decisions and carry
+work through verification, documentation, push, and a pull request.
 
 ## Working with Ethan
 
-This is a learning project. The deliverable includes Ethan's understanding of how
-applications and databases are built; the app is the vehicle.
+- Be concise and direct. Lead with results, decisions, and necessary questions.
+- Ask design questions explicitly and inline. Explain trade-offs when Ethan
+  needs to choose; do not turn implementation into a lesson unless he asks.
+- Treat Ethan's confirmed decisions as the implementation contract. Do not
+  reopen settled questions or expand the scope without a concrete reason.
+- Resolve routine implementation details independently within that contract.
+- Continue authorized work without asking Ethan to approve each step. Report
+  real blockers promptly, with what is needed to resolve them.
+- Keep Ethan informed during sustained work. Distinguish verified results from
+  assumptions, simulated checks, and unfinished work.
 
-- Teach the system, not syntax. For a feature, explain its data model, request flow
-  (screen → server → database → refresh), and important seams.
-- Give databases extra depth: schema, keys, relationships, migrations, concurrency,
-  and places where an AI-generated architectural mistake would be costly.
-- Do not walk through code line by line unless asked.
-- Build at normal speed while explaining decisions at the architecture level.
-- Prefer scalable patterns. Identify deliberate stepping-stones instead of silently
-  treating them as production-grade designs.
-- Default to concise responses. Lead with the decision or question and expand only
-  when requested.
-- Ask necessary questions inline rather than using a pop-up.
+## Release workflow — follow in order
+
+1. **Start with `grill-with-docs`.** Every new release begins with this design
+   process before feature code. Resolve the goal, user flows, editable data,
+   access rules, boundaries, edge cases, and acceptance criteria with Ethan.
+   If the skill is unavailable, tell Ethan and resolve the missing process with
+   him before coding; do not claim it ran.
+2. **Document Ethan's decisions.** Record the confirmed design in `docs/design/`.
+   Update status and roadmap as the plan changes. Begin implementation once
+   Ethan confirms the design is resolved. Keep later agreed changes in the same
+   design record. Add an ADR only for a hard-to-reverse architectural decision
+   with a real trade-off.
+3. **Implement as agreed on `dev`.** Inspect the existing code and working-tree
+   diff first. Preserve unrelated work and follow the architecture guardrails.
+4. **Verify the implementation.** Test every acceptance criterion and affected
+   flow in the browser, staging database, or both, as appropriate. Run the
+   relevant automated checks. Fix failures and recheck before proceeding.
+5. **Apply agreed production database updates.** After staging verification,
+   apply and verify the release's database changes in production using the
+   database workflow below. Do not leave this work for Ethan to do manually.
+6. **Sweep documentation across the entire repository.** Check all documents
+   for changes needed by the final behavior and verification results, then
+   complete the release checklist below. Do not wait for Ethan to request it.
+7. **Commit, push, and open a PR.** Once verification and documentation are
+   complete, commit the release changes, push `dev`, and create or update the
+   PR from `dev` into `master`. These steps are part of the authorized workflow;
+   do not ask for separate approval. Report the commit, PR, checks, and any
+   remaining rollout steps. Do not merge the PR unless Ethan directs it.
+
+## Branch and repository practices
+
+- Everything happens on `dev`. Do not implement on `master` or another branch
+  unless Ethan explicitly changes this instruction.
+- Run application commands from `web/`; run repository-wide commands at the root.
+- Preserve unrelated working-tree changes. Review the final diff before committing
+  and include only the agreed work and its required documentation.
+- Use single-line commit messages summarizing their contents.
+- Keep changes reviewable. A PR describes the final problem, resulting behavior,
+  verification evidence, database rollout state, and material limitations.
+
+## Verification
+
+- Run `npm run lint` after code changes, `npm test` after behavior changes, and
+  `npm run build` before handing off a completed feature. Run TypeScript checks
+  when relevant; generate Next.js route types first when needed.
+- Verify user-facing changes in a real browser at desktop and phone widths.
+  Exercise the complete affected flow, including error recovery and touch or
+  keyboard interactions where applicable.
+- Verify database behavior in staging with authenticated Member permissions,
+  including data integrity, Household isolation, and relevant concurrency cases.
+- Use fictional staging fixtures and clean them up or roll them back. Preserve
+  existing staging data. Do not copy production Household data into staging.
+- Simulated browser responses and isolated database harnesses are supplemental;
+  identify them clearly and do not report them as live integration verification.
+- Record evidence in `docs/STATUS.md` or a linked verification record. Never claim
+  unrun checks passed. If a required check is blocked, report it explicitly rather
+  than presenting the release as fully verified.
+
+## Database workflow and standing authorization
+
+- Ethan's confirmed design authorizes the agent to implement, apply, and verify
+  the database changes it requires in both staging and production. Separate
+  explicit approval for those production updates is not required.
+- Inspect the actual target project, schema, and migration history before changes.
+  Confirm staging versus production from the connected service; do not infer the
+  target from a cached connection or an unqualified CLI default.
+- Record schema changes as ordered migrations under `web/supabase/migrations/`.
+  Apply and test in staging first, then apply the verified migration to production.
+- Keep repository, staging, and production migration histories aligned. If the
+  tool generates a different timestamp for the same applied migration, verify
+  the entry and reconcile its version as part of the authorized rollout.
+- Preserve existing data and verify counts, relevant constraints, ordering, and
+  permissions after applying a migration. Keep test fixtures out of production.
+- Coordinate migrations with application rollout. Changes applied before the PR
+  merges must remain compatible with the currently deployed app. If a design
+  requires a breaking transition, resolve the rollout sequence during design.
+- The authorization covers the agreed design. Bring unexpected destructive work,
+  unrelated changes, or material departures from that design back to Ethan.
+
+## Documentation and release checklist
+
+- Review documentation throughout the repository, including `README.md`,
+  `CONTEXT.md`, `CHANGELOG.md`, `docs/STATUS.md`, `docs/ROADMAP.md`, feature designs,
+  ADRs, setup instructions, and any affected operational notes.
+- Use `CONTEXT.md` as the source of product vocabulary. Update it when domain
+  language changes, and use the agreed terms consistently.
+- Record completed work under a dated version in `CHANGELOG.md`; remove its
+  completed release section from the roadmap and verify what comes next.
+- Keep `web/package.json` and `web/package-lock.json` on the completed version.
+- Keep status concise and current: completed version, verification evidence,
+  database migration state, application deployment state, next work, and blockers.
+  Completion, a pushed branch, a merged PR, and a production deployment are
+  distinct facts; report each only when supported by evidence.
+- Preserve historical records. Update current guidance and add completion notes
+  without rewriting historical findings as if they occurred today.
+- Update the Hearth entry in the `EthanWellsSr/EthanWellsSr` profile README when a
+  release changes the project's public description; include that update in the
+  release work rather than leaving an unpublished local draft.
+- Run `npm run notices` and `npm run notices:check` from `web/`; include the
+  regenerated `web/public/legal/THIRD_PARTY_NOTICES.txt`.
+- Check changed documentation links and version consistency before pushing.
+
+## Architecture guardrails
+
+- A Household is the tenancy boundary. Every Household-owned row belongs to one
+  Household; include explicit `household_id` filters in Household-scoped queries.
+- Use the signed-in User's Supabase client for application requests so RLS stays
+  active. Keep secret-key clients server-only and limited to validated admin or
+  system work.
+- Preserve access boundaries in schema changes, RPCs, and background operations.
+- Do not change authentication, tenancy, recurrence, or database shape as
+  collateral work outside the agreed design.
