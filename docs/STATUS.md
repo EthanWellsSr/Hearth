@@ -102,7 +102,7 @@ the active plan changes and as part of every release.
   [MIT license](../skills/LICENSE).
 - Root agent instructions now point to the local release-design skills and retain
   `CONTEXT.md` as Hearth's glossary. The Google Calendar design links to the
-  local skill; its full pre-code interview remains unperformed.
+  local skill; the interview was subsequently completed on 2026-10-23.
 - This imports files only; no plugin, hooks, tracker labels, or scripts were
   installed or executed. Upstream setup has not been run.
 - Verified imported-file coverage and exact source content; application and
@@ -111,13 +111,15 @@ the active plan changes and as part of every release.
 ## Next
 
 1. **v0.4.6 — Google Calendar Integration** is the next feature release.
-   Ethan confirmed the product scope on 2026-10-22; see the
+   Ethan confirmed the complete design after all 23 interview questions on
+   2026-10-23; see the
    [design](design/v0.4.6-google-calendar-integration.md). Each User connects
    selected Google calendars for shared, read-only viewing. Each Member controls
    visibility; the Hearth toggle includes Hearth Events and due Chores.
    Automatic synchronization, Sync now, and last-sync times are included.
-   Implementation has not started; technical and operational details remain to
-   resolve before code.
+   Design interview complete; implementation has not started. Next work is
+   application inspection, Google OAuth setup, implementation, and verification
+   against the confirmed design. Operational work must preserve settled decisions.
 2. **v0.4.7 — Event Reminders & Browser Push** follows Google Calendar integration;
    VAPID/Cron setup and real-device testing remain future work.
 3. Event Organization moves to v0.4.8 and Event Collaboration to v0.4.9.
