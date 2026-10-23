@@ -11,6 +11,11 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ### Added
 
+- Draft Google Calendar integration: read-only account/calendar connections,
+  shared imported Events, per-Member visibility, source status, sync routes, and
+  staging schema. OAuth configuration, live verification, scheduling, and
+  production rollout remain incomplete; this is not a released feature.
+
 - Vendor all 38 Matt Pocock skills with supporting files, source attribution,
   and MIT license under `skills/`; point the release workflow to local
   `grill-with-docs` and its companion skills.

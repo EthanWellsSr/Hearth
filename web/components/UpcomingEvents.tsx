@@ -29,7 +29,7 @@ export function UpcomingEvents({
     return (
       <li key={item.key} className={`flex gap-2 rounded-2xl border p-3 transition hover:-translate-y-0.5 hover:shadow-sm ${item.source === "chore" ? "border-amber-200 bg-amber-50/75" : "border-sky-100 bg-[#edf6f7]/75"}`}>
         <Link href={item.href} className="group flex min-w-0 flex-1 gap-3">
-          <span className={`mt-1 h-10 w-1 shrink-0 rounded-full ${item.source === "chore" ? "bg-amber-500" : "bg-[#78aeb9]"}`} />
+          <span style={item.calendarColor ? { backgroundColor: item.calendarColor } : undefined} className={`mt-1 h-10 w-1 shrink-0 rounded-full ${item.source === "chore" ? "bg-amber-500" : "bg-[#78aeb9]"}`} />
           <span className="min-w-0 flex-1">
             <span className={`block text-xs font-semibold uppercase tracking-[0.08em] ${item.source === "chore" ? "text-amber-700" : "text-[#5b8992]"}`}>
               {formatCalendarItemDateRange(item, timeZone)}
@@ -38,6 +38,7 @@ export function UpcomingEvents({
               {item.source === "chore" && <span aria-hidden className="mr-1">✓</span>}
               {item.title}
             </span>
+            {item.calendarName && <span className="block text-xs text-stone-500">{item.calendarName}</span>}
             <span className="mt-1 block text-sm text-stone-500">
               {formatCalendarItemTime(item, timeZone)}
               {range.start !== range.end && !item.allDay ? " · spans multiple days" : ""}

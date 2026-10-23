@@ -12,6 +12,9 @@ import {
 } from "@/lib/calendar";
 import { Temporal } from "@js-temporal/polyfill";
 import { loadCalendarItems } from "@/lib/calendar-data";
+import { loadImportedGoogleItems, loadSharedGoogleCalendars } from "@/lib/google-calendar-data";
+import { CalendarSources } from "@/components/CalendarSources";
+import { CalendarAutoRefresh } from "@/components/CalendarAutoRefresh";
 
 export default async function CalendarPage({
   searchParams,
@@ -19,7 +22,7 @@ export default async function CalendarPage({
   searchParams: Promise<{ month?: string; week?: string; view?: string; deleted?: string }>;
 }) {
   const params = await searchParams;
-  const { supabase, householdId, householdTimeZone } = await requireHousehold();
+  const { supabase, householdId, householdTimeZone, membershipId } = await requireHousehold();
   const timeZone = householdTimeZone;
   const today = todayInTimeZone(timeZone);
   const month = normalizeMonth(params.month, today);
@@ -33,18 +36,22 @@ export default async function CalendarPage({
         end: week.end > upcomingEnd ? week.end : upcomingEnd,
       }
     : monthWindow;
-  const items = await loadCalendarItems(
+  const nativeItems = await loadCalendarItems(
     supabase,
     householdId,
     range,
     timeZone,
     today
   );
+  const calendars = await loadSharedGoogleCalendars(supabase, householdId, membershipId, range);
+  const googleItems = await loadImportedGoogleItems(supabase, householdId, calendars.sources.filter(s => !calendars.hidden.has("google:" + s.google_calendar_id)), range, timeZone);
+  const items = [...(calendars.hidden.has("hearth") ? [] : nativeItems.map(item => ({ ...item, calendarKey: "hearth", calendarName: "Hearth", calendarColor: "#557d52" }))), ...googleItems];
   const upcoming = upcomingCalendarItems(items, today, timeZone);
 
   return (
     <>
       <span className="hidden" data-wide-shell />
+      {calendars.sources.length > 0 && <CalendarAutoRefresh />}
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="page-kicker">The shape of your days</p>
@@ -59,6 +66,8 @@ export default async function CalendarPage({
           </p>
         </div>
       </header>
+
+      {calendars.available && <CalendarSources sources={calendars.sources} hidden={calendars.hidden} range={range} />}
 
       {params.deleted && (
         <p className="status-message bg-emerald-100/80 text-emerald-800">Event deleted.</p>

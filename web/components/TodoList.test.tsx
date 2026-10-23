@@ -25,7 +25,7 @@ describe("To-do controls", () => {
     expect(screen.getByRole("alert").textContent).toBe("Could not save");
     // The error can render before the transition finishes. A real user must
     // wait for Save to be enabled; disabled fields are omitted from FormData.
-    const retry = screen.getByRole("button", { name: "Save" }) as HTMLButtonElement;
+    const retry = await screen.findByRole("button", { name: "Save" }) as HTMLButtonElement;
     await waitFor(() => expect(retry.disabled).toBe(false));
     fireEvent.click(retry);
     await waitFor(() => expect(screen.queryByLabelText("To-do text")).toBeNull());

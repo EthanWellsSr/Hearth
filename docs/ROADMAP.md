@@ -18,8 +18,11 @@ future decision; it does not govern repository visibility.
 
 ## v0.4.6 — Google Calendar Integration
 
-**Status:** Planned; confirmed product scope recorded in
-[the design](design/v0.4.6-google-calendar-integration.md). Implementation has not started.
+**Status:** Design confirmed; implementation drafted on `dev`. Google OAuth,
+scheduled recovery, and live integration verification remain. See
+[the design](design/v0.4.6-google-calendar-integration.md),
+[setup](setup/google-calendar.md), and
+[verification](audits/2026-10-23-google-calendar-verification.md).
 
 **Goal:** Bring each Member's selected Google calendars into Hearth's shared
 Household Calendar alongside Hearth Events and Chores.

@@ -108,6 +108,26 @@ the active plan changes and as part of every release.
 - Verified imported-file coverage and exact source content; application and
   package versions are unchanged.
 
+## v0.4.6 implementation draft — 2026-10-23
+
+- Confirmed design implemented as a draft on `dev`: multiple Google connections,
+  shared read-only imports and details, source names/colors, Member visibility,
+  Hearth Events/Chores toggle, sync/status controls, and provider routes.
+- 104 tests, TypeScript, lint, placeholder production build, and notices checks
+  passed. Desktop/phone component checks used fictional data. An isolated
+  PostgreSQL harness passed tenancy/permissions, stable-ID, lease, range, and
+  cleanup checks. These do not establish live Google integration.
+- Migrations `20261023002210`, `20261023002823`, and `20261023003744` are applied to staging only.
+  Hosted grants/RLS and unchanged native row counts were verified. Hosted
+  authenticated fixture execution failed with an expired request-state error.
+- Google OAuth application needs creation; Vercel denies team configuration
+  access (403, `hearth13`). No real Google connections, scheduler, or production
+  migration were configured. Package version stays v0.4.5.
+- Bounded snapshots currently cap at 25,000 Events/3 MB or 180 seconds. Larger
+  sources need further scalability work; incremental change detection is drafted. See
+  [full verification](audits/2026-10-23-google-calendar-verification.md) and
+  [setup](setup/google-calendar.md) for the remaining release gates.
+
 ## Next
 
 1. **v0.4.6 — Google Calendar Integration** is the next feature release.
@@ -117,9 +137,9 @@ the active plan changes and as part of every release.
    selected Google calendars for shared, read-only viewing. Each Member controls
    visibility; the Hearth toggle includes Hearth Events and due Chores.
    Automatic synchronization, Sync now, and last-sync times are included.
-   Design interview complete; implementation has not started. Next work is
-   application inspection, Google OAuth setup, implementation, and verification
-   against the confirmed design. Operational work must preserve settled decisions.
+   Design interview complete; implementation drafted. Complete Google OAuth
+   setup, scheduler installation, live authenticated staging checks, actual Google
+   account flows, and production rollout before declaring the release complete.
 2. **v0.4.7 — Event Reminders & Browser Push** follows Google Calendar integration;
    VAPID/Cron setup and real-device testing remain future work.
 3. Event Organization moves to v0.4.8 and Event Collaboration to v0.4.9.
