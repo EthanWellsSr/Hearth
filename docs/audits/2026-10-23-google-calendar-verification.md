@@ -3,9 +3,11 @@
 ## Result
 
 Implementation is drafted, not released. Package versions remain v0.4.5.
-The Google OAuth app does not exist yet. Vercel team configuration access returns
-403 for `hearth13`. Real Google account flows, scheduled recovery, authenticated
-staging fixture execution, and production rollout remain incomplete.
+The Google Cloud project and Calendar API are configured; OAuth consent/client
+setup remains pending. Vercel connector configuration access returns 403 for
+`hearth13`, while dashboard access works. Hosted authenticated staging fixture
+and concurrent REST range checks passed in the continuation below. Real Google
+account flows, scheduled recovery, and production rollout remain incomplete.
 
 ## Evidence
 
@@ -68,3 +70,40 @@ staging fixture execution, and production rollout remain incomplete.
 Follow [Google Calendar setup](../setup/google-calendar.md) and complete the
 [design acceptance criteria](../design/v0.4.6-google-calendar-integration.md)
 before marking this release complete, bumping package versions, or merging.
+
+## Release continuation — 2026-10-23
+
+- Re-ran all 104 automated tests, lint, route-type generation, TypeScript, and
+  notices checks successfully in the local checkout.
+- The production webpack build passed using the local staging configuration.
+  The default Turbopack build could not complete: font fetching was blocked in
+  the sandbox, and a network-enabled retry failed to bind a worker port. This
+  is not recorded as a successful default build.
+- The complete hosted staging SQL suite now passed under authenticated Member,
+  service, and anonymous roles. Verified shared reads, Household isolation,
+  connection ownership, visibility ownership, credential denial, read-only
+  imports, stable IDs, lease/range/checkpoint protection, and cascade cleanup.
+  All fictional fixtures rolled back. Post-test counts remained 99,446 To-dos,
+  4,004 Events, 4,004 Chores, and 2,002 Memberships, with zero Google connections,
+  sources, or imported Events.
+- A temporary Node/Supabase REST harness issued simultaneous date-range
+  expansion RPC requests against hosted staging. The resulting range preserved
+  both expansions (`2024-01-01` through `2029-01-01`). The fictional Auth User,
+  Household, Membership, connection, and source were removed in `finally`;
+  source cleanup was verified. This checks actual concurrent requests, not
+  provider synchronization.
+- The local production server connected to hosted staging and the existing
+  fictional Alex fixture. Calendar settings showed the expected unconfigured
+  state. The Hearth visibility switch saved to the database, survived reload,
+  and hid native Events and Chores together. Restored visibility and removed
+  the newly created preference row. Phone width 390 px had no horizontal
+  overflow or captured browser warnings/errors; the viewport was reset.
+- Created the Google Cloud project `Hearth Calendar`
+  (`charming-hearth-512602-h2`) and enabled the Google Calendar API after Ethan's
+  explicit confirmations. Billing and paid resources were not enabled.
+- Vercel connector configuration access still returns 403 for `hearth13` and
+  exposes no team-authorization helper. Dashboard sign-in worked. Added the
+  production `GOOGLE_CALENDAR_APP_ORIGIN` configuration value for the documented
+  production origin; it requires a new deployment to take effect.
+- OAuth consent/client creation, deployment credentials, real-provider tests,
+  scheduled recovery, and production migrations remain release gates.

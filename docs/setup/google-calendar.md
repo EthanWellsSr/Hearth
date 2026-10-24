@@ -6,6 +6,11 @@ permissions are requested.
 
 ## Google Cloud application
 
+Setup progress on 2026-10-23: project **Hearth Calendar**
+(`charming-hearth-512602-h2`) exists and the Google Calendar API is enabled.
+Billing was not enabled. OAuth branding/contact configuration and Web client
+creation remain pending; continue in this project rather than creating another.
+
 1. Open [Google Cloud Console](https://console.cloud.google.com/), create or select
    a project for Hearth, and enable the
    [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com).
@@ -56,7 +61,10 @@ connections unreadable and requires reconnection.
 The current Vercel connector lists Hearth but denies project/team configuration
 with HTTP 403 for scope `hearth13`. That access must be granted before the agent
 can install or verify environment variables. No authorization helper is exposed
-by the active connector. Dashboard configuration is an available alternative.
+by the active connector. Dashboard sign-in worked during the 2026-10-23
+continuation. The production `GOOGLE_CALENDAR_APP_ORIGIN` value was added as
+Config using the documented origin; it needs a new deployment to take effect.
+Other Google deployment variables remain unset.
 
 ## Scheduled recovery and notifications
 
