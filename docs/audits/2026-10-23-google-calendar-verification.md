@@ -3,8 +3,8 @@
 ## Result
 
 Implementation is drafted, not released. Package versions remain v0.4.5.
-The Google Cloud project and Calendar API are configured; OAuth consent/client
-setup remains pending. Vercel connector configuration access returns 403 for
+The Google Cloud project, Calendar API, OAuth consent, and separate staging/
+production clients are configured. Vercel connector configuration access returns 403 for
 `hearth13`, while dashboard access works. Hosted authenticated staging fixture
 and concurrent REST range checks passed in the continuation below. Real Google
 account flows, scheduled recovery, and production rollout remain incomplete.
@@ -107,3 +107,27 @@ before marking this release complete, bumping package versions, or merging.
   production origin; it requires a new deployment to take effect.
 - OAuth consent/client creation, deployment credentials, real-provider tests,
   scheduled recovery, and production migrations remain release gates.
+
+## OAuth setup and first live provider flow — 2026-10-23
+
+- Accepted Google’s User Data Policy after Ethan’s explicit confirmation. The
+  support/contact email is the account Ethan approved.
+- Created separate staging and production Web OAuth clients. Staging redirects
+  are the stable `dev` preview callback and localhost; production uses only the
+  documented production callback. No JavaScript origins or write scopes added.
+- Declared `openid`, email, calendar-list read, Event read, and availability read
+  scopes. Ethan’s account is a test user; the app remains in Testing.
+- Stored separate client credentials, encryption keys, and scheduler secrets in
+  Vercel Secret fields for production and the `dev` preview branch. App origins
+  are Config. Staging credentials are also in private `.env.local`.
+- The real Google authorization flow completed against hosted staging after
+  Ethan authorized the read-only grant. Calendar selection loaded from Google;
+  the primary calendar was deselected before saving. Only a newly created
+  fictional verification calendar was selected. No personal Events imported.
+- Created fictional all-day, timed, and recurring Events with no other people
+  invited. The initial provider snapshot committed to staging. Watch setup then
+  failed because Google cannot deliver to the local HTTP callback; the source
+  correctly showed an error while retaining the committed snapshot. A deployed
+  HTTPS endpoint is required for notification verification.
+- Hosted HTTPS notification/recovery checks, the remaining provider acceptance
+  cases, fixture cleanup, and production migrations remain incomplete.

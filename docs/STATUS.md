@@ -128,6 +128,17 @@ the active plan changes and as part of every release.
   [full verification](audits/2026-10-23-google-calendar-verification.md) and
   [setup](setup/google-calendar.md) for the remaining release gates.
 
+## OAuth setup continuation — 2026-10-23
+
+- Consent configuration, five minimal read-only/identity scopes, and separate
+  staging/production OAuth clients are configured. Vercel Secret variables and
+  separate origins are saved; a new deployment must load them.
+- Real Google authorization completed against hosted staging. Imported only a
+  fictional test calendar; initial snapshot committed. Local HTTP watch setup
+  failed as expected, leaving cached Events and an error. HTTPS notification
+  and recovery verification, remaining provider cases, and fixture cleanup are
+  pending. Production schema and app are unchanged.
+
 ## Next
 
 Continuation on 2026-10-23: hosted authenticated staging SQL and concurrent REST
