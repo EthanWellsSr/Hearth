@@ -96,7 +96,7 @@ export function TodoList({ items, members }: { items: TodoItem[]; members: Assig
                 <form action={(data) => run(() => toggleTodo(data))}>
                   <input type="hidden" name="id" value={item.id} />
                   <input type="hidden" name="done" value={String(item.done)} />
-                  <button disabled={disabled} aria-label={`${item.done ? "Reopen" : "Complete"} ${item.text}`} className={`flex h-9 w-9 items-center justify-center rounded-full border ${item.done ? "border-emerald-600 bg-emerald-600 text-white" : "border-emerald-300 text-stone-500"}`}>{item.done ? "✓" : "○"}</button>
+                  <button disabled={disabled} aria-label={`${item.done ? "Reopen" : "Complete"} ${item.text}`} className={`flex h-9 w-9 items-center justify-center rounded-none border ${item.done ? "border-emerald-600 bg-emerald-600 text-white" : "border-emerald-300 text-stone-500"}`}>{item.done ? "✓" : null}</button>
                 </form>
                 <div className="min-w-0 flex-1">
                   {editing === item.id ? (

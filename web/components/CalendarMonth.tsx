@@ -103,13 +103,14 @@ export function CalendarMonth({
                     <Link
                       key={item.key}
                       href={item.href}
-                      title={`${formatCalendarItemTime(item, timeZone)} · ${item.title}`}
+                      title={`${item.calendarName || "Hearth"} · ${formatCalendarItemTime(item, timeZone)} · ${item.title}`}
                       className={eventClass}
+                      style={item.calendarColor ? { borderLeft: `3px solid ${item.calendarColor}` } : undefined}
                     >
                       {!item.allDay && !spansDays && (
                         <span className="calendar-event-clock">{formatCalendarItemTime(item, timeZone).split("–")[0]}</span>
                       )}
-                      <span className="truncate">{item.title}</span>
+                      <span className="truncate">{item.title}{item.calendarName && <span className="ml-1 text-[0.55rem] font-normal"> · {item.calendarName}</span>}</span>
                     </Link>
                   );
                 })}

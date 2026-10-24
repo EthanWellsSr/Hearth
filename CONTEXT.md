@@ -108,6 +108,32 @@ The single timezone in which a Household enters and views timed Events. It belon
 to the Household rather than to an individual Member or device.
 _Avoid_: User timezone, device timezone
 
+### Planned Google Calendar vocabulary (v0.4.6; not yet implemented)
+
+**Connected Google calendar**:
+A Google calendar selected by a User for synchronization into their Household.
+Its Google name is preserved; imported Events are read-only in Hearth and shared
+with all Members. Each Member can independently show or hide it.
+
+**Google connection**:
+A User's authorization for Hearth to read selected calendars from one Google
+account. A User may have multiple connections. A calendar shared through
+multiple Household connections is still shown once.
+
+**Calendar visibility preference**:
+A Member's saved choice to show or hide a calendar across devices. It controls
+only that Member's view, not access for the Household or synchronization.
+
+**Hearth calendar**:
+The calendar containing Events created in Hearth and due Chores. In v0.4.6,
+one per-Member visibility toggle controls both, separately from Google calendars.
+All calendars are enabled by default; hiding one changes the Member's view,
+not Household access or synchronization.
+
+**Google change notification**:
+A server-to-server signal that a watched Google calendar changed. Hearth fetches
+the changes separately; this is not an Event Reminder or browser push message.
+
 ### Meals
 
 **Meal Plan**:

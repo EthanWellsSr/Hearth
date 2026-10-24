@@ -12,9 +12,22 @@ the active plan changes and as part of every release.
   [design](design/v0.4.5-todo-editing-ordering.md).
 - Implementation `8ced536` is on `dev`; GitHub CI passed. The matching database
   migration is applied to staging and production. PR #5 merged to `master` on
-  2026-10-22 as `ce0d6b8`; deployment of that merge has not been verified here.
+  2026-10-22 as `ce0d6b8`; Ethan confirmed checking the deployed To-do feature on 2026-10-22.
 - Keep explicit `household_id` filters in every Household-scoped query; the guard
   test catches omissions.
+
+## To-do checkbox follow-up — 2026-10-22
+
+- Ethan requested square completion boxes after checking the deployed To-do feature.
+- Changed the To-do completion button from a circle to a square, leaving unfinished
+  boxes empty and retaining the checkmark for completed To-dos.
+- Source review confirms the change only affects the completion control's shape
+  and unfinished glyph. Existing submission, labels, disabled state, and sizes remain.
+- Local lint, build, notices generation, and browser checks could not run because
+  the execution environment's network proxy was unavailable. GitHub CI checks
+  and migration jobs passed for checkbox commit `2925e6d`; live browser verification
+  of the square-box follow-up remains unperformed.
+- No database, dependency, or version changes.
 
 ## Verification and limitations
 
@@ -63,12 +76,94 @@ the active plan changes and as part of every release.
   apply agreed staging/production database updates, sweep repository docs, then
   commit, push, and create/update the PR without separate step approvals.
 
+## Roadmap documentation update — 2026-10-22
+
+- Recorded the confirmed Google Calendar scope as planned v0.4.6 and shifted
+  subsequent 0.4.x releases by one. Swept all repository Markdown documents;
+  updated README, vocabulary, changelog, roadmap, status, and affected designs.
+- Checked changed relative links and release references; no broken targets found.
+- Documentation only; application/package version remains v0.4.5.
+
+## To-do retry test follow-up — 2026-10-22
+
+- CI on the roadmap commit exposed a timing race in the edit-retry test: an
+  error can render while the transition still disables form fields, so synthetic
+  submission at that point omits the edited text from FormData.
+- The test now waits until Save is enabled and clicks it before checking the
+  retry payload. The existing edited-text assertion remains unchanged.
+- Application behavior is unchanged. Local execution remains blocked by the
+  unavailable network proxy; verification is delegated to GitHub CI.
+
+## Local skills — 2026-10-22
+
+- Vendored all 38 Matt Pocock skills and their support files from
+  `mattpocock/skills` at `5beb35b040e3de97e54fa9e386d7e42d15c295c2`, preserving upstream categories.
+  See the [catalog and source record](../skills/README.md) and
+  [MIT license](../skills/LICENSE).
+- Root agent instructions now point to the local release-design skills and retain
+  `CONTEXT.md` as Hearth's glossary. The Google Calendar design links to the
+  local skill; the interview was subsequently completed on 2026-10-23.
+- This imports files only; no plugin, hooks, tracker labels, or scripts were
+  installed or executed. Upstream setup has not been run.
+- Verified imported-file coverage and exact source content; application and
+  package versions are unchanged.
+
+## v0.4.6 implementation draft — 2026-10-23
+
+- Confirmed design implemented as a draft on `dev`: multiple Google connections,
+  shared read-only imports and details, source names/colors, Member visibility,
+  Hearth Events/Chores toggle, sync/status controls, and provider routes.
+- 104 tests, TypeScript, lint, placeholder production build, and notices checks
+  passed. Desktop/phone component checks used fictional data. An isolated
+  PostgreSQL harness passed tenancy/permissions, stable-ID, lease, range, and
+  cleanup checks. These do not establish live Google integration.
+- Migrations `20261023002210`, `20261023002823`, and `20261023003744` are applied to staging only.
+  Hosted grants/RLS and unchanged native row counts were verified. Hosted
+  authenticated fixture execution failed with an expired request-state error.
+- Google OAuth application needs creation; Vercel denies team configuration
+  access (403, `hearth13`). No real Google connections, scheduler, or production
+  migration were configured. Package version stays v0.4.5.
+- Bounded snapshots currently cap at 25,000 Events/3 MB or 180 seconds. Larger
+  sources need further scalability work; incremental change detection is drafted. See
+  [full verification](audits/2026-10-23-google-calendar-verification.md) and
+  [setup](setup/google-calendar.md) for the remaining release gates.
+
+## OAuth setup continuation — 2026-10-23
+
+- Consent configuration, five minimal read-only/identity scopes, and separate
+  staging/production OAuth clients are configured. Vercel Secret variables and
+  separate origins are saved; a new deployment must load them.
+- Real Google authorization completed against hosted staging. Imported only a
+  fictional test calendar; initial snapshot committed. Local HTTP watch setup
+  failed as expected, leaving cached Events and an error. HTTPS notification
+  and recovery verification, remaining provider cases, and fixture cleanup are
+  pending. Production schema and app are unchanged.
+
 ## Next
 
-1. **v0.4.6 — Event Reminders & Browser Push** is the next feature release.
-   Implementation awaits Ethan starting that work and providing VAPID/Cron setup.
-2. Verify the deployed v0.4.5 app after PR #5’s merge. Its database migration
-   is already applied and verified in production.
+Continuation on 2026-10-23: hosted authenticated staging SQL and concurrent REST
+range checks now pass, with fixtures cleaned up. Re-ran 104 tests, lint,
+TypeScript, webpack production build, and notices checks successfully. Live
+staging visibility persistence and phone layout checks passed. Created Google
+Cloud project `charming-hearth-512602-h2` and enabled Calendar API; OAuth
+contact/client setup is pending. Vercel dashboard access works despite connector
+403; production app-origin Config is saved but not deployed. See the updated
+[verification record](audits/2026-10-23-google-calendar-verification.md).
+
+1. **v0.4.6 — Google Calendar Integration** is the next feature release.
+   Ethan confirmed the complete design after all 23 interview questions on
+   2026-10-23; see the
+   [design](design/v0.4.6-google-calendar-integration.md). Each User connects
+   selected Google calendars for shared, read-only viewing. Each Member controls
+   visibility; the Hearth toggle includes Hearth Events and due Chores.
+   Automatic synchronization, Sync now, and last-sync times are included.
+   Design interview complete; implementation drafted. Complete Google OAuth
+   setup, scheduler installation, live authenticated staging checks, actual Google
+   account flows, and production rollout before declaring the release complete.
+2. **v0.4.7 — Event Reminders & Browser Push** follows Google Calendar integration;
+   VAPID/Cron setup and real-device testing remain future work.
+3. Event Organization moves to v0.4.8 and Event Collaboration to v0.4.9.
+   The v0.5.0-and-later milestones retain their version numbers and follow these.
 
 ## Blockers
 
