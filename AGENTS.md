@@ -70,6 +70,10 @@ work through verification, documentation, push, and a pull request.
   keyboard interactions where applicable.
 - Verify database behavior in staging with authenticated Member permissions,
   including data integrity, Household isolation, and relevant concurrency cases.
+- Ethan authorizes the agent to sign in to hosted staging (`hearth-staging` and
+  the `dev` Vercel preview) as the fictional fixture Members `alex@example.test`
+  and `sam@example.test` for verification. Read their password from
+  `web/.env.staging-demo.local` (`STAGING_DEMO_PASSWORD`); never commit or echo it.
 - Use fictional staging fixtures and clean them up or roll them back. Preserve
   existing staging data. Do not copy production Household data into staging.
 - Simulated browser responses and isolated database harnesses are supplemental;
