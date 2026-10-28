@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { InviteCodeControls } from "@/components/InviteCodeControls";
 import { MemberAvatar } from "@/components/MemberAvatar";
 import { RemoveMemberButton } from "@/components/RemoveMemberButton";
@@ -66,6 +67,7 @@ export default async function PeoplePage({
         <p className="page-description">See who shares this space and invite someone new.</p>
       </header>
 
+      <Link href="/people/calendars" className="btn-ghost self-start">Manage Google calendars</Link>
       {params.error && <p className="status-message bg-red-500/10 text-red-700">{params.error}</p>}
       {params.removed && <p className="status-message bg-emerald-100/80 text-emerald-800">Member removed. A new Invite Code is ready.</p>}
       {params.rotated && <p className="status-message bg-emerald-100/80 text-emerald-800">Your new Invite Code is ready.</p>}

@@ -9,6 +9,41 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ## [Unreleased]
 
+### Added
+
+- Vendor all 38 Matt Pocock skills with supporting files, source attribution,
+  and MIT license under `skills/`; point the release workflow to local
+  `grill-with-docs` and its companion skills.
+
+### Changed
+
+- Plan v0.4.6 Google Calendar Integration with shared read-only imports,
+  per-Member visibility toggles, and automatic synchronization. Move Event
+  Reminders, Event Organization, and Event Collaboration to v0.4.7–v0.4.9.
+
+- Use square completion boxes for To-dos, with an empty unfinished state and a
+  checkmark when completed.
+
+## [0.4.6] - 2026-10-27
+
+### Added
+
+- Google Calendar Integration: each User connects Google accounts and selects
+  calendars; imported Events appear read-only and shared with the Household,
+  with Google names/colors and links to edit in Google.
+- Per-Member calendar visibility toggles; the Hearth toggle covers Hearth Events
+  and due Chores.
+- Automatic synchronization through Google change notifications, Sync now, a
+  daily Vercel Cron recovery job, and visible last-sync times.
+
+### Verification
+
+- 104 tests, lint, TypeScript. Hosted staging: real Google OAuth, notification
+  delivery (3 s), cancellation, recurring exception, recovery from error.
+  Production migrations applied with data and permissions verified. Multi-account,
+  permission-loss, Gmail-created, and production Cron/connection checks remain;
+  see the [verification record](docs/audits/2026-10-23-google-calendar-verification.md).
+
 ## [0.4.5] - 2026-10-21
 
 ### Added
@@ -151,7 +186,7 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ### Deferred
 
-- Event reminders and browser push moved to their own release (now v0.4.6) because
+- Event reminders and browser push moved to their own release (now v0.4.7) because
   they require deployment secrets, Supabase Cron, and real-device testing.
 
 ## [0.4.0] - 2026-09-18

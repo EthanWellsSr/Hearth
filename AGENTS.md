@@ -22,8 +22,11 @@ work through verification, documentation, push, and a pull request.
 1. **Start with `grill-with-docs`.** Every new release begins with this design
    process before feature code. Resolve the goal, user flows, editable data,
    access rules, boundaries, edge cases, and acceptance criteria with Ethan.
-   If the skill is unavailable, tell Ethan and resolve the missing process with
-   him before coding; do not claim it ran.
+   Read `skills/engineering/grill-with-docs/SKILL.md` and its companion
+   `skills/productivity/grilling/SKILL.md` and
+   `skills/engineering/domain-modeling/SKILL.md`. If the harness has no native
+   Skill tool, follow these local files directly and report that accurately.
+   If the files are unavailable, tell Ethan before coding; do not claim it ran.
 2. **Document Ethan's decisions.** Record the confirmed design in `docs/design/`.
    Update status and roadmap as the plan changes. Begin implementation once
    Ethan confirms the design is resolved. Keep later agreed changes in the same
@@ -67,6 +70,10 @@ work through verification, documentation, push, and a pull request.
   keyboard interactions where applicable.
 - Verify database behavior in staging with authenticated Member permissions,
   including data integrity, Household isolation, and relevant concurrency cases.
+- Ethan authorizes the agent to sign in to hosted staging (`hearth-staging` and
+  the `dev` Vercel preview) as the fictional fixture Members `alex@example.test`
+  and `sam@example.test` for verification. Read their password from
+  `web/.env.staging-demo.local` (`STAGING_DEMO_PASSWORD`); never commit or echo it.
 - Use fictional staging fixtures and clean them up or roll them back. Preserve
   existing staging data. Do not copy production Household data into staging.
 - Simulated browser responses and isolated database harnesses are supplemental;
@@ -129,3 +136,14 @@ work through verification, documentation, push, and a pull request.
 - Preserve access boundaries in schema changes, RPCs, and background operations.
 - Do not change authentication, tenancy, recurrence, or database shape as
   collateral work outside the agreed design.
+
+## Local agent skills
+
+Matt Pocock's skills are vendored under [skills/](skills/README.md), with a pinned
+source revision, MIT license, catalog, and supporting files. Read the matching
+`SKILL.md` before using a skill; importing it does not execute it or install a
+plugin. Hearth's existing workflow and Ethan's instructions govern integration.
+Use `CONTEXT.md` wherever upstream skills refer to the project's `GLOSSARY.md`;
+keep ADRs in `docs/adr/` and feature decisions in `docs/design/`. Do not create
+a second glossary. Upstream tracker/triage setup has not been run; use its setup
+process when those skills need configuration.

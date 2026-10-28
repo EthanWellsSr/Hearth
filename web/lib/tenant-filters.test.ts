@@ -17,6 +17,10 @@ const SCOPED_TABLES = [
   "event_reminder_deliveries",
   "memberships",
   "households",
+  "google_connections",
+  "google_calendar_sources",
+  "google_calendar_events",
+  "calendar_visibility",
 ];
 
 const root = join(__dirname, "..");

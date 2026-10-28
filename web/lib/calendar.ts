@@ -69,6 +69,9 @@ export type EventOccurrenceException = {
 };
 
 type CalendarItemBase = {
+  calendarKey?: string;
+  calendarName?: string;
+  calendarColor?: string;
   key: string;
   sourceId: string;
   title: string;

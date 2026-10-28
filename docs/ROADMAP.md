@@ -16,7 +16,7 @@ Ethan and his wife. A live guest Demo remains deferred.
 wife. The [partial design](design/v0.4.4-public-sign-up.md) is retained for a
 future decision; it does not govern repository visibility.
 
-## v0.4.6 — Event Reminders & Browser Push
+## v0.4.7 — Event Reminders & Browser Push
 
 **Status:** Planned; design already recorded in
 [`docs/design/v0.4.1-calendar-rhythm.md`](design/v0.4.1-calendar-rhythm.md)
@@ -47,7 +47,7 @@ applied as groundwork.
 - [x] Decide recurrence rules, reminder delivery channels, notification
   preferences, and Chore presentation during the pre-code design gate
 
-## v0.4.7 — Event Organization
+## v0.4.8 — Event Organization
 
 **Status:** Planned
 
@@ -61,7 +61,7 @@ applied as groundwork.
 - [ ] Decide whether colors belong to individual Events, categories, Members, or a
   combination during the pre-code design gate
 
-## v0.4.8 — Event Collaboration
+## v0.4.9 — Event Collaboration
 
 **Status:** Planned
 

@@ -128,8 +128,8 @@ export function CalendarWeek({
           {allDayByDate.map((dayItems, dayIndex) => (
             <div key={dates[dayIndex]} className="calendar-week-all-day">
               {dayItems.map((item) => (
-                <div key={`${item.key}:${dates[dayIndex]}`} className={`calendar-week-all-day-item ${item.source === "chore" ? "calendar-week-chore" : ""}`}>
-                  <Link href={item.href} className="truncate" title={item.title}>{item.source === "chore" ? "✓ " : ""}{item.title}</Link>
+                <div key={`${item.key}:${dates[dayIndex]}`} className={`calendar-week-all-day-item ${item.source === "chore" ? "calendar-week-chore" : ""}`} style={item.calendarColor ? { borderLeft: `3px solid ${item.calendarColor}` } : undefined}>
+                  <Link href={item.href} className="truncate" title={`${item.calendarName || "Hearth"} · ${item.title}`}>{item.source === "chore" ? "✓ " : ""}{item.title}{item.calendarName && <span className="ml-1 text-[0.55rem]"> · {item.calendarName}</span>}</Link>
                   {item.source === "chore" && (
                     <form action={completeChore}>
                       <input type="hidden" name="id" value={item.sourceId} />
@@ -162,16 +162,17 @@ export function CalendarWeek({
                   <Link
                     key={item.key}
                     href={item.href}
-                    title={`${formatCalendarItemTime(item, timeZone)} · ${item.title}`}
+                    title={`${item.calendarName || "Hearth"} · ${formatCalendarItemTime(item, timeZone)} · ${item.title}`}
                     className="calendar-week-event"
                     style={{
+                      borderLeft: item.calendarColor ? `3px solid ${item.calendarColor}` : undefined,
                       top: (startMinute / 60) * HOUR_HEIGHT,
                       height: Math.max(24, ((endMinute - startMinute) / 60) * HOUR_HEIGHT),
                       left: `calc(${(column / columns) * 100}% + 2px)`,
                       width: `calc(${100 / columns}% - 4px)`,
                     }}
                   >
-                    <span className="font-semibold">{item.title}</span>
+                    <span className="font-semibold">{item.title}{item.calendarName && <span className="sr-only"> · {item.calendarName}</span>}</span>
                     <span>{formatCalendarItemTime(item, timeZone)}</span>
                   </Link>
                 ))}
