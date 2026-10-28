@@ -1,8 +1,9 @@
 import { timingSafeEqual } from "node:crypto";
 import { runGoogleSync } from "@/lib/google-calendar-server";
 export const maxDuration = 300;
-export async function POST(request: Request) {
-  const expected = process.env.GOOGLE_CALENDAR_SYNC_SECRET;
+// Vercel Cron calls GET with `Authorization: Bearer <CRON_SECRET>`.
+export async function GET(request: Request) {
+  const expected = process.env.CRON_SECRET;
   const actual = Buffer.from(request.headers.get("authorization") ?? "");
   const wanted = Buffer.from(`Bearer ${expected ?? ""}`);
   if (
