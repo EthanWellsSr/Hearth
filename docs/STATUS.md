@@ -10,9 +10,11 @@ the active plan changes and as part of every release.
   [verification](audits/2026-10-23-google-calendar-verification.md)).
 - Database: three Calendar migrations applied to staging and production with
   matching versions; production data counts and permissions verified.
-- Application: preview deployed from `dev`; production deploys when the PR to
-  `master` merges. Recovery is a daily Vercel Cron job and needs `CRON_SECRET`
-  set in Vercel Production before it can authenticate.
+- Application: PR #7 merged to `master` on 2026-10-27 as `517b3bb`; the
+  production deployment succeeded and serves v0.4.6. The daily cron job
+  (`/api/google-calendar/sync`, 09:00 UTC) is registered; unauthenticated calls
+  return 401. A manual run was triggered, but Vercel logs did not show its result,
+  so `CRON_SECRET` authentication is unconfirmed until a logged run or real sync.
 - Live staging verification: OAuth, notification delivery, cancellation,
   recurring exception, recovery, phone layout. **Not yet verified live:** second
   Google account/shared-calendar deduplication, permission loss/reconnect,
@@ -149,8 +151,8 @@ the active plan changes and as part of every release.
 
 ## Next
 
-1. Merge the v0.4.6 PR, set `CRON_SECRET` in Vercel Production, then connect a
-   real Google account in production and confirm the first daily Cron run.
+1. Connect a real Google account in production and confirm the next daily Cron
+   run updates its last-sync time.
 2. Run the remaining live provider cases listed above.
 3. **v0.4.7 — Event Reminders & Browser Push**; Event Organization (v0.4.8) and
    Event Collaboration (v0.4.9) follow, then v0.5.0 and later.
