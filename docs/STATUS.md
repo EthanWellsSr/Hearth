@@ -5,16 +5,24 @@ the active plan changes and as part of every release.
 
 ## Current completed version
 
-- **v0.4.5 — To-do Editing & Ordering**, completed 2026-10-21 and accepted by
-  Ethan. Either Member can edit text, optional due date, and Assignee. One
-  Household order supports drag handles and move buttons; completed To-dos appear
-  last and new To-dos append to the unfinished list. See the
-  [design](design/v0.4.5-todo-editing-ordering.md).
-- Implementation `8ced536` is on `dev`; GitHub CI passed. The matching database
-  migration is applied to staging and production. PR #5 merged to `master` on
-  2026-10-22 as `ce0d6b8`; Ethan confirmed checking the deployed To-do feature on 2026-10-22.
-- Keep explicit `household_id` filters in every Household-scoped query; the guard
-  test catches omissions.
+- **v0.4.6 — Google Calendar Integration**, completed 2026-10-27 on `dev`
+  ([design](design/v0.4.6-google-calendar-integration.md),
+  [verification](audits/2026-10-23-google-calendar-verification.md)).
+- Database: three Calendar migrations applied to staging and production with
+  matching versions; production data counts and permissions verified.
+- Application: preview deployed from `dev`; production deploys when the PR to
+  `master` merges. Recovery is a daily Vercel Cron job and needs `CRON_SECRET`
+  set in Vercel Production before it can authenticate.
+- Live staging verification: OAuth, notification delivery, cancellation,
+  recurring exception, recovery, phone layout. **Not yet verified live:** second
+  Google account/shared-calendar deduplication, permission loss/reconnect,
+  Gmail-created Events, calendar rename, range expansion, production Cron run and
+  production Google connection.
+
+## Previous release — v0.4.5
+
+- **v0.4.5 — To-do Editing & Ordering**, completed 2026-10-21; PR #5 merged
+  2026-10-22 as `ce0d6b8`. See the [design](design/v0.4.5-todo-editing-ordering.md).
 
 ## To-do checkbox follow-up — 2026-10-22
 
@@ -141,29 +149,11 @@ the active plan changes and as part of every release.
 
 ## Next
 
-Continuation on 2026-10-23: hosted authenticated staging SQL and concurrent REST
-range checks now pass, with fixtures cleaned up. Re-ran 104 tests, lint,
-TypeScript, webpack production build, and notices checks successfully. Live
-staging visibility persistence and phone layout checks passed. Created Google
-Cloud project `charming-hearth-512602-h2` and enabled Calendar API; OAuth
-contact/client setup is pending. Vercel dashboard access works despite connector
-403; production app-origin Config is saved but not deployed. See the updated
-[verification record](audits/2026-10-23-google-calendar-verification.md).
-
-1. **v0.4.6 — Google Calendar Integration** is the next feature release.
-   Ethan confirmed the complete design after all 23 interview questions on
-   2026-10-23; see the
-   [design](design/v0.4.6-google-calendar-integration.md). Each User connects
-   selected Google calendars for shared, read-only viewing. Each Member controls
-   visibility; the Hearth toggle includes Hearth Events and due Chores.
-   Automatic synchronization, Sync now, and last-sync times are included.
-   Design interview complete; implementation drafted. Complete Google OAuth
-   setup, scheduler installation, live authenticated staging checks, actual Google
-   account flows, and production rollout before declaring the release complete.
-2. **v0.4.7 — Event Reminders & Browser Push** follows Google Calendar integration;
-   VAPID/Cron setup and real-device testing remain future work.
-3. Event Organization moves to v0.4.8 and Event Collaboration to v0.4.9.
-   The v0.5.0-and-later milestones retain their version numbers and follow these.
+1. Merge the v0.4.6 PR, set `CRON_SECRET` in Vercel Production, then connect a
+   real Google account in production and confirm the first daily Cron run.
+2. Run the remaining live provider cases listed above.
+3. **v0.4.7 — Event Reminders & Browser Push**; Event Organization (v0.4.8) and
+   Event Collaboration (v0.4.9) follow, then v0.5.0 and later.
 
 ## Blockers
 

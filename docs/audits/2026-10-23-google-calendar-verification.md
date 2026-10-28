@@ -131,3 +131,26 @@ before marking this release complete, bumping package versions, or merging.
   HTTPS endpoint is required for notification verification.
 - Hosted HTTPS notification/recovery checks, the remaining provider acceptance
   cases, fixture cleanup, and production migrations remain incomplete.
+
+## Hosted notification verification and production rollout — 2026-10-27
+
+- Scheduler changed to daily Vercel Cron by Ethan's decision; Vault/`pg_cron`
+  installer removed. Watch addresses include the Vercel automation bypass when
+  configured. 104 tests, lint, and TypeScript passed after both changes.
+- On hosted staging (`dev` preview, signed in as fictional `alex@example.test`),
+  Sync now recovered the errored source and registered a watch. With the bypass
+  designated, a Google-side rename of a fictional Event reached Hearth 3 seconds
+  later without user action. A Google-side cancellation removed it; a moved,
+  renamed recurring occurrence updated only that instance. All-day/timed Events
+  and their times are stored correctly. Phone width (375 px) shows no horizontal
+  overflow. Fictional verification Events remain on the dedicated test calendar.
+- Production (`Hearth`, `gclfsxkmtjdxmawwlhba`): applied
+  `20261023002210`, `20261023002823`, and `20261023003744`; reconciled
+  tool-generated versions to repository versions. Household, Membership, Event,
+  Chore, To-do, and Grocery counts unchanged; RLS enabled on all new tables;
+  service-only functions not executable by `authenticated`/`anon`. Only new
+  advisor notice: intentional RLS-without-policy on `google_calendar_credentials`.
+- **Not verified live:** a second Google account and shared-calendar
+  deduplication, permission loss and reconnect, Gmail-created Events, calendar
+  rename, live range expansion, a production Vercel Cron run (needs
+  `CRON_SECRET` and merge), and a production Google connection.

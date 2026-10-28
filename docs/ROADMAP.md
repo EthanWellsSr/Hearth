@@ -16,35 +16,6 @@ Ethan and his wife. A live guest Demo remains deferred.
 wife. The [partial design](design/v0.4.4-public-sign-up.md) is retained for a
 future decision; it does not govern repository visibility.
 
-## v0.4.6 — Google Calendar Integration
-
-**Status:** Design confirmed; implementation drafted on `dev`. Google OAuth,
-scheduled recovery, and live integration verification remain. See
-[the design](design/v0.4.6-google-calendar-integration.md),
-[setup](setup/google-calendar.md), and
-[verification](audits/2026-10-23-google-calendar-verification.md).
-
-**Goal:** Bring each Member's selected Google calendars into Hearth's shared
-Household Calendar alongside Hearth Events and Chores.
-
-### Confirmed scope
-
-- [ ] Let each User connect their own Google account and select calendars to import
-- [ ] Preserve Google calendar names and show imported Events as read-only entries
-  in Hearth's existing Calendar views, with a link to edit in Google
-- [ ] Share all selected calendars and their Events with every Household Member;
-  there is no private Event mode in this scope
-- [ ] Let each Member independently toggle each Google calendar and the Hearth
-  calendar, with all calendars enabled by default
-- [ ] Keep Events created in Hearth in the Hearth calendar; its toggle also
-  controls due Chores
-- [ ] Synchronize additions, changes, and cancellations automatically, including
-  Events added through Gmail once Google exposes them on a selected calendar
-- [ ] Use Google change notifications backed by regular synchronization, plus
-  Sync now and visible last-successful-sync times
-- [ ] Define operational details and acceptance cases before feature code; no
-  Gmail access, Google Event editing in Hearth, or writes to Google are included
-
 ## v0.4.7 — Event Reminders & Browser Push
 
 **Status:** Planned; design already recorded in

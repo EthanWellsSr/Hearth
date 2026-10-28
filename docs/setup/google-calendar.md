@@ -75,22 +75,17 @@ required to load these settings. No credentials belong in the repository.
 
 - `/api/google-calendar/notifications` receives Google watch notifications.
   It authenticates opaque channel tokens, then fetches the source changes.
-- `/api/google-calendar/sync` accepts **POST** with
-  `Authorization: Bearer <GOOGLE_CALENDAR_SYNC_SECRET>`.
-- Store the matching sync URL and secret in the target Supabase project's Vault
-  as `hearth_google_calendar_sync_url` and `hearth_google_calendar_sync_secret`.
-  Never commit their values.
-- After deploying the endpoint and configuring secrets, run
-  [the scheduler installer](../../web/supabase/operations/install_google_calendar_sync.sql)
-  against the matching project. It schedules recovery every 15 minutes through
-  `pg_cron` and `pg_net`. Enable those extensions if the target lacks them.
-- Google must be able to reach the notification URL. An authenticated Vercel
-  preview may block Google; use a dedicated reachable staging endpoint or a
-  narrowly configured protection exception. Verify reachability rather than
-  disabling protection for the whole app by assumption.
-
-No recovery schedule has been installed yet. Its successful invocation and
-notification delivery are release acceptance checks, not inferred from code.
+- `/api/google-calendar/sync` accepts **GET** with
+  `Authorization: Bearer <CRON_SECRET>`. `web/vercel.json` schedules it daily at
+  09:00 UTC through Vercel Cron, which sends that header automatically. Set a
+  random `CRON_SECRET` in the Vercel project's Production environment. Vercel
+  Cron runs only on production deployments; on Hobby it is limited to daily.
+- Preview deployments are behind Vercel Authentication. Google reaches them via
+  Protection Bypass for Automation: a secret designated as the
+  `VERCEL_AUTOMATION_BYPASS_SECRET` system variable is appended to the watch
+  address by the app. Production is unprotected and needs no bypass.
+- Existing watches keep their original address until renewal (within a day of
+  their 7-day expiry); a new bypass takes effect on the next renewal.
 
 ## Verification before release
 

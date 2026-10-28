@@ -4,25 +4,22 @@ Hearth is a responsive household web app I built for my household and use daily
 to coordinate our Calendar, Chores, To-dos, and Grocery List. Building it is also
 a learning project for me. The deployed app is limited to its existing Members.
 
-**Current completed version: v0.4.5 — To-do Editing & Ordering.** Verified on
-staging; see [status](docs/STATUS.md) for production rollout state.
+**Current completed version: v0.4.6 — Google Calendar Integration.** See
+[status](docs/STATUS.md) for verification and rollout state.
 
 ## What works today
 
 | Area | Current behavior |
 | --- | --- |
-| Calendar | Upcoming, month, and week views; all-day and timed Events; Recurring Events with occurrence changes; due Chores; Household timezone |
+| Calendar | Upcoming, month, and week views; all-day and timed Events; Recurring Events with occurrence changes; due Chores; Household timezone; read-only shared Google calendars with per-Member toggles and automatic sync |
 | Chores | Every-N-days or weekly schedules, completion, next due date, and Member assignment |
 | To-dos | Create and edit text, optional due date, and Assignee; shared saved order with drag handles and move buttons; complete, delete, and automatic cleanup |
 | Grocery List | Add, mark bought, remove, and clear bought items |
 | Household people | User Profiles and private Avatars, Memberships, Invite Codes, owner controls, and timezone settings |
 
-Hearth is installable as a progressive web app. **Next: v0.4.6 — Google Calendar
-Integration**, bringing selected Google calendars into the shared Calendar as
-read-only Events, with per-Member calendar toggles and automatic synchronization.
-The implementation is in draft: Google OAuth setup and live integration
-verification remain; see [setup](docs/setup/google-calendar.md) and
-[verification](docs/audits/2026-10-23-google-calendar-verification.md).
+Hearth is installable as a progressive web app. **Next: v0.4.7 — Event Reminders &
+Browser Push.** Google Calendar setup is documented in
+[setup](docs/setup/google-calendar.md).
 Meal planning, Notes, Messages, Expenses, and Event Reminders are also planned
 work; see the [roadmap](docs/ROADMAP.md).
 

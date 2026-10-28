@@ -11,11 +11,6 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 ### Added
 
-- Draft Google Calendar integration: read-only account/calendar connections,
-  shared imported Events, per-Member visibility, source status, sync routes, and
-  staging schema. OAuth configuration, live verification, scheduling, and
-  production rollout remain incomplete; this is not a released feature.
-
 - Vendor all 38 Matt Pocock skills with supporting files, source attribution,
   and MIT license under `skills/`; point the release workflow to local
   `grill-with-docs` and its companion skills.
@@ -28,6 +23,26 @@ handoff state belong in [`docs/STATUS.md`](docs/STATUS.md).
 
 - Use square completion boxes for To-dos, with an empty unfinished state and a
   checkmark when completed.
+
+## [0.4.6] - 2026-10-27
+
+### Added
+
+- Google Calendar Integration: each User connects Google accounts and selects
+  calendars; imported Events appear read-only and shared with the Household,
+  with Google names/colors and links to edit in Google.
+- Per-Member calendar visibility toggles; the Hearth toggle covers Hearth Events
+  and due Chores.
+- Automatic synchronization through Google change notifications, Sync now, a
+  daily Vercel Cron recovery job, and visible last-sync times.
+
+### Verification
+
+- 104 tests, lint, TypeScript. Hosted staging: real Google OAuth, notification
+  delivery (3 s), cancellation, recurring exception, recovery from error.
+  Production migrations applied with data and permissions verified. Multi-account,
+  permission-loss, Gmail-created, and production Cron/connection checks remain;
+  see the [verification record](docs/audits/2026-10-23-google-calendar-verification.md).
 
 ## [0.4.5] - 2026-10-21
 
