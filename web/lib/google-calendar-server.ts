@@ -108,6 +108,13 @@ export function googleAppOrigin(): string {
     throw new Error("Invalid Google Calendar application origin.");
   return url.origin;
 }
+// Protected Vercel previews admit Google only with the automation bypass.
+export function notificationAddress(): string {
+  const url = new URL("/api/google-calendar/notifications", googleAppOrigin());
+  const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  if (bypass) url.searchParams.set("x-vercel-protection-bypass", bypass);
+  return url.toString();
+}
 function adminClient() {
   return createClient(
     process.env.SUPABASE_URL || setting("NEXT_PUBLIC_SUPABASE_URL"),
@@ -662,7 +669,7 @@ export async function syncGoogleSource(
         body: JSON.stringify({
           id: watchId,
           type: "web_hook",
-          address: googleAppOrigin() + "/api/google-calendar/notifications",
+          address: notificationAddress(),
           token: watchToken,
           params: { ttl: "604800" },
         }),
